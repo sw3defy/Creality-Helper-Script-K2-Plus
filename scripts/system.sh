@@ -138,6 +138,7 @@ remove_include_from_printer_cfg() {
 
 MOONRAKER_CONF=$CONFIG_DIR/moonraker.conf
 MOONRAKER_RC=/etc/rc.d/S56moonraker
+MOONRAKER_RC_BAK=/mnt/UDISK/helper-script/.S56moonraker.orig
 MOONRAKER_STOCK_CONF=/usr/share/moonraker/moonraker.conf
 
 # Patch S56moonraker to use our config wrapper instead of the stock one
