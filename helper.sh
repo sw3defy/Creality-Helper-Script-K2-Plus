@@ -61,27 +61,27 @@ main_menu() {
     echo "    8) Fluidd (install/update/repair — port 4408)"
     echo "    9) Mainsail (install/update/repair — port 4409)"
     echo "   10) Moonraker Timelapse"
+    echo "   11) Camera Streamer (MJPEG for Fluidd/Mainsail)"
     echo ""
     echo -e "  ${YELLOW}--- Step 5: Remote access & notifications ---${NC}"
-    echo "   12) Entware (package manager)"
-    echo "   13) OctoEverywhere"
-    echo "   14) Mobileraker Companion"
-    echo "   15) Git Backup"
+    echo "   12) OctoEverywhere"
+    echo "   13) Mobileraker Companion"
+    echo "   14) Git Backup"
     echo ""
     echo -e "  ${WHITE}[Remove] Menu${NC}"
-    echo "   16) Remove a feature"
+    echo "   15) Remove a feature"
     echo ""
     echo -e "  ${WHITE}[Backup & Restore] Menu${NC}"
-    echo "   17) Backup Klipper configuration"
-    echo "   18) Restore Klipper configuration"
+    echo "   16) Backup Klipper configuration"
+    echo "   17) Restore Klipper configuration"
     echo ""
     echo -e "  ${WHITE}[Tools] Menu${NC}"
-    echo "   19) Restart Klipper"
-    echo "   20) Restart Moonraker"
-    echo "   21) Restart Nginx"
-    echo "   22) View Klipper log"
-    echo "   23) View Moonraker log"
-    echo "   24) Show installed features"
+    echo "   18) Restart Klipper"
+    echo "   19) Restart Moonraker"
+    echo "   20) Restart Nginx"
+    echo "   21) View Klipper log"
+    echo "   22) View Moonraker log"
+    echo "   23) Show installed features"
     echo ""
     echo "    0) Exit"
     echo ""
@@ -103,19 +103,18 @@ handle_choice() {
         9)  sh "$SCRIPTS_DIR/mainsail.sh" install ;;
         10) sh "$SCRIPTS_DIR/timelapse.sh" install ;;
         11) sh "$SCRIPTS_DIR/camera.sh" install ;;
-        12) sh "$SCRIPTS_DIR/entware.sh" install ;;
         13) sh "$SCRIPTS_DIR/octoeverywhere.sh" install ;;
         14) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
         15) sh "$SCRIPTS_DIR/git_backup.sh" install ;;
-        16) remove_menu ;;
-        17) sh "$SCRIPTS_DIR/backup.sh" backup ;;
-        18) sh "$SCRIPTS_DIR/backup.sh" restore ;;
-        19) sh "$SCRIPTS_DIR/system.sh" restart_klipper ;;
-        20) sh "$SCRIPTS_DIR/system.sh" restart_moonraker ;;
-        21) sh "$SCRIPTS_DIR/system.sh" restart_nginx ;;
-        22) tail -50 "$LOGS_DIR/klippy.log" | less ;;
-        23) tail -50 "$LOGS_DIR/moonraker.log" | less ;;
-        24) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
+        15) remove_menu ;;
+        16) sh "$SCRIPTS_DIR/backup.sh" backup ;;
+        17) sh "$SCRIPTS_DIR/backup.sh" restore ;;
+        18) sh "$SCRIPTS_DIR/system.sh" restart_klipper ;;
+        19) sh "$SCRIPTS_DIR/system.sh" restart_moonraker ;;
+        20) sh "$SCRIPTS_DIR/system.sh" restart_nginx ;;
+        21) tail -50 "$LOGS_DIR/klippy.log" | less ;;
+        22) tail -50 "$LOGS_DIR/moonraker.log" | less ;;
+        23) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
         0)  echo ""; echo "Goodbye!"; echo ""; exit 0 ;;
         *)  echo -e "${RED}Invalid choice.${NC}"; sleep 1 ;;
     esac
@@ -159,8 +158,7 @@ remove_menu() {
         9)  sh "$SCRIPTS_DIR/mainsail.sh" remove ;;
         10) sh "$SCRIPTS_DIR/timelapse.sh" remove ;;
         11) sh "$SCRIPTS_DIR/camera.sh" remove ;;
-        12) sh "$SCRIPTS_DIR/entware.sh" remove ;;
-        13) sh "$SCRIPTS_DIR/octoeverywhere.sh" remove ;;
+        12) sh "$SCRIPTS_DIR/octoeverywhere.sh" remove ;;
         14) sh "$SCRIPTS_DIR/mobileraker.sh" remove ;;
         15) sh "$SCRIPTS_DIR/git_backup.sh" remove ;;
         0)  return ;;
