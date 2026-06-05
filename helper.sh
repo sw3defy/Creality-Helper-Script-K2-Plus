@@ -69,23 +69,23 @@ main_menu() {
     echo -e "  ${YELLOW}--- Step 5: Remote access & notifications ---${NC}"
     echo "   11) Entware (package manager)
    12) OctoEverywhere"
-    echo "   12) Mobileraker Companion"
-    echo "   13) Git Backup"
+    echo "   13) Mobileraker Companion"
+    echo "   14) Git Backup"
     echo ""
     echo -e "  ${WHITE}[Remove] Menu${NC}"
-    echo "   14) Remove a feature"
+    echo "   15) Remove a feature"
     echo ""
     echo -e "  ${WHITE}[Backup & Restore] Menu${NC}"
-    echo "   15) Backup Klipper configuration"
-    echo "   16) Restore Klipper configuration"
+    echo "   16) Backup Klipper configuration"
+    echo "   17) Restore Klipper configuration"
     echo ""
     echo -e "  ${WHITE}[Tools] Menu${NC}"
-    echo "   17) Restart Klipper"
-    echo "   18) Restart Moonraker"
-    echo "   19) Restart Nginx"
-    echo "   20) View Klipper log"
-    echo "   21) View Moonraker log"
-    echo "   22) Show installed features"
+    echo "   18) Restart Klipper"
+    echo "   19) Restart Moonraker"
+    echo "   20) Restart Nginx"
+    echo "   21) View Klipper log"
+    echo "   22) View Moonraker log"
+    echo "   23) Show installed features"
     echo ""
     echo "    0) Exit"
     echo ""
@@ -116,15 +116,15 @@ handle_choice() {
         13) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
         14) sh "$SCRIPTS_DIR/git_backup.sh" install ;;
         # Other menus
-        14) remove_menu ;;
-        15) sh "$SCRIPTS_DIR/backup.sh" backup ;;
-        16) sh "$SCRIPTS_DIR/backup.sh" restore ;;
-        17) sh "$SCRIPTS_DIR/system.sh" restart_klipper ;;
-        18) sh "$SCRIPTS_DIR/system.sh" restart_moonraker ;;
-        19) sh "$SCRIPTS_DIR/system.sh" restart_nginx ;;
-        20) tail -50 "$LOGS_DIR/klippy.log" | less ;;
-        21) tail -50 "$LOGS_DIR/moonraker.log" | less ;;
-        22) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
+        15) remove_menu ;;
+        16) sh "$SCRIPTS_DIR/backup.sh" backup ;;
+        17) sh "$SCRIPTS_DIR/backup.sh" restore ;;
+        18) sh "$SCRIPTS_DIR/system.sh" restart_klipper ;;
+        19) sh "$SCRIPTS_DIR/system.sh" restart_moonraker ;;
+        20) sh "$SCRIPTS_DIR/system.sh" restart_nginx ;;
+        21) tail -50 "$LOGS_DIR/klippy.log" | less ;;
+        22) tail -50 "$LOGS_DIR/moonraker.log" | less ;;
+        23) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
         0)  echo ""; echo "Goodbye!"; echo ""; exit 0 ;;
         *)  echo -e "${RED}Invalid choice.${NC}"; sleep 1 ;;
     esac
@@ -150,8 +150,8 @@ remove_menu() {
     echo "   10) Moonraker Timelapse"
     echo "   11) Entware (package manager)
    12) OctoEverywhere"
-    echo "   12) Mobileraker Companion"
-    echo "   13) Git Backup"
+    echo "   13) Mobileraker Companion"
+    echo "   14) Git Backup"
     echo "    0) Back"
     echo ""
     printf "  Enter choice: "
