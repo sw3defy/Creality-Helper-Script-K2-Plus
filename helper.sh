@@ -85,7 +85,7 @@ main_menu() {
     echo ""
     echo -e "    ${YELLOW}0)${NC} ${RED}Exit${NC}"
     echo ""
-printf "  Enter choice: "
+printf "  \033[0;32mEnter choice:\033[0m "
     read choice
     handle_choice "$choice"
 }
@@ -143,7 +143,7 @@ remove_menu() {
     echo "   15) Git Backup"
     echo -e "    0)) ${GREEN}Back${NC}"
     echo ""
-    printf "  Enter choice: "
+    printf "  \033[0;32mEnter choice:\033[0m "
     read choice
     case "$choice" in
         1)  sh "$SCRIPTS_DIR/moonraker.sh" remove ;;
