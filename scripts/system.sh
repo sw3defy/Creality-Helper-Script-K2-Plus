@@ -90,7 +90,7 @@ show_installed() {
     echo "Installed features:"
     if [ -f "$INSTALLED_FILE" ] && [ -s "$INSTALLED_FILE" ]; then
         while IFS= read -r line; do
-            echo "  ${GREEN}✓${NC} $line"
+            echo -e "  ${GREEN}✓${NC} $line"
         done < "$INSTALLED_FILE"
     else
         echo "  None installed yet."
