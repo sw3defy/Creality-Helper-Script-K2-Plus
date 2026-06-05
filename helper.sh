@@ -61,7 +61,6 @@ main_menu() {
     echo -e "  ${CYAN}--- Step 4: Web interface & camera ---${NC}"
     echo -e "    ${YELLOW}8)${NC} ${GREEN}Fluidd (install/update/repair — port 4408)${NC}"
     echo -e "    ${YELLOW}9)${NC} ${GREEN}Mainsail (install/update/repair — port 4409)${NC}"
-    echo -e "   ${YELLOW}10)${NC} ${GREEN}Moonraker Timelapse${NC}"
     echo ""
     echo -e "  ${CYAN}--- Step 5: Remote access & notifications ---${NC}"
     echo -e "   ${YELLOW}11)${NC} ${GREEN}OctoEverywhere${NC}"
@@ -101,19 +100,18 @@ handle_choice() {
         7)  sh "$SCRIPTS_DIR/shapers.sh" install ;;
         8)  sh "$SCRIPTS_DIR/fluidd.sh" install ;;
         9)  sh "$SCRIPTS_DIR/mainsail.sh" install ;;
-        10) sh "$SCRIPTS_DIR/timelapse.sh" install ;;
         13) sh "$SCRIPTS_DIR/octoeverywhere.sh" install ;;
         14) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
         15) sh "$SCRIPTS_DIR/git_backup.sh" install ;;
-        14) remove_menu ;;
-        15) sh "$SCRIPTS_DIR/backup.sh" backup ;;
-        16) sh "$SCRIPTS_DIR/backup.sh" restore ;;
-        17) sh "$SCRIPTS_DIR/system.sh" restart_klipper ;;
-        18) sh "$SCRIPTS_DIR/system.sh" restart_moonraker ;;
-        19) sh "$SCRIPTS_DIR/system.sh" restart_nginx ;;
-        20) tail -50 "$LOGS_DIR/klippy.log" | less ;;
-        21) tail -50 "$LOGS_DIR/moonraker.log" | less ;;
-        22) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
+        13) remove_menu ;;
+        14) sh "$SCRIPTS_DIR/backup.sh" backup ;;
+        15) sh "$SCRIPTS_DIR/backup.sh" restore ;;
+        16) sh "$SCRIPTS_DIR/system.sh" restart_klipper ;;
+        17) sh "$SCRIPTS_DIR/system.sh" restart_moonraker ;;
+        18) sh "$SCRIPTS_DIR/system.sh" restart_nginx ;;
+        19) tail -50 "$LOGS_DIR/klippy.log" | less ;;
+        20) tail -50 "$LOGS_DIR/moonraker.log" | less ;;
+        21) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
         0)  echo ""; echo "Goodbye!"; echo ""; exit 0 ;;
         *)  echo -e "${RED}Invalid choice.${NC}"; sleep 1 ;;
     esac
@@ -155,8 +153,7 @@ remove_menu() {
         7)  sh "$SCRIPTS_DIR/shapers.sh" remove ;;
         8)  sh "$SCRIPTS_DIR/fluidd.sh" remove ;;
         9)  sh "$SCRIPTS_DIR/mainsail.sh" remove ;;
-        10) sh "$SCRIPTS_DIR/timelapse.sh" remove ;;
-        11) sh "$SCRIPTS_DIR/octoeverywhere.sh" remove ;;
+        10) sh "$SCRIPTS_DIR/octoeverywhere.sh" remove ;;
         14) sh "$SCRIPTS_DIR/mobileraker.sh" remove ;;
         15) sh "$SCRIPTS_DIR/git_backup.sh" remove ;;
         0)  return ;;
