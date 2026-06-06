@@ -225,6 +225,11 @@ EOF
 }
 
 remove_shapers() {
+
+    echo -e "${YELLOW}WARNING: This will remove Improved Shapers Calibrations.${NC}"
+    printf "Are you sure? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
     log_info "Removing Improved Shapers Calibrations..."
     remove_include_from_printer_cfg "shapers_calibration.cfg"
