@@ -83,6 +83,11 @@ except: pass
 }
 
 remove_helixscreen() {
+
+    echo -e "${YELLOW}WARNING: This will remove HelixScreen.${NC}"
+    printf "Are you sure? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
     log_info "Removing HelixScreen..."
 
