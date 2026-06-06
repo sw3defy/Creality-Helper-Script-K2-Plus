@@ -46,6 +46,11 @@ EOF
 }
 
 remove_z_offset() {
+
+    echo -e "${YELLOW}WARNING: This will remove Z-Offset Macros.${NC}"
+    printf "Are you sure? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     remove_include_from_printer_cfg "z_offset_macros.cfg"
     rm -f "$Z_CFG"
     restart_klipper
