@@ -115,6 +115,11 @@ PYEOF
 }
 
 remove_mainsail_nginx_block() {
+
+    echo -e "${YELLOW}WARNING: This will remove Mainsail.${NC}"
+    printf "Are you sure? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     if ! check_mainsail_nginx_block; then
         log_info "Mainsail nginx block not found — nothing to remove."
         return 0
