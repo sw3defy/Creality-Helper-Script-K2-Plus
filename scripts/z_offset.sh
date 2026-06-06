@@ -5,6 +5,14 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 Z_CFG=$CONFIG_DIR/z_offset_macros.cfg
 
 install_z_offset() {
+
+    if is_installed "z_offset_macros"; then
+        log_info "Z Offset Macros is already installed."
+        echo ""
+        printf "  Reinstall? [y/N]: "
+        read confirm
+        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
+    fi
     echo ""
     log_info "Installing Save Z-Offset Macros..."
     cat > "$Z_CFG" << 'EOF'
