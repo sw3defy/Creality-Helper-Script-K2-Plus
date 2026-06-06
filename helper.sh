@@ -102,9 +102,11 @@ handle_choice() {
         7)  sh "$SCRIPTS_DIR/shapers.sh" install ;;
         8)  sh "$SCRIPTS_DIR/fluidd.sh" install ;;
         9)  sh "$SCRIPTS_DIR/mainsail.sh" install ;;
-        13) sh "$SCRIPTS_DIR/octoeverywhere.sh" install ;;
-        14) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
-        15) sh "$SCRIPTS_DIR/git_backup.sh" install ;;
+        10) sh "$SCRIPTS_DIR/timelapse.sh" install ;;
+        11) sh "$SCRIPTS_DIR/helixscreen.sh" install ;;
+        12) sh "$SCRIPTS_DIR/octoeverywhere.sh" install ;;
+        13) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
+        14) sh "$SCRIPTS_DIR/git_backup.sh" install ;;
         15) remove_menu ;;
         16) sh "$SCRIPTS_DIR/backup.sh" backup ;;
         17) sh "$SCRIPTS_DIR/backup.sh" restore ;;
@@ -155,9 +157,11 @@ remove_menu() {
         7)  sh "$SCRIPTS_DIR/shapers.sh" remove ;;
         8)  sh "$SCRIPTS_DIR/fluidd.sh" remove ;;
         9)  sh "$SCRIPTS_DIR/mainsail.sh" remove ;;
-        10) sh "$SCRIPTS_DIR/octoeverywhere.sh" remove ;;
-        14) sh "$SCRIPTS_DIR/mobileraker.sh" remove ;;
-        15) sh "$SCRIPTS_DIR/git_backup.sh" remove ;;
+        10) sh "$SCRIPTS_DIR/timelapse.sh" remove ;;
+        11) sh "$SCRIPTS_DIR/helixscreen.sh" remove ;;
+        12) sh "$SCRIPTS_DIR/octoeverywhere.sh" remove ;;
+        13) sh "$SCRIPTS_DIR/mobileraker.sh" remove ;;
+        14) sh "$SCRIPTS_DIR/git_backup.sh" remove ;;
         0)  return ;;
         *)  echo -e "${RED}Invalid choice.${NC}" ;;
     esac
