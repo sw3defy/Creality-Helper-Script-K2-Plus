@@ -62,26 +62,27 @@ main_menu() {
     echo -e "    ${YELLOW}8)${NC} ${GREEN}Fluidd (install/update/repair — port 4408)${NC}"
     echo -e "    ${YELLOW}9)${NC} ${GREEN}Mainsail (install/update/repair — port 4409)${NC}"
     echo -e "   ${YELLOW}10)${NC} ${GREEN}Moonraker Timelapse${NC}"
+    echo -e "   ${YELLOW}11)${NC} ${GREEN}HelixScreen (touchscreen UI)${NC}"
     echo ""
     echo -e "  ${CYAN}--- Step 5: Remote access & notifications ---${NC}"
-    echo -e "   ${YELLOW}11)${NC} ${GREEN}OctoEverywhere${NC}"
-    echo -e "   ${YELLOW}12)${NC} ${GREEN}Mobileraker Companion${NC}"
-    echo -e "   ${YELLOW}13)${NC} ${GREEN}Git Backup${NC}"
+    echo -e "   ${YELLOW}12)${NC} ${GREEN}OctoEverywhere${NC}"
+    echo -e "   ${YELLOW}13)${NC} ${GREEN}Mobileraker Companion${NC}"
+    echo -e "   ${YELLOW}14)${NC} ${GREEN}Git Backup${NC}"
     echo ""
     echo -e "  ${WHITE}[Remove] Menu${NC}"
-    echo -e "   ${YELLOW}14)${NC} ${GREEN}Remove a feature${NC}"
+    echo -e "   ${YELLOW}15)${NC} ${GREEN}Remove a feature${NC}"
     echo ""
     echo -e "  ${WHITE}[Backup & Restore] Menu${NC}"
-    echo -e "   ${YELLOW}15)${NC} ${GREEN}Backup Klipper configuration${NC}"
-    echo -e "   ${YELLOW}16)${NC} ${GREEN}Restore Klipper configuration${NC}"
+    echo -e "   ${YELLOW}16)${NC} ${GREEN}Backup Klipper configuration${NC}"
+    echo -e "   ${YELLOW}17)${NC} ${GREEN}Restore Klipper configuration${NC}"
     echo ""
     echo -e "  ${WHITE}[Tools] Menu${NC}"
-    echo -e "   ${YELLOW}17)${NC} ${GREEN}Restart Klipper${NC}"
-    echo -e "   ${YELLOW}18)${NC} ${GREEN}Restart Moonraker${NC}"
-    echo -e "   ${YELLOW}19)${NC} ${GREEN}Restart Nginx${NC}"
-    echo -e "   ${YELLOW}20)${NC} ${GREEN}View Klipper log${NC}"
-    echo -e "   ${YELLOW}21)${NC} ${GREEN}View Moonraker log${NC}"
-    echo -e "   ${YELLOW}22)${NC} ${GREEN}Show installed features${NC}"
+    echo -e "   ${YELLOW}18)${NC} ${GREEN}Restart Klipper${NC}"
+    echo -e "   ${YELLOW}19)${NC} ${GREEN}Restart Moonraker${NC}"
+    echo -e "   ${YELLOW}20)${NC} ${GREEN}Restart Nginx${NC}"
+    echo -e "   ${YELLOW}21)${NC} ${GREEN}View Klipper log${NC}"
+    echo -e "   ${YELLOW}22)${NC} ${GREEN}View Moonraker log${NC}"
+    echo -e "   ${YELLOW}23)${NC} ${GREEN}Show installed features${NC}"
     echo ""
     echo -e "    ${YELLOW}0)${NC} ${RED}Exit${NC}"
     echo ""
@@ -104,15 +105,15 @@ handle_choice() {
         13) sh "$SCRIPTS_DIR/octoeverywhere.sh" install ;;
         14) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
         15) sh "$SCRIPTS_DIR/git_backup.sh" install ;;
-        13) remove_menu ;;
-        14) sh "$SCRIPTS_DIR/backup.sh" backup ;;
-        15) sh "$SCRIPTS_DIR/backup.sh" restore ;;
-        16) sh "$SCRIPTS_DIR/system.sh" restart_klipper ;;
-        17) sh "$SCRIPTS_DIR/system.sh" restart_moonraker ;;
-        18) sh "$SCRIPTS_DIR/system.sh" restart_nginx ;;
-        19) tail -50 "$LOGS_DIR/klippy.log" | less ;;
-        20) tail -50 "$LOGS_DIR/moonraker.log" | less ;;
-        21) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
+        15) remove_menu ;;
+        16) sh "$SCRIPTS_DIR/backup.sh" backup ;;
+        17) sh "$SCRIPTS_DIR/backup.sh" restore ;;
+        18) sh "$SCRIPTS_DIR/system.sh" restart_klipper ;;
+        19) sh "$SCRIPTS_DIR/system.sh" restart_moonraker ;;
+        20) sh "$SCRIPTS_DIR/system.sh" restart_nginx ;;
+        21) tail -50 "$LOGS_DIR/klippy.log" | less ;;
+        22) tail -50 "$LOGS_DIR/moonraker.log" | less ;;
+        23) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
         0)  echo ""; echo "Goodbye!"; echo ""; exit 0 ;;
         *)  echo -e "${RED}Invalid choice.${NC}"; sleep 1 ;;
     esac
