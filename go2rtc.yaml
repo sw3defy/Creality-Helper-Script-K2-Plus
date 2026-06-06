@@ -1,0 +1,17 @@
+api:
+  listen: :1984
+
+streams:
+  k2plus:
+    - "webrtc:http://127.0.0.1:8090/call/webrtc_local"
+
+webrtc:
+  listen: :8555
+  candidates:
+    - 192.168.50.247
+  ice_servers:
+    - urls:
+        - stun:stun.l.google.com:19302
+
+publish:
+  k2plus: true
