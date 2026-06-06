@@ -8,6 +8,14 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 MACROS_CFG=$CONFIG_DIR/useful_macros.cfg
 
 install_useful_macros() {
+
+    if is_installed "useful_macros"; then
+        log_info "Useful Macros is already installed."
+        echo ""
+        printf "  Reinstall? [y/N]: "
+        read confirm
+        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
+    fi
     echo ""
     log_info "Installing Useful Macros..."
     echo ""
