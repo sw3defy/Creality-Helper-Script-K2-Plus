@@ -8,6 +8,14 @@ MOONRAKER_CONF=$CONFIG_DIR/moonraker.conf
 STOCK_MOONRAKER_CONF=/usr/share/moonraker/moonraker.conf
 
 install_moonraker_extensions() {
+
+    if is_installed "moonraker_extensions"; then
+        log_info "Moonraker Extensions is already installed."
+        echo ""
+        printf "  Reinstall? [y/N]: "
+        read confirm
+        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
+    fi
     echo ""
     log_info "Installing Moonraker Extensions..."
     echo ""
