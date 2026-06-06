@@ -19,6 +19,9 @@ log_success() { echo -e "${GREEN}[OK]${NC} $1"; }
 # ── Service restarts ──────────────────────────────────────────────────────────
 
 restart_klipper() {
+    printf "Restart Klipper? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     log_info "Restarting Klipper..."
     /etc/rc.d/S55klipper restart
     sleep 3
@@ -30,6 +33,9 @@ restart_klipper() {
 }
 
 restart_moonraker() {
+    printf "Restart Moonraker? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     log_info "Restarting Moonraker..."
     # Kill ALL running moonraker instances (stock + helper script)
     for pid in $(ps aux | grep moonraker.py | grep -v grep | awk '{print $1}'); do
@@ -46,6 +52,9 @@ restart_moonraker() {
 }
 
 restart_nginx() {
+    printf "Restart Nginx? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     log_info "Restarting Nginx..."
     /etc/rc.d/S80nginx restart
     sleep 2
