@@ -6,6 +6,14 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 SHAPERS_CFG=$CONFIG_DIR/shapers_calibration.cfg
 
 install_shapers() {
+
+    if is_installed "improved_shapers"; then
+        log_info "Improved Shapers is already installed."
+        echo ""
+        printf "  Reinstall? [y/N]: "
+        read confirm
+        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
+    fi
     echo ""
     log_info "Installing Improved Shapers Calibrations..."
     echo ""
