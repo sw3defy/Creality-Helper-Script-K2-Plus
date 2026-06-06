@@ -7,6 +7,14 @@ TIMELAPSE_DIR=/mnt/UDISK/printer_data/timelapse
 TIMELAPSE_COMPONENT=/usr/share/moonraker/components/timelapse.py
 
 install_timelapse() {
+
+    if is_installed "moonraker_timelapse"; then
+        log_info "Moonraker Timelapse is already installed."
+        echo ""
+        printf "  Reinstall? [y/N]: "
+        read confirm
+        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
+    fi
     echo ""
     log_info "Installing Moonraker Timelapse..."
     echo ""
