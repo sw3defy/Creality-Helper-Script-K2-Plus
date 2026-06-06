@@ -7,6 +7,14 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 FANS_CFG=$CONFIG_DIR/fans_control.cfg
 
 install_fans() {
+
+    if is_installed "fans_control_macros"; then
+        log_info "Fans Control Macros is already installed."
+        echo ""
+        printf "  Reinstall? [y/N]: "
+        read confirm
+        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
+    fi
     echo ""
     log_info "Installing Fans Control Macros..."
     echo ""
