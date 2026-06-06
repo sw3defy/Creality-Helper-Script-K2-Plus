@@ -95,6 +95,11 @@ EOF
 }
 
 remove_kamp() {
+
+    echo -e "${YELLOW}WARNING: This will remove KAMP.${NC}"
+    printf "Are you sure? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
     log_info "Removing KAMP..."
     remove_include_from_printer_cfg "KAMP/KAMP_Settings.cfg"
