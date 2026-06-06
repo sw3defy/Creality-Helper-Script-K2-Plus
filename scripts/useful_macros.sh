@@ -461,6 +461,11 @@ EOF
 }
 
 remove_useful_macros() {
+
+    echo -e "${YELLOW}WARNING: This will remove Useful Macros.${NC}"
+    printf "Are you sure? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
     log_info "Removing Useful Macros..."
     remove_include_from_printer_cfg "useful_macros.cfg"
