@@ -59,6 +59,16 @@ print('Downloaded installer')
         return 1
     fi
 
+    # Remove update_manager section - not supported on K2 Plus
+    python3 -c "
+import re
+try:
+    content = open('/mnt/UDISK/printer_data/config/moonraker.conf').read()
+    content = re.sub(r'\[update_manager helixscreen\][^\[]*', '', content)
+    open('/mnt/UDISK/printer_data/config/moonraker.conf', 'w').write(content)
+    print('Cleaned moonraker.conf')
+except: pass
+"
     mark_installed "helixscreen"
     echo ""
     log_success "HelixScreen installed successfully!"
