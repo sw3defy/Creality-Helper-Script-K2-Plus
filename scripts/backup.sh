@@ -6,6 +6,9 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 BACKUP_DIR=/mnt/UDISK/helper-script/backups
 
 backup_config() {
+    printf "Backup Klipper configuration? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
     log_info "Backing up Klipper configuration..."
     mkdir -p "$BACKUP_DIR"
