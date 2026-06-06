@@ -129,23 +129,23 @@ remove_menu() {
     print_header
     echo -e "  ${WHITE}[Remove] Menu${NC}"
     echo ""
-    echo -e "    1)) ${GREEN}Moonraker Extensions${NC}"
-    echo -e "    2)) ${GREEN}Fans Control Macros${NC}"
-    echo -e "    3)) ${GREEN}Useful Macros${NC}"
-    echo -e "    4)) ${GREEN}Save Z-Offset Macros${NC}"
-    echo -e "    5)) ${GREEN}M600 Support${NC}"
-    echo -e "    6)) ${GREEN}KAMP${NC}"
-    echo -e "    7)) ${GREEN}Improved Shapers Calibrations${NC}"
-    echo -e "    8)) ${GREEN}Fluidd${NC}"
-    echo -e "    9)) ${GREEN}Mainsail${NC}"
-    echo "   10) Moonraker Timelapse"
-    echo "   11) Entware"
-    echo "   13) OctoEverywhere"
-    echo "   14) Mobileraker Companion"
-    echo "   15) Git Backup"
-    echo -e "    0)) ${GREEN}Back${NC}"
+    echo -e "    ${YELLOW}1)${NC}  ${GREEN}Moonraker Extensions${NC}"
+    echo -e "    ${YELLOW}2)${NC}  ${GREEN}Fans Control Macros${NC}"
+    echo -e "    ${YELLOW}3)${NC}  ${GREEN}Useful Macros${NC}"
+    echo -e "    ${YELLOW}4)${NC}  ${GREEN}Save Z-Offset Macros${NC}"
+    echo -e "    ${YELLOW}5)${NC}  ${GREEN}M600 Support${NC}"
+    echo -e "    ${YELLOW}6)${NC}  ${GREEN}KAMP${NC}"
+    echo -e "    ${YELLOW}7)${NC}  ${GREEN}Improved Shapers Calibrations${NC}"
+    echo -e "    ${YELLOW}8)${NC}  ${GREEN}Fluidd${NC}"
+    echo -e "    ${YELLOW}9)${NC}  ${GREEN}Mainsail${NC}"
+    echo -e "   ${YELLOW}10)${NC}  ${GREEN}Moonraker Timelapse${NC}"
+    echo -e "   ${YELLOW}11)${NC}  ${GREEN}HelixScreen${NC}"
+    echo -e "   ${YELLOW}12)${NC}  ${GREEN}OctoEverywhere${NC}"
+    echo -e "   ${YELLOW}13)${NC}  ${GREEN}Mobileraker Companion${NC}"
+    echo -e "   ${YELLOW}14)${NC}  ${GREEN}Git Backup${NC}"
+    echo -e "    ${YELLOW}0)${NC}  ${RED}Back${NC}"
     echo ""
-    printf "  \033[0;32mEnter choice:\033[0m "
+    printf "  ${GREEN}Enter choice:${NC} "
     read choice
     case "$choice" in
         1)  sh "$SCRIPTS_DIR/moonraker.sh" remove ;;
@@ -166,6 +166,7 @@ remove_menu() {
         *)  echo -e "${RED}Invalid choice.${NC}" ;;
     esac
 }
+
 
 check_root
 check_printer
