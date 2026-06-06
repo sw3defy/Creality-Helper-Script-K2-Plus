@@ -69,6 +69,11 @@ ffmpeg_binary_path: /usr/bin/ffmpeg"
 }
 
 remove_timelapse() {
+
+    echo -e "${YELLOW}WARNING: This will remove Moonraker Timelapse.${NC}"
+    printf "Are you sure? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
     log_info "Removing Moonraker Timelapse..."
     remove_moonraker_section "timelapse"
