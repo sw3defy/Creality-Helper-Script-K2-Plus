@@ -6,6 +6,14 @@ KAMP_DIR=$CONFIG_DIR/KAMP
 KAMP_URL=https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging/archive/refs/heads/main.zip
 
 install_kamp() {
+
+    if is_installed "kamp"; then
+        log_info "Kamp is already installed."
+        echo ""
+        printf "  Reinstall? [y/N]: "
+        read confirm
+        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
+    fi
     echo ""
     log_info "Installing Klipper Adaptive Meshing & Purging (KAMP)..."
     echo ""
