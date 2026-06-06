@@ -11,6 +11,11 @@ install_mobileraker() {
 }
 
 remove_mobileraker() {
+
+    echo -e "${YELLOW}WARNING: This will remove Mobileraker Companion.${NC}"
+    printf "Are you sure? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
     log_info "This feature is not yet implemented for K2 Plus."
     echo ""
