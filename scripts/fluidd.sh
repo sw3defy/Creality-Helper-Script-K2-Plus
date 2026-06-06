@@ -135,12 +135,14 @@ install_fluidd() {
         echo ""
         echo "  1) Update to the latest version"
         echo "  2) Repair (re-download and reinstall current latest)"
+        echo "  3) Restore nginx block only (if port 4408 is broken)"
         echo "  0) Cancel"
         echo ""
         printf "  Enter choice: "
         read subchoice
         case "$subchoice" in
             1|2) : ;;  # continue with install
+            3) restore_fluidd_nginx_block; /etc/rc.d/S80nginx restart; log_success "Nginx block restored for port 4408."; return 0 ;;
             *)  log_info "Cancelled."; return 0 ;;
         esac
     else
