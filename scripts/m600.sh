@@ -5,6 +5,14 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 M600_CFG=$CONFIG_DIR/m600.cfg
 
 install_m600() {
+
+    if is_installed "m600_support"; then
+        log_info "M600 Support is already installed."
+        echo ""
+        printf "  Reinstall? [y/N]: "
+        read confirm
+        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
+    fi
     echo ""
     log_info "Installing M600 Support..."
     cat > "$M600_CFG" << 'EOF'
