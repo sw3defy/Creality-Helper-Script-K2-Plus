@@ -200,6 +200,11 @@ install_fluidd() {
 # ── Remove Fluidd static files ────────────────────────────────────────────────
 
 remove_fluidd() {
+
+    echo -e "${YELLOW}WARNING: This will remove Fluidd.${NC}"
+    printf "Are you sure? [y/N]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
     echo -e "${YELLOW}WARNING: This removes the Fluidd web interface static files.${NC}"
     echo "Port 4408 will return a 404 until Fluidd is reinstalled."
