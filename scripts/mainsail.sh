@@ -11,24 +11,13 @@ NGINX_CONF=/etc/nginx/nginx.conf
 # ── Download helper ───────────────────────────────────────────────────────────
 
 check_download_tool() {
-    if which wget > /dev/null 2>&1; then
-        DOWNLOAD_CMD="wget"
-    elif which curl > /dev/null 2>&1; then
-        DOWNLOAD_CMD="curl"
-    else
-        log_error "Neither wget nor curl found. Install Entware first."
-        return 1
-    fi
+    DOWNLOAD_CMD="python3"
 }
 
 download_file() {
     local url="$1"
     local dest="$2"
-    if [ "$DOWNLOAD_CMD" = "wget" ]; then
-        wget -q --show-progress -O "$dest" "$url"
-    else
-        curl -L --progress-bar -o "$dest" "$url"
-    fi
+    python3 -c "import urllib.request; urllib.request.urlretrieve('$url', '$dest'); print('Downloaded')"
 }
 
 # ── Nginx block management ────────────────────────────────────────────────────
