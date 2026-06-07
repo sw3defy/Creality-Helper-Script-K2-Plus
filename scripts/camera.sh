@@ -297,34 +297,29 @@ function checkAndReload() {
     .then(r => r.json())
     .then(data => {
       var stream = data.k2plus;
-      if(stream && stream.producers && stream.producers.length > 0) {
-        var receivers = stream.producers[0].receivers;
-        var hasBytes = receivers && receivers.some(function(r) { return r.bytes > 0; });
-        if(hasBytes && !cameraReady) {
+      var prod = stream && stream.producers && stream.producers[0];
+      if(prod) {
+        var cons = stream.consumers;
+        var senderHasBytes = cons && cons.length > 0 && cons[0].senders &&
+          cons[0].senders.some(function(s) { return s.bytes > 0; });
+        if(senderHasBytes) {
           cameraReady = true;
           enableCamera();
-          try {
-            var s = document.querySelector(\"#app\").__vue__.\$store;
-            var cams = s.state.webcams.webcams;
-            if(cams && cams.length > 0) {
-              var cam = Object.assign({}, cams[0]);
-              cam.enabled = false;
-              s.state.webcams.webcams.splice(0, 1, cam);
-              setTimeout(function() {
-                cam.enabled = true;
-                s.state.webcams.webcams.splice(0, 1, cam);
-              }, 1000);
-            }
-          } catch(e) {}
+        } else if(!cameraReady && prod.bytes_recv > 500000 && !sessionStorage.getItem(\'reloaded\')) {
+          sessionStorage.setItem(\'reloaded\', \'1\');
+          setTimeout(function() { location.reload(); }, 2000);
         }
-      } else { cameraReady = false; }
+      }
     })
-    .catch(function() { cameraReady = false; });
+    .catch(function() {});
 }
 setTimeout(enableCamera, 2000);
 setInterval(checkAndReload, 3000);
 </script>'''
-content = content.replace('</body>', script + '</body>')
+# Add hidden iframe for go2rtc keepalive and inject script
+import socket
+ip = socket.gethostbyname(socket.gethostname())
+content = content.replace('</body>', '<iframe src="http://' + ip + ':1984/stream.html?src=k2plus&mode=webrtc" style="display:none;width:1px;height:1px;" id="go2rtc_keepalive"></iframe>' + script + '</body>')
 open('/usr/share/fluidd/index.html', 'w').write(content)
 print('Fluidd index.html updated')
 "
