@@ -1,11 +1,9 @@
 #!/bin/sh
-# camera.sh - Install K2 Plus camera support for Fluidd
+# camera.sh - Install K2 Plus camera support for Fluidd and Mainsail
 # Credit: DnG-Crafts (https://github.com/DnG-Crafts/K2-Camera)
 #         AlexxIT/go2rtc (https://github.com/AlexxIT/go2rtc)
-
 SCRIPT_DIR=/mnt/UDISK/helper-script
 . "$SCRIPT_DIR/scripts/system.sh"
-
 GO2RTC=$SCRIPT_DIR/go2rtc
 GO2RTC_YAML=$SCRIPT_DIR/go2rtc.yaml
 K2RTC=$SCRIPT_DIR/k2rtc.py
@@ -13,10 +11,10 @@ WATCHDOG=$SCRIPT_DIR/camera_watchdog.py
 
 install_camera() {
     echo ""
-    log_info "Installing K2 Plus Camera Support for Fluidd..."
+    log_info "Installing K2 Plus Camera Support for Fluidd and Mainsail..."
     echo ""
     echo "  This installs a WebRTC bridge that makes the K2 Plus"
-    echo "  camera available in the Fluidd dashboard."
+    echo "  camera available in both Fluidd and Mainsail dashboards."
     echo ""
     echo "  Credit: DnG-Crafts and AlexxIT/go2rtc"
     echo ""
@@ -38,10 +36,14 @@ print('Downloaded go2rtc')
         chmod +x $GO2RTC
     fi
 
+    # Get printer IP
+    PRINTER_IP=$(python3 -c "import socket; print(socket.gethostbyname(socket.gethostname()))")
+
     # Create go2rtc config
-    cat > $GO2RTC_YAML << 'YAML'
+    cat > $GO2RTC_YAML << YAML
 api:
   listen: :1984
+  origin: '*'
 
 streams:
   k2plus:
@@ -50,7 +52,7 @@ streams:
 webrtc:
   listen: :8555
   candidates:
-    - 192.168.50.247
+    - $PRINTER_IP
   ice_servers:
     - urls:
         - stun:stun.l.google.com:19302
@@ -59,12 +61,11 @@ YAML
     # Create k2rtc.py bridge
     cat > $K2RTC << 'PYTHON'
 #!/usr/bin/env python3
-import http.server, urllib.request, json, base64, time, threading
+import http.server, urllib.request, json, base64, time
 
 class K2Handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         pass
-
     def do_POST(self):
         length = int(self.headers.get('Content-Length', 0))
         sdp = self.rfile.read(length).decode()
@@ -81,7 +82,7 @@ class K2Handler(http.server.BaseHTTPRequestHandler):
             decoded = base64.b64decode(response)
             data = json.loads(decoded)
             answer_sdp = data['sdp'].encode()
-            time.sleep(1.5)
+            time.sleep(0.1)
             self.send_response(200)
             self.send_header('Content-Type', 'application/sdp')
             self.send_header('Access-Control-Allow-Origin', '*')
@@ -93,7 +94,6 @@ class K2Handler(http.server.BaseHTTPRequestHandler):
             print('Error:', e, flush=True)
             self.send_response(500)
             self.end_headers()
-
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
@@ -101,16 +101,6 @@ class K2Handler(http.server.BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', '*')
         self.end_headers()
 
-def preconnect():
-    time.sleep(5)
-    try:
-        import urllib.request
-        urllib.request.urlopen('http://127.0.0.1:1984/api/streams?src=k2plus', timeout=5)
-        print('Stream pre-connected', flush=True)
-    except Exception as e:
-        print('Pre-connect error:', e, flush=True)
-
-threading.Thread(target=preconnect, daemon=True).start()
 server = http.server.HTTPServer(('127.0.0.1', 8090), K2Handler)
 print('K2 bridge running on 8090', flush=True)
 server.serve_forever()
@@ -131,7 +121,6 @@ def reconnect():
 print('Camera watchdog started', flush=True)
 last_bytes = 0
 stale_count = 0
-
 while True:
     try:
         r = urllib.request.urlopen('http://127.0.0.1:1984/api/streams', timeout=3)
@@ -167,17 +156,11 @@ HELIX=/mnt/UDISK/helper-script
 start() {
     echo "Starting K2 camera bridge..."
     sleep 60
-    echo "Starting k2rtc.py..." >> /tmp/camera_startup.log 2>&1
     python3 $HELIX/k2rtc.py >> /tmp/k2rtc.log 2>&1 &
     sleep 2
-    echo "Starting go2rtc..." >> /tmp/camera_startup.log 2>&1
     $HELIX/go2rtc -config $HELIX/go2rtc.yaml >> /tmp/go2rtc.log 2>&1 &
-    sleep 15
-    echo "Pre-connecting stream..." >> /tmp/camera_startup.log 2>&1
-    python3 -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:1984/api/streams?src=k2plus', timeout=10)" >> /tmp/camera_startup.log 2>&1
-    sleep 5
-    python3 -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:1984/api/streams?src=k2plus', timeout=10)" >> /tmp/camera_startup.log 2>&1
     echo "Camera bridge started" >> /tmp/camera_startup.log 2>&1
+    sleep 5
     python3 $HELIX/camera_watchdog.py >> /tmp/watchdog.log 2>&1 &
 }
 stop() {
@@ -206,12 +189,13 @@ else:
     print('Already in rc.local')
 "
 
-    # Add nginx proxy for go2rtc
+    # Add nginx proxy for go2rtc on port 4408 (Fluidd) and 4409 (Mainsail)
     python3 -c "
 content = open('/etc/nginx/nginx.conf').read()
 if 'go2rtc' not in content:
-    old = '        location /webcam/ {'
-    new = '''        location /go2rtc/ {
+    # Port 4408 Fluidd block
+    old4408 = '        location /webcam/ { proxy_pass http://mjpgstreamer1/; }\n    }\n\n    server {'
+    new4408 = '''        location /go2rtc/ {
             proxy_pass http://127.0.0.1:1984/;
             proxy_http_version 1.1;
             proxy_set_header Upgrade \$http_upgrade;
@@ -229,8 +213,15 @@ if 'go2rtc' not in content:
             proxy_read_timeout 3600;
             proxy_send_timeout 3600;
         }
-        location /api/ws {
-            proxy_pass http://127.0.0.1:1984/api/ws?src=k2plus;
+        location /webcam/ { proxy_pass http://mjpgstreamer1/; }
+    }
+
+    server {'''
+    content = content.replace(old4408, new4408)
+    # Port 4409 Mainsail block - last location before closing
+    old4409 = '        location /webcam/ { proxy_pass http://mjpgstreamer1/; }\n    }\n\n}'
+    new4409 = '''        location /go2rtc/ {
+            proxy_pass http://127.0.0.1:1984/;
             proxy_http_version 1.1;
             proxy_set_header Upgrade \$http_upgrade;
             proxy_set_header Connection \$connection_upgrade;
@@ -238,29 +229,43 @@ if 'go2rtc' not in content:
             proxy_read_timeout 3600;
             proxy_send_timeout 3600;
         }
-        location /webcam/ {'''
-    content = content.replace(old, new)
+        location /go2rtc/api/ws {
+            proxy_pass http://127.0.0.1:1984/api/ws?src=k2plus&\$args;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade \$http_upgrade;
+            proxy_set_header Connection \$connection_upgrade;
+            proxy_set_header Host \$http_host;
+            proxy_read_timeout 3600;
+            proxy_send_timeout 3600;
+        }
+        location /webcam/ { proxy_pass http://mjpgstreamer1/; }
+    }
+
+}'''
+    content = content.replace(old4409, new4409)
     open('/etc/nginx/nginx.conf', 'w').write(content)
-    print('Nginx updated')
+    print('Nginx updated for Fluidd and Mainsail')
 else:
     print('Nginx already configured')
 "
 
-    # Add camera to Moonraker
+    # Add camera to Moonraker (one entry for both Fluidd and Mainsail)
     python3 -c "
-import urllib.request, json
-try:
-    req = urllib.request.Request('http://127.0.0.1:7125/server/webcams/item?name=K2%20Camera', method='DELETE')
-    urllib.request.urlopen(req)
-except: pass
+import urllib.request, json, socket
+import subprocess; ip = subprocess.check_output(['ip', 'route', 'get', '1']).decode().split('src')[1].strip().split()[0]
+for name in ['K2 Camera', 'K2 Camera Mainsail']:
+    try:
+        req = urllib.request.Request('http://127.0.0.1:7125/server/webcams/item?name=' + name.replace(' ', '%20'), method='DELETE')
+        urllib.request.urlopen(req)
+    except: pass
 
 camera = {
     'name': 'K2 Camera',
     'location': 'printer',
     'service': 'webrtc-go2rtc',
     'target_fps': 15,
-    'stream_url': 'http://192.168.50.247:4408/go2rtc/',
-    'snapshot_url': 'http://192.168.50.247:4408/go2rtc/api/frame.jpeg?src=k2plus',
+    'stream_url': 'http://' + ip + ':4409/go2rtc/',
+    'snapshot_url': 'http://' + ip + ':4409/go2rtc/api/frame.jpeg?src=k2plus',
     'flip_horizontal': False,
     'flip_vertical': False,
     'rotation': 0
@@ -275,10 +280,12 @@ urllib.request.urlopen(req)
 print('Camera added to Moonraker')
 "
 
-    # Update Fluidd index.html
+    # Update Fluidd index.html with iframe keepalive and auto-reload
     python3 -c "
-import re
+import re, socket
+import subprocess; ip = subprocess.check_output(['ip', 'route', 'get', '1']).decode().split('src')[1].strip().split()[0]
 content = open('/usr/share/fluidd/index.html').read()
+content = re.sub(r'<iframe[^>]*go2rtc_keepalive[^>]*>.*?</iframe>', '', content)
 content = re.sub(r'<script>\nvar cameraReady.*?</script>', '', content, flags=re.DOTALL)
 script = '''<script>
 var cameraReady = false;
@@ -316,25 +323,50 @@ function checkAndReload() {
 setTimeout(enableCamera, 2000);
 setInterval(checkAndReload, 3000);
 </script>'''
-# Add hidden iframe for go2rtc keepalive and inject script
-import socket
-ip = socket.gethostbyname(socket.gethostname())
-content = content.replace('</body>', '<iframe src="http://' + ip + ':1984/stream.html?src=k2plus&mode=webrtc" style="display:none;width:1px;height:1px;" id="go2rtc_keepalive"></iframe>' + script + '</body>')
+content = content.replace('</body>', '<iframe src=\"http://' + ip + ':1984/stream.html?src=k2plus&mode=webrtc\" style=\"display:none;width:1px;height:1px;\" id=\"go2rtc_keepalive\"></iframe>' + script + '</body>')
 open('/usr/share/fluidd/index.html', 'w').write(content)
 print('Fluidd index.html updated')
+"
+
+    # Update Mainsail index.html with enabled cam injection
+    python3 -c "
+import re
+content = open('/usr/share/mainsail/index.html').read()
+content = re.sub(r'<iframe[^>]*go2rtc_keepalive[^>]*>.*?</iframe>', '', content)
+content = re.sub(r'<script>.*?enableMainsailCams.*?</script>', '', content, flags=re.DOTALL)
+script = '''<script>
+function enableMainsailCams() {
+  try {
+    var s = document.querySelector(\"#app\").__vue__.\$store;
+    var cams = s.state.gui.webcams.webcams;
+    if(cams && cams.length > 0) {
+      var changed = false;
+      cams.forEach(function(cam, i) {
+        if(!cam.enabled) { s.state.gui.webcams.webcams[i].enabled = true; changed = true; }
+      });
+      if(changed) s.state.gui.webcams.webcams = s.state.gui.webcams.webcams.slice();
+    }
+  } catch(e) {}
+}
+setTimeout(enableMainsailCams, 2000);
+setInterval(enableMainsailCams, 5000);
+</script>'''
+content = content.replace('</body>', script + '</body>')
+open('/usr/share/mainsail/index.html', 'w').write(content)
+print('Mainsail index.html updated')
 "
 
     /etc/rc.d/S80nginx restart
     mark_installed "camera_support"
     echo ""
-    log_success "Camera support installed!"
-    log_info "The camera will appear in Fluidd after reboot."
+    log_success "Camera support installed for Fluidd and Mainsail!"
+    log_info "The camera will appear in both dashboards after reboot."
     log_info "Note: Camera takes 60-90 seconds to appear after boot."
 }
 
 remove_camera() {
     echo ""
-    echo -e "${YELLOW}WARNING: This will remove the K2 camera support for Fluidd.${NC}"
+    echo -e "${YELLOW}WARNING: This will remove the K2 camera support.${NC}"
     printf "Are you sure? [y/N]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
@@ -356,30 +388,41 @@ print('Removed from rc.local')
     python3 -c "
 import re
 content = open('/etc/nginx/nginx.conf').read()
-content = re.sub(r'        location /go2rtc/.*?}\n', '', content, flags=re.DOTALL)
-content = re.sub(r'        location /api/ws.*?}\n', '', content, flags=re.DOTALL)
+content = re.sub(r'\s*location /go2rtc/.*?}\n', '', content, flags=re.DOTALL)
+content = re.sub(r'\s*location /go2rtc/api/ws.*?}\n', '', content, flags=re.DOTALL)
 open('/etc/nginx/nginx.conf', 'w').write(content)
 print('Nginx restored')
 "
     /etc/rc.d/S80nginx restart
 
-    # Remove camera from Moonraker
+    # Remove cameras from Moonraker
     python3 -c "
 import urllib.request
-try:
-    req = urllib.request.Request('http://127.0.0.1:7125/server/webcams/item?name=K2%20Camera', method='DELETE')
-    urllib.request.urlopen(req)
-    print('Camera removed from Moonraker')
-except: pass
+for name in ['K2 Camera', 'K2 Camera Mainsail']:
+    try:
+        req = urllib.request.Request('http://127.0.0.1:7125/server/webcams/item?name=' + name.replace(' ', '%20'), method='DELETE')
+        urllib.request.urlopen(req)
+        print('Removed:', name)
+    except: pass
 "
 
     # Restore Fluidd index.html
     python3 -c "
 import re
 content = open('/usr/share/fluidd/index.html').read()
+content = re.sub(r'<iframe[^>]*go2rtc_keepalive[^>]*></iframe>', '', content)
 content = re.sub(r'<script>\nvar cameraReady.*?</script>', '', content, flags=re.DOTALL)
 open('/usr/share/fluidd/index.html', 'w').write(content)
 print('Fluidd index.html restored')
+"
+
+    # Restore Mainsail index.html
+    python3 -c "
+import re
+content = open('/usr/share/mainsail/index.html').read()
+content = re.sub(r'<script>.*?enableMainsailCams.*?</script>', '', content, flags=re.DOTALL)
+open('/usr/share/mainsail/index.html', 'w').write(content)
+print('Mainsail index.html restored')
 "
 
     mark_removed "camera_support"
