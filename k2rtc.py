@@ -26,7 +26,7 @@ class K2Handler(http.server.BaseHTTPRequestHandler):
             answer_sdp = data['sdp'].encode()
             
             # Small delay to let go2rtc prepare
-            time.sleep(1.5)
+            time.sleep(0.1)
             
             self.send_response(200)
             self.send_header('Content-Type', 'application/sdp')
@@ -50,16 +50,6 @@ class K2Handler(http.server.BaseHTTPRequestHandler):
 
 import threading, time
 
-def preconnect():
-    time.sleep(5)
-    try:
-        import urllib.request
-        urllib.request.urlopen('http://127.0.0.1:1984/api/streams?src=k2plus', timeout=5)
-        print('Stream pre-connected', flush=True)
-    except Exception as e:
-        print('Pre-connect error:', e, flush=True)
-
-threading.Thread(target=preconnect, daemon=True).start()
 server = http.server.HTTPServer(('127.0.0.1', 8090), K2Handler)
 print('K2 bridge running on 8090', flush=True)
 server.serve_forever()
