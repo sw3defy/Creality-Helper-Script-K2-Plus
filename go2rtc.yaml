@@ -1,5 +1,6 @@
 api:
   listen: :1984
+  origin: '*'
 
 streams:
   k2plus:
@@ -12,6 +13,3 @@ webrtc:
   ice_servers:
     - urls:
         - stun:stun.l.google.com:19302
-
-publish:
-  k2plus: true
