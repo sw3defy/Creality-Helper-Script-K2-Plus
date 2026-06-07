@@ -68,24 +68,13 @@ STOCK_FLUIDD_BLOCK='    server {
 # ── Check internet ────────────────────────────────────────────────────────────
 
 check_download_tool() {
-    if which wget > /dev/null 2>&1; then
-        DOWNLOAD_CMD="wget"
-    elif which curl > /dev/null 2>&1; then
-        DOWNLOAD_CMD="curl"
-    else
-        log_error "Neither wget nor curl found. Install Entware first or check your PATH."
-        return 1
-    fi
+    DOWNLOAD_CMD="python3"
 }
 
 download_file() {
     local url="$1"
     local dest="$2"
-    if [ "$DOWNLOAD_CMD" = "wget" ]; then
-        wget -q --show-progress -O "$dest" "$url"
-    else
-        curl -L --progress-bar -o "$dest" "$url"
-    fi
+    python3 -c "import urllib.request; urllib.request.urlretrieve('$url', '$dest'); print('Downloaded')"
 }
 
 # ── Nginx: check and restore Fluidd block ────────────────────────────────────
@@ -169,7 +158,7 @@ install_fluidd() {
 
     log_info "Installing Fluidd to $FLUIDD_DIR..."
     mkdir -p "$FLUIDD_DIR"
-    unzip -q -o /tmp/fluidd.zip -d "$FLUIDD_DIR"
+    python3 -c "import shutil; shutil.unpack_archive('/tmp/fluidd.zip', '$FLUIDD_DIR')" 
     rm -f /tmp/fluidd.zip
 
     if [ ! -f "$FLUIDD_DIR/index.html" ]; then
