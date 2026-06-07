@@ -1,12 +1,12 @@
-# Creality K2 Plus — Helper Script
+# Creality K2 Plus - Helper Script
 
 A menu-driven helper script for the **Creality K2 Plus** and **K2 Plus Combo (with CFS)**.
 
-Forked and adapted from the excellent [Guilouz Creality Helper Script](https://github.com/Guilouz/Creality-Helper-Script) — rebuilt from the ground up for the K2 Plus architecture.
+Forked and adapted from the excellent [Guilouz Creality Helper Script](https://github.com/Guilouz/Creality-Helper-Script) - rebuilt from the ground up for the K2 Plus architecture.
 
 ## Wiki & Documentation
 
-📖 **[https://sw3defy.github.io/Creality-Helper-Script-Wiki-K2-Plus/](https://sw3defy.github.io/Creality-Helper-Script-Wiki-K2-Plus/)**
+**[https://sw3defy.github.io/Creality-Helper-Script-Wiki-K2-Plus/](https://sw3defy.github.io/Creality-Helper-Script-Wiki-K2-Plus/)**
 
 ## Installation
 
@@ -48,16 +48,22 @@ sh /mnt/UDISK/helper-script/helper.sh
 
 ## Discussions & Support
 
-💬 [Join the discussion](https://github.com/sw3defy/Creality-Helper-Script-Wiki-K2-Plus/discussions)
+[Join the discussion](https://github.com/sw3defy/Creality-Helper-Script-Wiki-K2-Plus/discussions)
 
 ## Support the Project
 
-- ☕ [Buy Me a Coffee](https://buymeacoffee.com/sw3defy)
-- 💛 [Ko-fi](https://ko-fi.com/sw3defy)
+- [Buy Me a Coffee](https://buymeacoffee.com/sw3defy)
+- [Ko-fi](https://ko-fi.com/sw3defy)
 
 ## Credits
 
-- [Guilouz](https://github.com/Guilouz) — Original Creality Helper Script for K1 Series
-- [DnG-Crafts](https://github.com/DnG-Crafts/K2-Camera) — K2 camera WebRTC discovery
-- [AlexxIT/go2rtc](https://github.com/AlexxIT/go2rtc) — Stream conversion software
-- [HelixScreen](https://helixscreen.org) — Modern touchscreen UI for Klipper
+- [Guilouz](https://github.com/Guilouz) - Original Creality Helper Script for K1 Series
+- [DnG-Crafts](https://github.com/DnG-Crafts/K2-Camera) - K2 camera WebRTC discovery
+- [AlexxIT/go2rtc](https://github.com/AlexxIT/go2rtc) - Stream conversion software
+- [prestonbrown/HelixScreen](https://github.com/prestonbrown/helixscreen) - Modern touchscreen UI for Klipper
+- [Klipper](https://www.klipper3d.org) - 3D printer firmware
+- [Moonraker](https://moonraker.readthedocs.io) - API server
+- [Fluidd](https://docs.fluidd.xyz) - Web interface
+- [Mainsail](https://docs.mainsail.xyz) - Web interface
+- [KAMP](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) - Adaptive meshing
+- [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) - Wiki theme
