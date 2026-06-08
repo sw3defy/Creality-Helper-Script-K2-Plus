@@ -68,22 +68,23 @@ main_menu() {
     echo -e "  ${CYAN}--- Step 5: Remote access & notifications ---${NC}"
     echo -e "   ${YELLOW}13)${NC} ${GREEN}OctoEverywhere${NC}"
     echo -e "   ${YELLOW}14)${NC} ${GREEN}Mobileraker Companion${NC}"
-    echo -e "   ${YELLOW}15)${NC} ${GREEN}Git Backup${NC}"
+    echo -e "   ${YELLOW}15)${NC} ${GREEN}Entware Package Manager${NC}"
+    echo -e "   ${YELLOW}16)${NC} ${GREEN}Git Backup${NC}"
     echo ""
     echo -e "  ${WHITE}[Remove] Menu${NC}"
-    echo -e "   ${YELLOW}16)${NC} ${GREEN}Remove a feature${NC}"
+    echo -e "   ${YELLOW}17)${NC} ${GREEN}Remove a feature${NC}"
     echo ""
     echo -e "  ${WHITE}[Backup & Restore] Menu${NC}"
-    echo -e "   ${YELLOW}17)${NC} ${GREEN}Backup Klipper configuration${NC}"
-    echo -e "   ${YELLOW}18)${NC} ${GREEN}Restore Klipper configuration${NC}"
+    echo -e "   ${YELLOW}18)${NC} ${GREEN}Backup Klipper configuration${NC}"
+    echo -e "   ${YELLOW}19)${NC} ${GREEN}Restore Klipper configuration${NC}"
     echo ""
     echo -e "  ${WHITE}[Tools] Menu${NC}"
-    echo -e "   ${YELLOW}19)${NC} ${GREEN}Restart Klipper${NC}"
-    echo -e "   ${YELLOW}20)${NC} ${GREEN}Restart Moonraker${NC}"
-    echo -e "   ${YELLOW}21)${NC} ${GREEN}Restart Nginx${NC}"
-    echo -e "   ${YELLOW}22)${NC} ${GREEN}View Klipper log${NC}"
-    echo -e "   ${YELLOW}23)${NC} ${GREEN}View Moonraker log${NC}"
-    echo -e "   ${YELLOW}24)${NC} ${GREEN}Show installed features${NC}"
+    echo -e "   ${YELLOW}20)${NC} ${GREEN}Restart Klipper${NC}"
+    echo -e "   ${YELLOW}21)${NC} ${GREEN}Restart Moonraker${NC}"
+    echo -e "   ${YELLOW}22)${NC} ${GREEN}Restart Nginx${NC}"
+    echo -e "   ${YELLOW}23)${NC} ${GREEN}View Klipper log${NC}"
+    echo -e "   ${YELLOW}24)${NC} ${GREEN}View Moonraker log${NC}"
+    echo -e "   ${YELLOW}25)${NC} ${GREEN}Show installed features${NC}"
     echo ""
     echo -e "    ${YELLOW}0)${NC} ${RED}Exit${NC}"
     echo ""
@@ -108,16 +109,17 @@ handle_choice() {
         12) sh "$SCRIPTS_DIR/helixscreen.sh" install ;;
         13) sh "$SCRIPTS_DIR/octoeverywhere.sh" install ;;
         14) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
-        15) sh "$SCRIPTS_DIR/git_backup.sh" install ;;
-        16) remove_menu ;;
-        17) sh "$SCRIPTS_DIR/backup.sh" backup ;;
-        18) sh "$SCRIPTS_DIR/backup.sh" restore ;;
-        19) sh "$SCRIPTS_DIR/system.sh" restart_klipper ;;
-        20) sh "$SCRIPTS_DIR/system.sh" restart_moonraker ;;
-        21) sh "$SCRIPTS_DIR/system.sh" restart_nginx ;;
-        22) tail -50 "$LOGS_DIR/klippy.log" | less ;;
-        23) tail -50 "$LOGS_DIR/moonraker.log" | less ;;
-        24) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
+        15) sh "$SCRIPTS_DIR/entware.sh" install ;;
+        16) sh "$SCRIPTS_DIR/git_backup.sh" install ;;
+        17) remove_menu ;;
+        18) sh "$SCRIPTS_DIR/backup.sh" backup ;;
+        19) sh "$SCRIPTS_DIR/backup.sh" restore ;;
+        20) sh "$SCRIPTS_DIR/system.sh" restart_klipper ;;
+        21) sh "$SCRIPTS_DIR/system.sh" restart_moonraker ;;
+        22) sh "$SCRIPTS_DIR/system.sh" restart_nginx ;;
+        23) tail -50 "$LOGS_DIR/klippy.log" | less ;;
+        24) tail -50 "$LOGS_DIR/moonraker.log" | less ;;
+        25) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
         0)  echo ""; echo "Goodbye!"; echo ""; exit 0 ;;
         *)  echo -e "${RED}Invalid choice.${NC}"; sleep 1 ;;
     esac
@@ -145,7 +147,8 @@ remove_menu() {
     echo -e "   ${YELLOW}12)${NC}  ${GREEN}HelixScreen${NC}"
     echo -e "   ${YELLOW}13)${NC}  ${GREEN}OctoEverywhere${NC}"
     echo -e "   ${YELLOW}14)${NC}  ${GREEN}Mobileraker Companion${NC}"
-    echo -e "   ${YELLOW}15)${NC}  ${GREEN}Git Backup${NC}"
+    echo -e "   ${YELLOW}15)${NC}  ${GREEN}Entware Package Manager${NC}"
+    echo -e "   ${YELLOW}16)${NC}  ${GREEN}Git Backup${NC}"
     echo -e "    ${YELLOW}0)${NC}  ${RED}Back${NC}"
     echo ""
     printf "  ${GREEN}Enter choice:${NC} "
@@ -165,7 +168,8 @@ remove_menu() {
         12) sh "$SCRIPTS_DIR/helixscreen.sh" remove ;;
         13) sh "$SCRIPTS_DIR/octoeverywhere.sh" remove ;;
         14) sh "$SCRIPTS_DIR/mobileraker.sh" remove ;;
-        15) sh "$SCRIPTS_DIR/git_backup.sh" remove ;;
+        15) sh "$SCRIPTS_DIR/entware.sh" remove ;;
+        16) sh "$SCRIPTS_DIR/git_backup.sh" remove ;;
         0)  return ;;
         *)  echo -e "${RED}Invalid choice.${NC}" ;;
     esac
