@@ -13,7 +13,7 @@ install_octoeverywhere() {
 remove_octoeverywhere() {
 
     echo -e "${YELLOW}WARNING: This will remove OctoEverywhere.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
