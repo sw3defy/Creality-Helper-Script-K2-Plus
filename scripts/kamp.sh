@@ -10,7 +10,7 @@ install_kamp() {
     if is_installed "kamp"; then
         log_info "Kamp is already installed."
         echo ""
-        printf "  Reinstall? [y/N]: "
+        printf "  Reinstall? [y/n]: "
         read confirm
         [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
     fi
@@ -97,7 +97,7 @@ EOF
 remove_kamp() {
 
     echo -e "${YELLOW}WARNING: This will remove KAMP.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
