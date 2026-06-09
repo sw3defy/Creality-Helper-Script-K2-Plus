@@ -37,7 +37,7 @@ print('Downloaded go2rtc')
     fi
 
     # Get printer IP
-    PRINTER_IP=$(python3 -c "import socket; print(socket.gethostbyname(socket.gethostname()))")
+    PRINTER_IP=$(python3 -c "import subprocess; print(subprocess.check_output(['ip', 'route', 'get', '1']).decode().split('src')[1].strip().split()[0])")
 
     # Create go2rtc config
     cat > $GO2RTC_YAML << YAML
