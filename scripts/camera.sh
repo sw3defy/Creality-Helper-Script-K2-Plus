@@ -367,6 +367,11 @@ print('Mainsail index.html updated')
     log_success "Camera support installed for Fluidd and Mainsail!"
     log_info "The camera will appear in both dashboards after reboot."
     log_info "Note: Camera takes 60-90 seconds to appear after boot."
+    echo ""
+    echo -e "  ${YELLOW}A reboot is required for the camera service to start!${NC}"
+    printf "  Reboot now? [y/n]: "
+    read confirm
+    [ "$confirm" = "y" ] || [ "$confirm" = "Y" ] && reboot
 }
 
 remove_camera() {
