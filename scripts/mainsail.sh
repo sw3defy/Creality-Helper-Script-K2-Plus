@@ -217,7 +217,7 @@ PYEOF
 
     mark_installed "mainsail"
     echo ""
-    log_info "Access Mainsail at: http://$(hostname -I | awk '{print $1}'):4409"
+    log_info "Access Mainsail at: http://$(ip route get 1 | awk '{print $NF;exit}'):4409"
     echo ""
 }
 
