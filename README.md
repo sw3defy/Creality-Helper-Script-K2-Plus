@@ -34,11 +34,12 @@ sh /mnt/UDISK/helper-script/helper.sh
 | 8 | Fluidd (install/update/repair - port 4408) |
 | 9 | Mainsail (install/update/repair - port 4409) |
 | 10 | Moonraker Timelapse |
-| 11 | Camera Support for Fluidd (WebRTC via go2rtc) |
+| 11 | Camera Support for Fluidd and Mainsail (WebRTC via go2rtc) |
 | 12 | HelixScreen (modern touchscreen UI) |
-| 13 | OctoEverywhere (coming soon) |
-| 14 | Mobileraker Companion (coming soon) |
-| 15 | Git Backup (coming soon) |
+| 13 | OctoEverywhere |
+| 14 | Mobileraker Companion |
+| 15 | Entware Package Manager |
+| 16 | Git Backup |
 
 ## Requirements
 
