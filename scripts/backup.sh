@@ -83,7 +83,7 @@ restore_config() {
 
     if [ $? -eq 0 ]; then
         log_success "Config restored successfully."
-        restart_klipper
+        restart_klipper force
     else
         log_error "Restore failed."
     fi
