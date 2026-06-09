@@ -144,7 +144,7 @@ remove_include_from_printer_cfg() {
     local printer_cfg="$CONFIG_DIR/printer.cfg"
 
     if grep -q "^\[include ${include_file}\]" "$printer_cfg" 2>/dev/null; then
-        sed -i "/^\[include ${include_file}\]$/d" "$printer_cfg"
+        sed -i "\|^\[include ${include_file}\]$|d" "$printer_cfg"
         log_success "Removed [include ${include_file}] from printer.cfg"
     fi
 }
