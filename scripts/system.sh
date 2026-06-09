@@ -19,9 +19,11 @@ log_success() { echo -e "${GREEN}[OK]${NC} $1"; }
 # ── Service restarts ──────────────────────────────────────────────────────────
 
 restart_klipper() {
-    printf "Restart Klipper? [y/N]: "
-    read confirm
-    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
+    if [ "$1" != "force" ]; then
+        printf "Restart Klipper? [y/N]: "
+        read confirm
+        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
+    fi
     log_info "Restarting Klipper..."
     /etc/rc.d/S55klipper restart
     sleep 3
