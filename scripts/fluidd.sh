@@ -130,7 +130,7 @@ install_fluidd() {
         printf "  Enter choice: "
         read subchoice
         case "$subchoice" in
-            1|2) : ;;  # continue with install
+            1|2) mark_installed "fluidd_updated" ;;  # continue with install
             3) restore_fluidd_nginx_block; /etc/rc.d/S80nginx restart; log_success "Nginx block restored for port 4408."; return 0 ;;
             *)  log_info "Cancelled."; return 0 ;;
         esac
