@@ -332,6 +332,8 @@ print('Fluidd index.html updated')
     # Update Mainsail index.html with enabled cam injection
     python3 -c "
 import re
+import os
+if not os.path.exists('/usr/share/mainsail/index.html'): exit(0)
 content = open('/usr/share/mainsail/index.html').read()
 content = re.sub(r'<iframe[^>]*go2rtc_keepalive[^>]*>.*?</iframe>', '', content)
 content = re.sub(r'<script>.*?enableMainsailCams.*?</script>', '', content, flags=re.DOTALL)
@@ -420,6 +422,8 @@ print('Fluidd index.html restored')
     # Restore Mainsail index.html
     python3 -c "
 import re
+import os
+if not os.path.exists('/usr/share/mainsail/index.html'): exit(0)
 content = open('/usr/share/mainsail/index.html').read()
 content = re.sub(r'<script>.*?enableMainsailCams.*?</script>', '', content, flags=re.DOTALL)
 open('/usr/share/mainsail/index.html', 'w').write(content)
