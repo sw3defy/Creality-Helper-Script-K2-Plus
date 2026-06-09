@@ -14,9 +14,22 @@ install_helixscreen() {
     echo ""
     log_info "Installing HelixScreen..."
     echo ""
-    echo "  HelixScreen is a modern touchscreen UI for Klipper printers."
-    echo "  It replaces the stock Creality touchscreen interface."
-    echo "  Fully reversible — stock UI can be restored at any time."
+    echo "======================================================"
+    echo "  HelixScreen Installation"
+    echo "======================================================"
+    echo ""
+    echo "  HelixScreen requires a reboot after installation."
+    echo ""
+    echo "  The installer will:"
+    echo "    - Install HelixScreen"
+    echo "    - Automatically reboot the printer"
+    echo ""
+    echo "  IMPORTANT:"
+    echo "    - The first startup may take longer than normal."
+    echo "    - The printer may remain on the Creality logo"
+    echo "      for several minutes during the first boot."
+    echo "    - Do NOT power off the printer during this process."
+    echo "    - If stuck on Creality logo, use wipe_all USB recovery."
     echo ""
 
     if check_helixscreen; then
@@ -82,15 +95,25 @@ except: pass
     echo -e "  Choose y to reboot now, or n to continue installing other features."
     echo -e "  Remember to reboot manually when done if you choose n!"
     echo ""
-    printf "Reboot now? [y/N]: "
-    read confirm
-    [ "$confirm" = "y" ] || [ "$confirm" = "Y" ] && reboot
+    echo ""
+    echo "======================================================"
+    echo "  HelixScreen installed successfully."
+    echo ""
+    echo "  The printer will reboot in 10 seconds..."
+    echo ""
+    echo "  After reboot:"
+    echo "    - Startup may take longer than usual."
+    echo "    - Please be patient and do not power off."
+    echo "======================================================"
+    echo ""
+    sleep 10
+    reboot
 }
 
 remove_helixscreen() {
 
     echo -e "${YELLOW}WARNING: This will remove HelixScreen.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
@@ -111,9 +134,19 @@ remove_helixscreen() {
     echo -e "  Choose y to reboot now, or n to continue installing other features."
     echo -e "  Remember to reboot manually when done if you choose n!"
     echo ""
-    printf "Reboot now? [y/N]: "
-    read confirm
-    [ "$confirm" = "y" ] || [ "$confirm" = "Y" ] && reboot
+    echo ""
+    echo "======================================================"
+    echo "  HelixScreen installed successfully."
+    echo ""
+    echo "  The printer will reboot in 10 seconds..."
+    echo ""
+    echo "  After reboot:"
+    echo "    - Startup may take longer than usual."
+    echo "    - Please be patient and do not power off."
+    echo "======================================================"
+    echo ""
+    sleep 10
+    reboot
 }
 
 case "$1" in
