@@ -9,7 +9,7 @@ install_m600() {
     if is_installed "m600_support"; then
         log_info "M600 Support is already installed."
         echo ""
-        printf "  Reinstall? [y/N]: "
+        printf "  Reinstall? [y/n]: "
         read confirm
         [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
     fi
@@ -88,7 +88,7 @@ EOF
 remove_m600() {
 
     echo -e "${YELLOW}WARNING: This will remove M600 Support.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     remove_include_from_printer_cfg "m600.cfg"
