@@ -182,7 +182,7 @@ install_fluidd() {
 
     mark_installed "fluidd_updated"
     echo ""
-    log_info "Access Fluidd at: http://$(hostname -I | awk '{print $1}'):4408"
+    log_info "Access Fluidd at: http://$(ip route get 1 | awk '{print $NF;exit}'):4408"
     echo ""
 }
 
