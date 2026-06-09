@@ -60,6 +60,7 @@ sh /mnt/UDISK/helper-script/helper.sh
 
 - [Guilouz](https://github.com/Guilouz) - Original Creality Helper Script for K1 Series
 - [DnG-Crafts](https://github.com/DnG-Crafts/K2-Camera) - K2 camera WebRTC discovery
+- [vsevolod-volkov](https://github.com/vsevolod-volkov/K2Plus-entware) - Entware on K2 Plus (wget shim solution)
 - [AlexxIT/go2rtc](https://github.com/AlexxIT/go2rtc) - Stream conversion software
 - [prestonbrown/HelixScreen](https://github.com/prestonbrown/helixscreen) - Modern touchscreen UI for Klipper
 - [Klipper](https://www.klipper3d.org) - 3D printer firmware
