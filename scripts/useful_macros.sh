@@ -12,7 +12,7 @@ install_useful_macros() {
     if is_installed "useful_macros"; then
         log_info "Useful Macros is already installed."
         echo ""
-        printf "  Reinstall? [y/N]: "
+        printf "  Reinstall? [y/n]: "
         read confirm
         [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
     fi
@@ -354,7 +354,7 @@ EOF
 remove_useful_macros() {
 
     echo -e "${YELLOW}WARNING: This will remove Useful Macros.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
