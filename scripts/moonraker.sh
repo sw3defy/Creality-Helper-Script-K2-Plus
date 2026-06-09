@@ -46,7 +46,7 @@ EOF
     patch_moonraker_startup
 
     # 4. Restart Moonraker
-    restart_moonraker
+    restart_moonraker force
 
     mark_installed "moonraker_extensions"
     echo ""
@@ -87,7 +87,7 @@ remove_moonraker_extensions() {
     mv "$MOONRAKER_CONF" "${MOONRAKER_CONF}.removed.$(date +%Y%m%d)"
     log_success "Archived moonraker.conf"
 
-    restart_moonraker
+    restart_moonraker force
 
     mark_removed "moonraker_extensions"
     log_success "Moonraker Extensions removed. Stock config restored."
