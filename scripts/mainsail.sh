@@ -106,7 +106,7 @@ PYEOF
 remove_mainsail_nginx_block() {
 
     echo -e "${YELLOW}WARNING: This will remove Mainsail.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     if ! check_mainsail_nginx_block; then
@@ -228,7 +228,7 @@ remove_mainsail() {
     echo -e "${YELLOW}WARNING: This removes Mainsail static files and the port 4409 nginx block.${NC}"
     echo "Fluidd on port 4408 is not affected."
     echo ""
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
         log_info "Cancelled."
