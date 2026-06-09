@@ -13,7 +13,7 @@ install_git_backup() {
 remove_git_backup() {
 
     echo -e "${YELLOW}WARNING: This will remove Git Backup.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
