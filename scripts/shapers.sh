@@ -199,7 +199,7 @@ gcode:
 EOF
 
     add_include_to_printer_cfg "shapers_calibration.cfg"
-    restart_klipper
+    restart_klipper force
 
     mark_installed "improved_shapers"
     echo ""
@@ -234,7 +234,7 @@ remove_shapers() {
     log_info "Removing Improved Shapers Calibrations..."
     remove_include_from_printer_cfg "shapers_calibration.cfg"
     rm -f "$SHAPERS_CFG"
-    restart_klipper
+    restart_klipper force
     mark_removed "improved_shapers"
     log_success "Improved Shapers Calibrations removed."
     echo ""
