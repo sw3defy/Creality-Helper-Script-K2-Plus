@@ -11,7 +11,7 @@ install_timelapse() {
     if is_installed "moonraker_timelapse"; then
         log_info "Moonraker Timelapse is already installed."
         echo ""
-        printf "  Reinstall? [y/N]: "
+        printf "  Reinstall? [y/n]: "
         read confirm
         [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
     fi
@@ -71,7 +71,7 @@ ffmpeg_binary_path: /usr/bin/ffmpeg"
 remove_timelapse() {
 
     echo -e "${YELLOW}WARNING: This will remove Moonraker Timelapse.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
