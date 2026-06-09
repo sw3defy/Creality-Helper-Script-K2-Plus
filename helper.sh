@@ -93,24 +93,30 @@ printf "  \033[0;32mEnter choice:\033[0m "
     handle_choice "$choice"
 }
 
+confirm_install() {
+    echo ""
+    printf "  This will install %s. Continue? [y/N]: " "$1"
+    read confirm
+    [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]
+}
 handle_choice() {
     case "$1" in
-        1)  sh "$SCRIPTS_DIR/moonraker.sh" install ;;
-        2)  sh "$SCRIPTS_DIR/fans.sh" install ;;
-        3)  sh "$SCRIPTS_DIR/useful_macros.sh" install ;;
-        4)  sh "$SCRIPTS_DIR/z_offset.sh" install ;;
-        5)  sh "$SCRIPTS_DIR/m600.sh" install ;;
-        6)  sh "$SCRIPTS_DIR/kamp.sh" install ;;
-        7)  sh "$SCRIPTS_DIR/shapers.sh" install ;;
-        8)  sh "$SCRIPTS_DIR/fluidd.sh" install ;;
-        9)  sh "$SCRIPTS_DIR/mainsail.sh" install ;;
-        10) sh "$SCRIPTS_DIR/timelapse.sh" install ;;
-        11) sh "$SCRIPTS_DIR/camera.sh" install ;;
-        12) sh "$SCRIPTS_DIR/helixscreen.sh" install ;;
-        13) sh "$SCRIPTS_DIR/octoeverywhere.sh" install ;;
-        14) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
-        15) sh "$SCRIPTS_DIR/entware.sh" install ;;
-        16) sh "$SCRIPTS_DIR/git_backup.sh" install ;;
+        1)  confirm_install "Moonraker Extensions" && sh "$SCRIPTS_DIR/moonraker.sh" install ;;
+        2)  confirm_install "Fans Control Macros" && sh "$SCRIPTS_DIR/fans.sh" install ;;
+        3)  confirm_install "Useful Macros" && sh "$SCRIPTS_DIR/useful_macros.sh" install ;;
+        4)  confirm_install "Save Z-Offset Macros" && sh "$SCRIPTS_DIR/z_offset.sh" install ;;
+        5)  confirm_install "M600 Support" && sh "$SCRIPTS_DIR/m600.sh" install ;;
+        6)  confirm_install "KAMP" && sh "$SCRIPTS_DIR/kamp.sh" install ;;
+        7)  confirm_install "Improved Shapers Calibrations" && sh "$SCRIPTS_DIR/shapers.sh" install ;;
+        8)  confirm_install "Fluidd" && sh "$SCRIPTS_DIR/fluidd.sh" install ;;
+        9)  confirm_install "Mainsail" && sh "$SCRIPTS_DIR/mainsail.sh" install ;;
+        10) confirm_install "Moonraker Timelapse" && sh "$SCRIPTS_DIR/timelapse.sh" install ;;
+        11) confirm_install "Camera Support" && sh "$SCRIPTS_DIR/camera.sh" install ;;
+        12) confirm_install "HelixScreen" && sh "$SCRIPTS_DIR/helixscreen.sh" install ;;
+        13) confirm_install "OctoEverywhere" && sh "$SCRIPTS_DIR/octoeverywhere.sh" install ;;
+        14) confirm_install "Mobileraker Companion" && sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
+        15) confirm_install "Entware Package Manager" && sh "$SCRIPTS_DIR/entware.sh" install ;;
+        16) confirm_install "Git Backup" && sh "$SCRIPTS_DIR/git_backup.sh" install ;;
         17) remove_menu ;;
         18) sh "$SCRIPTS_DIR/backup.sh" backup ;;
         19) sh "$SCRIPTS_DIR/backup.sh" restore ;;
