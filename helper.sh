@@ -95,7 +95,7 @@ printf "  \033[0;32mEnter choice:\033[0m "
 
 confirm_install() {
     echo ""
-    printf "  This will install %s. Continue? [y/N]: " "$1"
+    printf "  This will install %s. Continue? [y/n]: " "$1"
     read confirm
     [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]
 }
