@@ -18,7 +18,7 @@ install_camera() {
     echo ""
     echo "  Credit: DnG-Crafts and AlexxIT/go2rtc"
     echo ""
-    printf "  Continue? [y/N]: "
+    printf "  Continue? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
 
@@ -367,7 +367,7 @@ print('Mainsail index.html updated')
 remove_camera() {
     echo ""
     echo -e "${YELLOW}WARNING: This will remove the K2 camera support.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
 
