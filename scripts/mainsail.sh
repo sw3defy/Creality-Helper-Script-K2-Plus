@@ -99,7 +99,7 @@ with open('$NGINX_CONF', 'w') as f:
 print("Mainsail nginx block added on port 4409.")
 PYEOF
 
-    restart_nginx
+    restart_nginx force
     log_success "Mainsail nginx block restored on port 4409."
 }
 
@@ -206,7 +206,7 @@ PYEOF
     # Ensure nginx block is in place
     restore_mainsail_nginx_block
 
-    restart_nginx
+    restart_nginx force
 
     if [ -f "$MAINSAIL_DIR/version" ]; then
         NEW_VER=$(cat "$MAINSAIL_DIR/version")
@@ -237,7 +237,7 @@ remove_mainsail() {
 
     remove_mainsail_nginx_block
     rm -rf "$MAINSAIL_DIR"
-    restart_nginx
+    restart_nginx force
     mark_removed "mainsail"
     echo ""
     log_success "Mainsail removed."
