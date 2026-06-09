@@ -59,7 +59,6 @@ EOF
 
 remove_moonraker_extensions() {
     echo ""
-    log_info "Removing Moonraker Extensions..."
     echo ""
 
     # Only remove the extensions file if it exists
