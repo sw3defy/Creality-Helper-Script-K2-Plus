@@ -46,7 +46,7 @@ restart_moonraker() {
         kill "$pid" 2>/dev/null
     done
     sleep 2
-    /etc/rc.d/S56moonraker start
+    /etc/init.d/moonraker start
     sleep 3
     if pgrep -f "moonraker.py" > /dev/null; then
         log_success "Moonraker restarted successfully."
