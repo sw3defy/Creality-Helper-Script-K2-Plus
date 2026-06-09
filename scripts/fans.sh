@@ -104,7 +104,7 @@ gcode:
 EOF
 
     add_include_to_printer_cfg "fans_control.cfg"
-    restart_klipper
+    restart_klipper force
 
     mark_installed "fans_control_macros"
     echo ""
@@ -125,7 +125,7 @@ remove_fans() {
     log_info "Removing Fans Control Macros..."
     remove_include_from_printer_cfg "fans_control.cfg"
     rm -f "$FANS_CFG"
-    restart_klipper
+    restart_klipper force
     mark_removed "fans_control_macros"
     log_success "Fans Control Macros removed."
     echo ""
