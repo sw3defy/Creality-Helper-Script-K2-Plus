@@ -12,7 +12,7 @@ install_moonraker_extensions() {
     if is_installed "moonraker_extensions"; then
         log_info "Moonraker Extensions is already installed."
         echo ""
-        printf "  Reinstall? [y/N]: "
+        printf "  Reinstall? [y/n]: "
         read confirm
         [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
     fi
@@ -73,7 +73,7 @@ remove_moonraker_extensions() {
     echo "Any other extensions (timelapse, KAMP, etc.) that added sections to"
     echo "moonraker.conf will also stop working until re-installed."
     echo ""
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
         log_info "Cancelled."
