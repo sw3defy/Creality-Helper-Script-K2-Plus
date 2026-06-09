@@ -5,8 +5,6 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 
 install_entware() {
     echo ""
-    log_info "Installing Entware Package Manager..."
-    echo ""
     echo "  Entware provides hundreds of Linux packages for the K2 Plus."
     echo "  This uses a Python-based wget shim to bootstrap the installer."
     echo ""
