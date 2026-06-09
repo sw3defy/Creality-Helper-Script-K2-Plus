@@ -113,8 +113,8 @@ handle_choice() {
         10) confirm_install "Moonraker Timelapse" && sh "$SCRIPTS_DIR/timelapse.sh" install ;;
         11) sh "$SCRIPTS_DIR/camera.sh" install ;;
         12) sh "$SCRIPTS_DIR/helixscreen.sh" install ;;
-        13) confirm_install "OctoEverywhere" && sh "$SCRIPTS_DIR/octoeverywhere.sh" install ;;
-        14) confirm_install "Mobileraker Companion" && sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
+        13) sh "$SCRIPTS_DIR/octoeverywhere.sh" install ;;
+        14) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
         15) sh "$SCRIPTS_DIR/entware.sh" install ;;
         16) confirm_install "Git Backup" && sh "$SCRIPTS_DIR/git_backup.sh" install ;;
         17) remove_menu ;;
