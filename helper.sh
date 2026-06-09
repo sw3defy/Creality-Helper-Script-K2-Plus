@@ -151,10 +151,7 @@ remove_menu() {
     echo -e "   ${YELLOW}10)${NC}  ${GREEN}Moonraker Timelapse${NC}"
     echo -e "   ${YELLOW}11)${NC}  ${GREEN}Camera Support for Fluidd and Mainsail${NC}"
     echo -e "   ${YELLOW}12)${NC}  ${GREEN}HelixScreen${NC}"
-    echo -e "   ${YELLOW}13)${NC}  ${GREEN}OctoEverywhere${NC}"
-    echo -e "   ${YELLOW}14)${NC}  ${GREEN}Mobileraker Companion${NC}"
     echo -e "   ${YELLOW}15)${NC}  ${GREEN}Entware Package Manager${NC}"
-    echo -e "   ${YELLOW}16)${NC}  ${GREEN}Git Backup${NC}"
     echo -e "    ${YELLOW}0)${NC}  ${RED}Back${NC}"
     echo ""
     printf "  ${GREEN}Enter choice:${NC} "
@@ -172,10 +169,7 @@ remove_menu() {
         10) sh "$SCRIPTS_DIR/timelapse.sh" remove ;;
         11) sh "$SCRIPTS_DIR/camera.sh" remove ;;
         12) sh "$SCRIPTS_DIR/helixscreen.sh" remove ;;
-        13) sh "$SCRIPTS_DIR/octoeverywhere.sh" remove ;;
-        14) sh "$SCRIPTS_DIR/mobileraker.sh" remove ;;
         15) sh "$SCRIPTS_DIR/entware.sh" remove ;;
-        16) sh "$SCRIPTS_DIR/git_backup.sh" remove ;;
         0)  return ;;
         *)  echo -e "${RED}Invalid choice.${NC}" ;;
     esac
