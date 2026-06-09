@@ -146,7 +146,7 @@ remove_menu() {
     echo -e "    ${YELLOW}5)${NC}  ${GREEN}M600 Support${NC}"
     echo -e "    ${YELLOW}6)${NC}  ${GREEN}KAMP${NC}"
     echo -e "    ${YELLOW}7)${NC}  ${GREEN}Improved Shapers Calibrations${NC}"
-    echo -e "    ${YELLOW}8)${NC}  ${GREEN}Fluidd${NC}"
+    echo -e "    ${YELLOW}8)${NC}  ${GREEN}Restore stock Fluidd${NC}"
     echo -e "    ${YELLOW}9)${NC}  ${GREEN}Mainsail${NC}"
     echo -e "   ${YELLOW}10)${NC}  ${GREEN}Moonraker Timelapse${NC}"
     echo -e "   ${YELLOW}11)${NC}  ${GREEN}Camera Support for Fluidd and Mainsail${NC}"
