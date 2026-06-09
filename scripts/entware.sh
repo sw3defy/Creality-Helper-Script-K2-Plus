@@ -103,7 +103,16 @@ install_packages() {
         1) opkg install nano ;;
         2) opkg install htop ;;
         3) opkg install git git-http && ln -sf /opt/bin/git /usr/bin/git ;;
-        4) opkg install openssh-sftp-server && ln -sf /opt/libexec/sftp-server /usr/libexec/sftp-server ;;
+        4) opkg install openssh-sftp-server
+           ln -sf /opt/libexec/sftp-server /usr/libexec/sftp-server
+           python3 -c "
+content = open('/etc/rc.local').read()
+if 'sftp-server' not in content:
+    content = content.replace('# Entware', '# Entware
+ln -sf /opt/libexec/sftp-server /usr/libexec/sftp-server 2>/dev/null')
+    open('/etc/rc.local', 'w').write(content)
+"
+           ;;
         5) opkg install curl && ln -sf /opt/bin/curl /usr/bin/curl ;;
         6)
             opkg install nano htop git git-http curl openssh-sftp-server
