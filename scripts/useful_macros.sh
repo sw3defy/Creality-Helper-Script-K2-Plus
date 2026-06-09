@@ -403,37 +403,6 @@ gcode:
 
 EOF
 
-    # Add gcode_shell_command entries (requires Klipper Gcode Shell Command)
-    cat >> "$MACROS_CFG" << 'EOF'
-# ─── Shell commands (used by backup/restore/camera macros) ───────────────────
-# These require the Klipper Gcode Shell Command feature.
-# If not installed, the backup/restore/camera macros will not work.
-
-[gcode_shell_command restart_camera]
-command: /etc/rc.d/S97webrtc restart
-timeout: 10.0
-verbose: False
-
-[gcode_shell_command klipper_backup_config]
-command: tar -czf /mnt/UDISK/printer_data/config/backup_config.tar.gz -C /mnt/UDISK/printer_data config/
-timeout: 30.0
-verbose: True
-
-[gcode_shell_command klipper_restore_config]
-command: tar -xzf /mnt/UDISK/printer_data/config/backup_config.tar.gz -C /mnt/UDISK/printer_data/
-timeout: 30.0
-verbose: True
-
-[gcode_shell_command moonraker_backup_database]
-command: tar -czf /mnt/UDISK/printer_data/config/backup_database.tar.gz -C /mnt/UDISK/printer_data database/
-timeout: 30.0
-verbose: True
-
-[gcode_shell_command moonraker_restore_database]
-command: tar -xzf /mnt/UDISK/printer_data/config/backup_database.tar.gz -C /mnt/UDISK/printer_data/
-timeout: 30.0
-verbose: True
-EOF
 
     add_include_to_printer_cfg "useful_macros.cfg"
     restart_klipper
