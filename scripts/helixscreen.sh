@@ -121,7 +121,9 @@ remove_helixscreen() {
         return 1
     fi
 
-    $HELIX_INSTALL --uninstall
+    cp $HELIX_INSTALL /tmp/helix_uninstall.sh
+    sh /tmp/helix_uninstall.sh --uninstall
+    rm -f /tmp/helix_uninstall.sh
 
     mark_removed "helixscreen"
     echo ""
