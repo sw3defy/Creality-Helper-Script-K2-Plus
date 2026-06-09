@@ -35,9 +35,11 @@ restart_klipper() {
 }
 
 restart_moonraker() {
-    printf "Restart Moonraker? [y/N]: "
-    read confirm
-    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
+    if [ "$1" != "force" ]; then
+        printf "Restart Moonraker? [y/N]: "
+        read confirm
+        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
+    fi
     log_info "Restarting Moonraker..."
     # Kill ALL running moonraker instances (stock + helper script)
     for pid in $(ps aux | grep moonraker.py | grep -v grep | awk '{print $1}'); do
