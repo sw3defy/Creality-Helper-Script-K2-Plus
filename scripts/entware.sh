@@ -10,7 +10,7 @@ install_entware() {
     echo "  Entware provides hundreds of Linux packages for the K2 Plus."
     echo "  This uses a Python-based wget shim to bootstrap the installer."
     echo ""
-    printf "  Continue? [y/N]: "
+    printf "  Continue? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
 
@@ -80,7 +80,7 @@ else:
     log_success "Entware installed!"
     echo ""
     echo "  Would you like to install useful packages now?"
-    printf "  [y/N]: "
+    printf "  [y/n]: "
     read confirm
     [ "$confirm" = "y" ] || [ "$confirm" = "Y" ] && install_packages
 }
@@ -129,7 +129,7 @@ ln -sf /opt/libexec/sftp-server /usr/libexec/sftp-server 2>/dev/null')
 remove_entware() {
     echo ""
     echo -e "${YELLOW}WARNING: This will remove Entware and all installed packages.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
 
