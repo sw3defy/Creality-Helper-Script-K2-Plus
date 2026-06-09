@@ -2,6 +2,9 @@
 # camera.sh - Install K2 Plus camera support for Fluidd and Mainsail
 # Credit: DnG-Crafts (https://github.com/DnG-Crafts/K2-Camera)
 #         AlexxIT/go2rtc (https://github.com/AlexxIT/go2rtc)
+    printf "  Continue? [y/n]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
 SCRIPT_DIR=/mnt/UDISK/helper-script
 . "$SCRIPT_DIR/scripts/system.sh"
 GO2RTC=$SCRIPT_DIR/go2rtc
@@ -11,7 +14,6 @@ WATCHDOG=$SCRIPT_DIR/camera_watchdog.py
 
 install_camera() {
     echo ""
-    log_info "Installing K2 Plus Camera Support for Fluidd and Mainsail..."
     echo ""
     echo "======================================================"
     echo "  Camera Support for Fluidd and Mainsail"
@@ -23,6 +25,9 @@ install_camera() {
     echo "  Credit: DnG-Crafts and AlexxIT/go2rtc"
     echo ""
 
+    printf "  Continue? [y/n]: "
+    read confirm
+    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     # Download go2rtc if not present
     if [ ! -f "$GO2RTC" ]; then
         log_info "Downloading go2rtc (ARM)..."
