@@ -12,8 +12,6 @@ check_helixscreen() {
 
 install_helixscreen() {
     echo ""
-    log_info "Installing HelixScreen..."
-    echo ""
     echo "======================================================"
     echo "  HelixScreen Installation"
     echo "======================================================"
