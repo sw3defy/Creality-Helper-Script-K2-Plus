@@ -38,7 +38,7 @@ gcode:
   {action_respond_info("Z offset reset to 0")}
 EOF
     add_include_to_printer_cfg "z_offset_macros.cfg"
-    restart_klipper
+    restart_klipper force
     mark_installed "z_offset_macros"
     echo ""
     log_success "Save Z-Offset Macros installed!"
@@ -53,7 +53,7 @@ remove_z_offset() {
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     remove_include_from_printer_cfg "z_offset_macros.cfg"
     rm -f "$Z_CFG"
-    restart_klipper
+    restart_klipper force
     mark_removed "z_offset_macros"
     log_success "Z-Offset Macros removed."
 }
