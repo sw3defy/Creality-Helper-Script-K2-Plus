@@ -110,7 +110,7 @@ with open('$NGINX_CONF', 'w') as f:
 print("Fluidd nginx block restored on port 4408.")
 PYEOF
 
-    restart_nginx
+    restart_nginx force
 }
 
 # ── Install / repair Fluidd ───────────────────────────────────────────────────
@@ -170,7 +170,7 @@ install_fluidd() {
     restore_fluidd_nginx_block
 
     # Restart nginx to serve updated files
-    restart_nginx
+    restart_nginx force
 
     # Show installed version
     if [ -f "$FLUIDD_DIR/version" ]; then
@@ -210,7 +210,7 @@ remove_fluidd() {
     rm -rf "$FLUIDD_DIR"
     mkdir -p "$FLUIDD_DIR"  # keep the directory so nginx doesn't error on root
 
-    restart_nginx
+    restart_nginx force
     mark_removed "fluidd_updated"
     echo ""
     log_success "Fluidd removed."
