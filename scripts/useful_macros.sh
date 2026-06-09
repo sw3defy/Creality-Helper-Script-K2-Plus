@@ -325,83 +325,6 @@ gcode:
 # BACKUP & RESTORE (from Fluidd/Mainsail console)
 # ═════════════════════════════════════════════════════════════════════════════
 
-[gcode_macro KLIPPER_BACKUP_CONFIG]
-description: Back up Klipper config files to backup_config.tar.gz in config folder
-gcode:
-  {action_respond_info("Backing up Klipper configuration...")}
-  RUN_SHELL_COMMAND CMD=klipper_backup_config
-  {action_respond_info("Backup saved as backup_config.tar.gz in your config folder.")}
-
-[gcode_macro KLIPPER_RESTORE_CONFIG]
-description: Restore Klipper config from backup_config.tar.gz — CAUTION: overwrites current config
-gcode:
-  {action_respond_info("Restoring Klipper configuration from backup_config.tar.gz...")}
-  RUN_SHELL_COMMAND CMD=klipper_restore_config
-  {action_respond_info("Config restored. Restarting Klipper...")}
-  FIRMWARE_RESTART
-
-[gcode_macro MOONRAKER_BACKUP_DATABASE]
-description: Back up Moonraker database to backup_database.tar.gz in config folder
-gcode:
-  {action_respond_info("Backing up Moonraker database...")}
-  RUN_SHELL_COMMAND CMD=moonraker_backup_database
-  {action_respond_info("Moonraker database backup complete.")}
-
-[gcode_macro MOONRAKER_RESTORE_DATABASE]
-description: Restore Moonraker database from backup_database.tar.gz
-gcode:
-  {action_respond_info("Restoring Moonraker database...")}
-  RUN_SHELL_COMMAND CMD=moonraker_restore_database
-  {action_respond_info("Database restored.")}
-
-# ═════════════════════════════════════════════════════════════════════════════
-# CAMERA
-# ═════════════════════════════════════════════════════════════════════════════
-
-[gcode_macro RELOAD_CAMERA]
-description: Restart the WebRTC camera service without rebooting
-gcode:
-  {action_respond_info("Restarting camera service...")}
-  RUN_SHELL_COMMAND CMD=restart_camera
-  {action_respond_info("Camera service restarted.")}
-
-# ═════════════════════════════════════════════════════════════════════════════
-# SLICER INTEGRATION HELPERS
-# ═════════════════════════════════════════════════════════════════════════════
-
-[gcode_macro SET_PRINT_STATS_INFO]
-rename_existing: SET_PRINT_STATS_INFO_BASE
-description: Update print stats with layer info from slicer
-gcode:
-  {% if params.TOTAL_LAYER is defined %}
-    SET_PRINT_STATS_INFO_BASE TOTAL_LAYER={params.TOTAL_LAYER}
-  {% endif %}
-  {% if params.CURRENT_LAYER is defined %}
-    SET_PRINT_STATS_INFO_BASE CURRENT_LAYER={params.CURRENT_LAYER}
-  {% endif %}
-
-# ═════════════════════════════════════════════════════════════════════════════
-# Z-OFFSET
-# ═════════════════════════════════════════════════════════════════════════════
-
-[gcode_macro SAVE_Z_OFFSET]
-description: Save current live Z offset to printer.cfg
-gcode:
-  Z_OFFSET_APPLY_PROBE
-  SAVE_CONFIG
-
-[gcode_macro SET_Z_OFFSET]
-description: Apply a Z offset value and optionally save. Usage: SET_Z_OFFSET Z=0.05 SAVE=1
-gcode:
-  {% set z    = params.Z|default(0)|float %}
-  {% set save = params.SAVE|default(0)|int %}
-  SET_GCODE_OFFSET Z={z} MOVE=1
-  {action_respond_info("Z offset set to %.3fmm" % z)}
-  {% if save == 1 %}
-    SAVE_Z_OFFSET
-  {% endif %}
-
-EOF
 
 
     add_include_to_printer_cfg "useful_macros.cfg"
@@ -418,9 +341,7 @@ EOF
     echo -e "  ${GREEN}Warmup:${NC}       WARMUP [LOOPS=10] [ACCEL=5000]"
     echo -e "  ${GREEN}Chamber:${NC}      CHAMBER_HEAT, CHAMBER_COOL, CHAMBER_STATUS"
     echo -e "  ${GREEN}Z-Offset:${NC}     SAVE_Z_OFFSET, SET_Z_OFFSET"
-    echo -e "  ${GREEN}Backup:${NC}       KLIPPER_BACKUP_CONFIG, KLIPPER_RESTORE_CONFIG"
     echo "                MOONRAKER_BACKUP_DATABASE, MOONRAKER_RESTORE_DATABASE"
-    echo -e "  ${GREEN}Camera:${NC}       RELOAD_CAMERA"
     echo ""
     log_info "Slicer start G-code:"
     echo "  START_PRINT BED_TEMP=[bed_temperature_initial_layer_single] EXTRUDER_TEMP=[nozzle_temperature_initial_layer] CHAMBER_TEMP=[chamber_temperature]"
