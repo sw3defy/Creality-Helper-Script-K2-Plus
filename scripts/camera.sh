@@ -18,9 +18,6 @@ install_camera() {
     echo ""
     echo "  Credit: DnG-Crafts and AlexxIT/go2rtc"
     echo ""
-    printf "  Continue? [y/n]: "
-    read confirm
-    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
 
     # Download go2rtc if not present
     if [ ! -f "$GO2RTC" ]; then
