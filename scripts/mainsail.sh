@@ -104,11 +104,6 @@ PYEOF
 }
 
 remove_mainsail_nginx_block() {
-
-    echo -e "${YELLOW}WARNING: This will remove Mainsail.${NC}"
-    printf "Are you sure? [y/n]: "
-    read confirm
-    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     if ! check_mainsail_nginx_block; then
         log_info "Mainsail nginx block not found — nothing to remove."
         return 0
@@ -116,13 +111,28 @@ remove_mainsail_nginx_block() {
 
     log_info "Removing Mainsail nginx block from nginx.conf..."
     python3 - << PYEOF
-import re
-with open('$NGINX_CONF') as f:
-    content = f.read()
-# Remove the server block listening on 4409
-content = re.sub(r'\n\s*server\s*\{[^}]*listen\s+4409[^}]*(?:\{[^}]*\}[^}]*)?\}', '', content)
-with open('$NGINX_CONF', 'w') as f:
-    f.write(content)
+with open("$NGINX_CONF") as f:
+    file_lines = f.readlines()
+new_lines = []
+skip = False
+brace_count = 0
+for line in file_lines:
+    if not skip and "listen 4409" in line:
+        for i in range(len(new_lines)-1, -1, -1):
+            if new_lines[i].strip().startswith("server"):
+                new_lines = new_lines[:i]
+                break
+        skip = True
+        brace_count = 1
+        continue
+    if skip:
+        brace_count += line.count("{") - line.count("}")
+        if brace_count <= 0:
+            skip = False
+        continue
+    new_lines.append(line)
+with open("$NGINX_CONF", "w") as f:
+    f.writelines(new_lines)
 print("Mainsail nginx block removed.")
 PYEOF
     log_success "Mainsail nginx block removed."
