@@ -6,7 +6,7 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 BACKUP_DIR=/mnt/UDISK/helper-script/backups
 
 backup_config() {
-    printf "Backup Klipper configuration? [y/N]: "
+    printf "Backup Klipper configuration? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
@@ -71,7 +71,7 @@ restore_config() {
 
     echo ""
     echo -e "${YELLOW}WARNING: This will overwrite your current config files.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
         log_info "Cancelled."
