@@ -56,9 +56,11 @@ restart_moonraker() {
 }
 
 restart_nginx() {
-    printf "Restart Nginx? [y/N]: "
-    read confirm
-    [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
+    if [ "$1" != "force" ]; then
+        printf "Restart Nginx? [y/N]: "
+        read confirm
+        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
+    fi
     log_info "Restarting Nginx..."
     /etc/rc.d/S80nginx restart
     sleep 2
