@@ -81,7 +81,7 @@ EOF
             echo "" >> "$CONFIG_DIR/moonraker.conf"
             echo "[file_manager]" >> "$CONFIG_DIR/moonraker.conf"
             echo "enable_object_processing: True" >> "$CONFIG_DIR/moonraker.conf"
-            restart_moonraker
+            restart_moonraker force
         fi
     fi
 
