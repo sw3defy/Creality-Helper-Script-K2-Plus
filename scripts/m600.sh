@@ -77,7 +77,7 @@ gcode:
   {action_respond_info("Filament unloaded.")}
 EOF
     add_include_to_printer_cfg "m600.cfg"
-    restart_klipper
+    restart_klipper force
     mark_installed "m600_support"
     echo ""
     log_success "M600 Support installed!"
@@ -93,7 +93,7 @@ remove_m600() {
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     remove_include_from_printer_cfg "m600.cfg"
     rm -f "$M600_CFG"
-    restart_klipper
+    restart_klipper force
     mark_removed "m600_support"
     log_success "M600 Support removed."
 }
