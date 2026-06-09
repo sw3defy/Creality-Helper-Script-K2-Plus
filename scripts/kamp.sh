@@ -85,7 +85,7 @@ EOF
         fi
     fi
 
-    restart_klipper
+    restart_klipper force
     mark_installed "kamp"
     echo ""
     log_success "KAMP installed!"
@@ -104,7 +104,7 @@ remove_kamp() {
     log_info "Removing KAMP..."
     remove_include_from_printer_cfg "KAMP/KAMP_Settings.cfg"
     rm -rf "$KAMP_DIR"
-    restart_klipper
+    restart_klipper force
     mark_removed "kamp"
     log_success "KAMP removed."
     echo ""
