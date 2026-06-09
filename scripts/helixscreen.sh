@@ -77,6 +77,11 @@ except: pass
     log_info "Note: WiFi management shows as unavailable — this is normal."
     log_info "      Your printer WiFi connection is not affected."
     echo ""
+    echo ""
+    log_info "HelixScreen requires a reboot to activate."
+    echo -e "  Choose y to reboot now, or n to continue installing other features."
+    echo -e "  Remember to reboot manually when done if you choose n!"
+    echo ""
     printf "Reboot now? [y/N]: "
     read confirm
     [ "$confirm" = "y" ] || [ "$confirm" = "Y" ] && reboot
@@ -101,6 +106,11 @@ remove_helixscreen() {
     mark_removed "helixscreen"
     echo ""
     log_success "HelixScreen removed. Stock Creality UI restored after reboot."
+    echo ""
+    log_info "HelixScreen requires a reboot to activate."
+    echo -e "  Choose y to reboot now, or n to continue installing other features."
+    echo -e "  Remember to reboot manually when done if you choose n!"
+    echo ""
     printf "Reboot now? [y/N]: "
     read confirm
     [ "$confirm" = "y" ] || [ "$confirm" = "Y" ] && reboot
