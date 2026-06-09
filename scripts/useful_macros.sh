@@ -329,7 +329,7 @@ EOF
 
 
     add_include_to_printer_cfg "useful_macros.cfg"
-    restart_klipper
+    restart_klipper force
 
     mark_installed "useful_macros"
     echo ""
@@ -361,7 +361,7 @@ remove_useful_macros() {
     log_info "Removing Useful Macros..."
     remove_include_from_printer_cfg "useful_macros.cfg"
     rm -f "$MACROS_CFG"
-    restart_klipper
+    restart_klipper force
     mark_removed "useful_macros"
     log_success "Useful Macros removed."
     echo ""
