@@ -20,7 +20,7 @@ log_success() { echo -e "${GREEN}[OK]${NC} $1"; }
 
 restart_klipper() {
     if [ "$1" != "force" ]; then
-        printf "Restart Klipper? [y/N]: "
+        printf "Restart Klipper? [y/n]: "
         read confirm
         [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     fi
@@ -36,7 +36,7 @@ restart_klipper() {
 
 restart_moonraker() {
     if [ "$1" != "force" ]; then
-        printf "Restart Moonraker? [y/N]: "
+        printf "Restart Moonraker? [y/n]: "
         read confirm
         [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     fi
@@ -57,7 +57,7 @@ restart_moonraker() {
 
 restart_nginx() {
     if [ "$1" != "force" ]; then
-        printf "Restart Nginx? [y/N]: "
+        printf "Restart Nginx? [y/n]: "
         read confirm
         [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     fi
