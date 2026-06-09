@@ -57,7 +57,7 @@ ffmpeg_binary_path: /usr/bin/ffmpeg"
     add_include_to_printer_cfg "timelapse.cfg"
 
     restart_moonraker
-    restart_klipper
+    restart_klipper force
 
     mark_installed "moonraker_timelapse"
     echo ""
@@ -81,7 +81,7 @@ remove_timelapse() {
     rm -f "$TIMELAPSE_COMPONENT"
     rm -f "$CONFIG_DIR/timelapse.cfg"
     restart_moonraker
-    restart_klipper
+    restart_klipper force
     mark_removed "moonraker_timelapse"
     log_success "Moonraker Timelapse removed."
     echo ""
