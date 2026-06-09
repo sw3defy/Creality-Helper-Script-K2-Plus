@@ -191,7 +191,7 @@ install_fluidd() {
 remove_fluidd() {
 
     echo -e "${YELLOW}WARNING: This will remove Fluidd.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
@@ -199,7 +199,7 @@ remove_fluidd() {
     echo "Port 4408 will return a 404 until Fluidd is reinstalled."
     echo "Moonraker and Klipper continue running normally."
     echo ""
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
         log_info "Cancelled."
