@@ -189,32 +189,18 @@ install_fluidd() {
 # ── Remove Fluidd static files ────────────────────────────────────────────────
 
 remove_fluidd() {
-
-    echo -e "${YELLOW}WARNING: This will remove Fluidd.${NC}"
+    echo -e "${YELLOW}WARNING: This will restore stock Fluidd nginx configuration.${NC}"
+    echo "Fluidd itself will NOT be removed as it is pre-installed on the K2 Plus."
+    echo ""
     printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
-    echo ""
-    echo -e "${YELLOW}WARNING: This removes the Fluidd web interface static files.${NC}"
-    echo "Port 4408 will return a 404 until Fluidd is reinstalled."
-    echo "Moonraker and Klipper continue running normally."
-    echo ""
-    printf "Are you sure? [y/n]: "
-    read confirm
-    if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
-        log_info "Cancelled."
-        return 0
-    fi
-
-    log_info "Removing Fluidd static files from $FLUIDD_DIR..."
-    rm -rf "$FLUIDD_DIR"
-    mkdir -p "$FLUIDD_DIR"  # keep the directory so nginx doesn't error on root
-
+    log_info "Restoring stock Fluidd nginx configuration..."
+    restore_fluidd_nginx_block
     restart_nginx force
     mark_removed "fluidd_updated"
     echo ""
-    log_success "Fluidd removed."
-    log_info "To reinstall, run this script again and select Install."
+    log_success "Stock Fluidd nginx configuration restored."
     echo ""
 }
 
