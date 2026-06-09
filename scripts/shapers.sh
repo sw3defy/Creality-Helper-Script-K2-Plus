@@ -10,7 +10,7 @@ install_shapers() {
     if is_installed "improved_shapers"; then
         log_info "Improved Shapers is already installed."
         echo ""
-        printf "  Reinstall? [y/N]: "
+        printf "  Reinstall? [y/n]: "
         read confirm
         [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && return 0
     fi
@@ -227,7 +227,7 @@ EOF
 remove_shapers() {
 
     echo -e "${YELLOW}WARNING: This will remove Improved Shapers Calibrations.${NC}"
-    printf "Are you sure? [y/N]: "
+    printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     echo ""
