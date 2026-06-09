@@ -322,6 +322,7 @@ gcode:
   {action_respond_info("Chamber: %.1f°C  /  target: %.1f°C" % (temp, target))}
 
 # ═════════════════════════════════════════════════════════════════════════════
+EOF
 # BACKUP & RESTORE (from Fluidd/Mainsail console)
 # ═════════════════════════════════════════════════════════════════════════════
 
