@@ -122,6 +122,12 @@ remove_helixscreen() {
     cp $HELIX_INSTALL /tmp/helix_uninstall.sh
     sh /tmp/helix_uninstall.sh --uninstall
     rm -f /tmp/helix_uninstall.sh
+    # Ensure stock services are running
+    /etc/init.d/klipper restart 2>/dev/null
+    /etc/init.d/moonraker restart 2>/dev/null
+    # Clean up any remaining HelixScreen traces
+    rm -rf /mnt/UDISK/printer_data/config/helixscreen 2>/dev/null
+    rm -f /mnt/UDISK/printer_data/config/moonraker.conf.bak.helixscreen 2>/dev/null
 
     mark_removed "helixscreen"
     echo ""
