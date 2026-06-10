@@ -117,7 +117,7 @@ handle_choice() {
         14) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
         15) sh "$SCRIPTS_DIR/entware.sh" install ;;
         16) sh "$SCRIPTS_DIR/git_backup.sh" install ;;
-        17) remove_menu; return ;;
+        17) remove_menu ;;
         18) sh "$SCRIPTS_DIR/backup.sh" backup ;;
         19) sh "$SCRIPTS_DIR/backup.sh" restore ;;
         20) sh "$SCRIPTS_DIR/system.sh" restart_klipper ;;
@@ -130,7 +130,7 @@ handle_choice() {
         *)  echo -e "${RED}Invalid choice.${NC}"; sleep 1 ;;
     esac
     echo ""
-    printf "Press Enter to return to menu..."
+    printf "Press Enter to return to main menu..."
     read dummy
     main_menu
 }
