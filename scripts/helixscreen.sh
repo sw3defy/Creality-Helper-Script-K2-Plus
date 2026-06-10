@@ -119,7 +119,19 @@ remove_helixscreen() {
         return 1
     fi
 
-    cp $HELIX_INSTALL /tmp/helix_uninstall.sh
+    # Download installer if not present (may have been removed with Entware)
+    if [ ! -f "$HELIX_INSTALL" ]; then
+        log_info "Downloading HelixScreen installer for uninstall..."
+        python3 -c "
+import urllib.request as u
+open('/tmp/helix_uninstall.sh','wb').write(
+    u.urlopen(u.Request('http://dl.helixscreen.org/install.sh',
+    headers={'User-Agent':'helixscreen-installer/1.0'}), timeout=30).read()
+)
+"
+    else
+        cp $HELIX_INSTALL /tmp/helix_uninstall.sh
+    fi
     sh /tmp/helix_uninstall.sh --uninstall
     rm -f /tmp/helix_uninstall.sh
     # Ensure stock services are running
