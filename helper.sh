@@ -171,8 +171,12 @@ remove_menu() {
         12) sh "$SCRIPTS_DIR/helixscreen.sh" remove ;;
         13) sh "$SCRIPTS_DIR/entware.sh" remove ;;
         0)  return ;;
-        *)  echo -e "${RED}Invalid choice.${NC}" ;;
+        *)  echo -e "${RED}Invalid choice.${NC}"; sleep 1; remove_menu; return ;;
     esac
+    echo ""
+    printf "Press Enter to return to Remove menu..."
+    read dummy
+    remove_menu
 }
 
 
