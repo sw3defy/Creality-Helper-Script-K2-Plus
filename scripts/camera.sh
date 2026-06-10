@@ -318,7 +318,11 @@ print('Mainsail index.html updated')
 }
 
 remove_camera() {
-    echo ""
+    if ! is_installed "camera_support"; then
+        log_info "Camera Support is not installed."
+        return 0
+    fi
+        echo ""
     echo -e "${YELLOW}WARNING: This will remove the K2 camera support.${NC}"
     printf "Are you sure? [y/n]: "
     read confirm
