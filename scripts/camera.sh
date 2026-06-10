@@ -193,59 +193,7 @@ else:
 "
 
     # Add nginx proxy for go2rtc on port 4408 (Fluidd) and 4409 (Mainsail)
-    python3 << NGINXEOF
-import re
-content = open("/etc/nginx/nginx.conf").read()
-if "go2rtc" not in content:
-    go2rtc_4408 = """        location /go2rtc/ {
-            proxy_pass http://127.0.0.1:1984/;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection $connection_upgrade;
-            proxy_set_header Host $http_host;
-            proxy_read_timeout 3600;
-            proxy_send_timeout 3600;
-        }
-        location /go2rtc/api/ws {
-            proxy_pass http://127.0.0.1:1984/api/ws?src=k2plus;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection $connection_upgrade;
-            proxy_set_header Host $http_host;
-            proxy_read_timeout 3600;
-            proxy_send_timeout 3600;
-        }
-"""
-    go2rtc_4409 = """        location /go2rtc/ {
-            proxy_pass http://127.0.0.1:1984/;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection $connection_upgrade;
-            proxy_set_header Host $http_host;
-            proxy_read_timeout 3600;
-            proxy_send_timeout 3600;
-        }
-        location /go2rtc/api/ws {
-            proxy_pass http://127.0.0.1:1984/api/ws?src=k2plus&$args;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection $connection_upgrade;
-            proxy_set_header Host $http_host;
-            proxy_read_timeout 3600;
-            proxy_send_timeout 3600;
-        }
-"""
-    idx4408 = content.find("location /webcam/")
-    if idx4408 > 0:
-        content = content[:idx4408] + go2rtc_4408 + content[idx4408:]
-    idx4409 = content.find("location /webcam/", idx4408 + 100)
-    if idx4409 > 0:
-        content = content[:idx4409] + go2rtc_4409 + content[idx4409:]
-    open("/etc/nginx/nginx.conf", "w").write(content)
-    print("Nginx updated for Fluidd and Mainsail")
-else:
-    print("Nginx already configured")
-NGINXEOF
+    python3 $SCRIPT_DIR/nginx_go2rtc.py
 
     # Add camera to Moonraker (one entry for both Fluidd and Mainsail)
     python3 -c "
