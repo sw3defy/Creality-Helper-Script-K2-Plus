@@ -46,6 +46,10 @@ EOF
 }
 
 remove_z_offset() {
+    if ! is_installed "z_offset_macros"; then
+        log_info "Z Offset Macros is not installed."
+        return 0
+    fi
 
     echo -e "${YELLOW}WARNING: This will remove Z-Offset Macros.${NC}"
     printf "Are you sure? [y/n]: "
