@@ -189,7 +189,11 @@ install_fluidd() {
 # ── Remove Fluidd static files ────────────────────────────────────────────────
 
 remove_fluidd() {
-    echo -e "${YELLOW}WARNING: This will restore stock Fluidd nginx configuration.${NC}"
+    if ! is_installed "fluidd_updated"; then
+        log_info "Fluidd Updated is not installed."
+        return 0
+    fi
+        echo -e "${YELLOW}WARNING: This will restore stock Fluidd nginx configuration.${NC}"
     echo "Fluidd itself will NOT be removed as it is pre-installed on the K2 Plus."
     echo ""
     printf "Are you sure? [y/n]: "
