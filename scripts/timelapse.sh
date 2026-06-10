@@ -69,6 +69,10 @@ ffmpeg_binary_path: /usr/bin/ffmpeg"
 }
 
 remove_timelapse() {
+    if ! is_installed "moonraker_timelapse"; then
+        log_info "Moonraker Timelapse is not installed."
+        return 0
+    fi
 
     echo -e "${YELLOW}WARNING: This will remove Moonraker Timelapse.${NC}"
     printf "Are you sure? [y/n]: "
