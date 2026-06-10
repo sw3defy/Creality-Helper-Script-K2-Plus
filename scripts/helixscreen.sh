@@ -6,7 +6,7 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 HELIX_INSTALL=/opt/helixscreen/install.sh
 
 check_helixscreen() {
-    [ -f "$HELIX_INSTALL" ] && return 0
+    [ -f /etc/init.d/S99helixscreen ] && return 0
     return 1
 }
 
