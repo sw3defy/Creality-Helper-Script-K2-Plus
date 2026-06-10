@@ -86,6 +86,10 @@ EOF
 }
 
 remove_m600() {
+    if ! is_installed "m600_support"; then
+        log_info "M600 Support is not installed."
+        return 0
+    fi
 
     echo -e "${YELLOW}WARNING: This will remove M600 Support.${NC}"
     printf "Are you sure? [y/n]: "
