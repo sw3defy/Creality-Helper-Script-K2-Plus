@@ -106,6 +106,10 @@ except: pass
 }
 
 remove_helixscreen() {
+    if ! is_installed "helixscreen"; then
+        log_info "HelixScreen is not installed."
+        return 0
+    fi
 
     echo -e "${YELLOW}WARNING: This will remove HelixScreen.${NC}"
     echo -e "  The printer will reboot automatically after removal."
