@@ -116,6 +116,10 @@ EOF
 }
 
 remove_fans() {
+    if ! is_installed "fans_control_macros"; then
+        log_info "Fans Control Macros is not installed."
+        return 0
+    fi
 
     echo -e "${YELLOW}WARNING: This will remove Fans Control Macros.${NC}"
     printf "Are you sure? [y/n]: "
