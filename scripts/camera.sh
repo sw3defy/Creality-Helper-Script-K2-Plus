@@ -22,6 +22,8 @@ install_camera() {
     echo "  Credit: DnG-Crafts and AlexxIT/go2rtc"
     echo ""
 
+    echo ""
+    echo -e "  ${YELLOW}NOTE: A reboot is required after install for the camera to start.${NC}"
     printf "  Continue? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
