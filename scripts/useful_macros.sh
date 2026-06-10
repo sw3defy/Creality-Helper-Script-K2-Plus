@@ -352,6 +352,10 @@ EOF
 }
 
 remove_useful_macros() {
+    if ! is_installed "useful_macros"; then
+        log_info "Useful Macros is not installed."
+        return 0
+    fi
 
     echo -e "${YELLOW}WARNING: This will remove Useful Macros.${NC}"
     printf "Are you sure? [y/n]: "
