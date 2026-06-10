@@ -117,7 +117,7 @@ handle_choice() {
         14) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
         15) sh "$SCRIPTS_DIR/entware.sh" install ;;
         16) sh "$SCRIPTS_DIR/git_backup.sh" install ;;
-        17) remove_menu ;;
+        17) remove_menu; main_menu; return ;;
         18) sh "$SCRIPTS_DIR/backup.sh" backup ;;
         19) sh "$SCRIPTS_DIR/backup.sh" restore ;;
         20) sh "$SCRIPTS_DIR/system.sh" restart_klipper ;;
