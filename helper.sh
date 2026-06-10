@@ -152,7 +152,7 @@ remove_menu() {
     echo -e "   ${YELLOW}11)${NC}  ${GREEN}Camera Support for Fluidd and Mainsail${NC}"
     echo -e "   ${YELLOW}12)${NC}  ${GREEN}HelixScreen${NC}"
     echo -e "   ${YELLOW}13)${NC}  ${GREEN}Entware Package Manager${NC}"
-    echo -e "    ${YELLOW}0)${NC}  ${RED}Back${NC}"
+    echo -e "    ${YELLOW}0)${NC}  ${RED}Back to main menu${NC}"
     echo ""
     printf "  ${GREEN}Enter choice:${NC} "
     read choice
