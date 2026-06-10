@@ -95,6 +95,10 @@ EOF
 }
 
 remove_kamp() {
+    if ! is_installed "kamp"; then
+        log_info "Kamp is not installed."
+        return 0
+    fi
 
     echo -e "${YELLOW}WARNING: This will remove KAMP.${NC}"
     printf "Are you sure? [y/n]: "
