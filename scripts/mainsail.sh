@@ -234,7 +234,11 @@ PYEOF
 # ── Remove ────────────────────────────────────────────────────────────────────
 
 remove_mainsail() {
-    echo ""
+    if ! is_installed "mainsail"; then
+        log_info "Mainsail is not installed."
+        return 0
+    fi
+        echo ""
     echo -e "${YELLOW}WARNING: This removes Mainsail static files and the port 4409 nginx block.${NC}"
     echo "Fluidd on port 4408 is not affected."
     echo ""
