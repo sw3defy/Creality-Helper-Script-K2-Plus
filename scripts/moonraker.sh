@@ -58,6 +58,10 @@ EOF
 }
 
 remove_moonraker_extensions() {
+    if ! is_installed "moonraker_extensions"; then
+        log_info "Moonraker Extensions is not installed."
+        return 0
+    fi
     echo ""
     echo ""
 
