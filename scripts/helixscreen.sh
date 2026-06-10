@@ -108,6 +108,8 @@ except: pass
 remove_helixscreen() {
 
     echo -e "${YELLOW}WARNING: This will remove HelixScreen.${NC}"
+    echo -e "  The printer will reboot automatically after removal."
+    echo -e "  Stock Creality UI will be restored after reboot."
     printf "Are you sure? [y/n]: "
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
