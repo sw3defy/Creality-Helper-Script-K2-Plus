@@ -129,7 +129,11 @@ ln -sf /opt/libexec/sftp-server /usr/libexec/sftp-server 2>/dev/null')
 }
 
 remove_entware() {
-    echo ""
+    if ! is_installed "entware"; then
+        log_info "Entware is not installed."
+        return 0
+    fi
+        echo ""
     echo -e "${YELLOW}WARNING: This will remove Entware and all installed packages.${NC}"
     printf "Are you sure? [y/n]: "
     read confirm
