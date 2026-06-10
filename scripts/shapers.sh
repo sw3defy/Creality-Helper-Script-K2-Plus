@@ -225,6 +225,10 @@ EOF
 }
 
 remove_shapers() {
+    if ! is_installed "improved_shapers"; then
+        log_info "Improved Shapers is not installed."
+        return 0
+    fi
 
     echo -e "${YELLOW}WARNING: This will remove Improved Shapers Calibrations.${NC}"
     printf "Are you sure? [y/n]: "
