@@ -314,6 +314,12 @@ patch_stock_configs() {
           "$macro_cfg"
         log_success "Patched gcode_macro.cfg"
     fi
+
+    local printer_cfg="$CONFIG_DIR/printer.cfg"
+    if [ -f "$printer_cfg" ]; then
+        sed -i 's/mesh_min: 5,5/mesh_min: 20,20/' "$printer_cfg"
+        log_success "Patched printer.cfg mesh_min"
+    fi
 }
 
 # ── Entry point ───────────────────────────────────────────────────────────────
@@ -325,76 +331,3 @@ case "$1" in
     show_installed)    show_installed ;;
     patch_stock_configs) patch_stock_configs ;;
 esac
-
-# ── Stock config patch (fix underscore prefix bug) ────────────────────────────
-
-patch_stock_configs() {
-    local box_cfg="$CONFIG_DIR/box.cfg"
-    local macro_cfg="$CONFIG_DIR/gcode_macro.cfg"
-
-    log_info "Patching stock config files to fix macro naming..."
-
-    # Fix box.cfg
-    if [ -f "$box_cfg" ]; then
-        sed -i 's/\[gcode_macro _BOX_/[gcode_macro BOX_/g' "$box_cfg"
-        log_success "Patched box.cfg"
-    fi
-
-    # Fix gcode_macro.cfg - macro definitions
-    if [ -f "$macro_cfg" ]; then
-        sed -i \
-          -e 's/\[gcode_macro _PRINTER_PARAM\]/[gcode_macro PRINTER_PARAM]/g' \
-          -e "s/gcode_macro _PRINTER_PARAM'/gcode_macro PRINTER_PARAM'/g" \
-          -e 's/printer\["gcode_macro _PRINTER_PARAM"\]/printer["gcode_macro PRINTER_PARAM"]/g' \
-          -e 's/MACRO=_PRINTER_PARAM/MACRO=PRINTER_PARAM/g' \
-          -e 's/\[gcode_macro _MAINTENANCE_ITEM_PARAM\]/[gcode_macro MAINTENANCE_ITEM_PARAM]/g' \
-          -e 's/\[gcode_macro _IF_NEED_HOME\]/[gcode_macro IF_NEED_HOME]/g' \
-          -e 's/\[gcode_macro _LOAD_MATERIAL_CLOSE_FAN2\]/[gcode_macro LOAD_MATERIAL_CLOSE_FAN2]/g' \
-          -e 's/\[gcode_macro _LOAD_MATERIAL_RESTORE_FAN2\]/[gcode_macro LOAD_MATERIAL_RESTORE_FAN2]/g' \
-          -e 's/\[gcode_macro _LOAD_MATERIAL_HEATING\]/[gcode_macro LOAD_MATERIAL_HEATING]/g' \
-          -e 's/\[gcode_macro _LOAD_MATERIAL_MATERIAL_FLUSH\]/[gcode_macro LOAD_MATERIAL_MATERIAL_FLUSH]/g' \
-          -e 's/\[gcode_macro _LOAD_MATERIAL_END\]/[gcode_macro LOAD_MATERIAL_END]/g' \
-          -e 's/\[gcode_macro _LOAD_MATERIAL\]/[gcode_macro LOAD_MATERIAL]/g' \
-          -e 's/\[gcode_macro _QUIT_MATERIAL_HEATING\]/[gcode_macro QUIT_MATERIAL_HEATING]/g' \
-          -e 's/\[gcode_macro _QUIT_MATERIAL_CUT_MATERIAL\]/[gcode_macro QUIT_MATERIAL_CUT_MATERIAL]/g' \
-          -e 's/\[gcode_macro _QUIT_MATERIAL_RETRUDE_MATERIAL\]/[gcode_macro QUIT_MATERIAL_RETRUDE_MATERIAL]/g' \
-          -e 's/\[gcode_macro _QUIT_MATERIAL_END\]/[gcode_macro QUIT_MATERIAL_END]/g' \
-          -e 's/\[gcode_macro _QUIT_MATERIAL\]/[gcode_macro QUIT_MATERIAL]/g' \
-          -e 's/\[gcode_macro _Qmode\]/[gcode_macro Qmode]/g' \
-          -e "s/gcode_macro _Qmode'/gcode_macro Qmode'/g" \
-          -e 's/MACRO=_Qmode/MACRO=Qmode/g' \
-          -e 's/\[gcode_macro _Qmode_exit\]/[gcode_macro Qmode_exit]/g' \
-          -e 's/\[gcode_macro _M205\]/[gcode_macro M205]/g' \
-          -e 's/\[gcode_macro _M106\]/[gcode_macro M106]/g' \
-          -e 's/\[gcode_macro _M107\]/[gcode_macro M107]/g' \
-          -e 's/\[gcode_macro _M900\]/[gcode_macro M900]/g' \
-          -e 's/\[gcode_macro _WAIT_TEMP_START\]/[gcode_macro WAIT_TEMP_START]/g' \
-          -e 's/\[gcode_macro _WAIT_TEMP_END\]/[gcode_macro WAIT_TEMP_END]/g' \
-          -e 's/\[gcode_macro _PRINT_CALIBRATION\]/[gcode_macro PRINT_CALIBRATION]/g' \
-          -e 's/\[gcode_macro _FIRST_FLOOR_PAUSE_POSITION\]/[gcode_macro FIRST_FLOOR_PAUSE_POSITION]/g' \
-          -e 's/\[gcode_macro _PRINT_TEMP_SET\]/[gcode_macro PRINT_TEMP_SET]/g' \
-          -e 's/\[gcode_macro _ZDOWN_SWITCH_SET\]/[gcode_macro ZDOWN_SWITCH_SET]/g' \
-          -e 's/\[gcode_macro _PRINT_PREPARED\]/[gcode_macro PRINT_PREPARED]/g' \
-          -e 's/\[gcode_macro _PRINT_PREPARE_CLEAR\]/[gcode_macro PRINT_PREPARE_CLEAR]/g' \
-          -e 's/\[gcode_macro _END_PRINT_POINT_WITHOUT_LIFTING\]/[gcode_macro END_PRINT_POINT_WITHOUT_LIFTING]/g' \
-          -e 's/\[gcode_macro _END_PRINT_Z_SAFE\]/[gcode_macro END_PRINT_Z_SAFE]/g' \
-          -e 's/\[gcode_macro _END_PRINT_POINT\]/[gcode_macro END_PRINT_POINT]/g' \
-          -e 's/\[gcode_macro _FIRST_FLOOR_PAUSE\]/[gcode_macro FIRST_FLOOR_PAUSE]/g' \
-          -e 's/\[gcode_macro _FIRST_FLOOR_RESUME\]/[gcode_macro FIRST_FLOOR_RESUME]/g' \
-          -e 's/\[gcode_macro _PAUSE_EXTERNAL\]/[gcode_macro PAUSE_EXTERNAL]/g' \
-          -e 's/\[gcode_macro _RESUME_EXTERNAL_PROCESS\]/[gcode_macro RESUME_EXTERNAL_PROCESS]/g' \
-          -e 's/\[gcode_macro _RESUME_EXTERNAL\]/[gcode_macro RESUME_EXTERNAL]/g' \
-          -e 's/\[gcode_macro _MOTOR_CANCEL_PRINT\]/[gcode_macro MOTOR_CANCEL_PRINT]/g' \
-          -e 's/\[gcode_macro _BED_MANUAL_CAL_START\]/[gcode_macro BED_MANUAL_CAL_START]/g' \
-          -e 's/\[gcode_macro _BED_MANUAL_CAL_END\]/[gcode_macro BED_MANUAL_CAL_END]/g' \
-          -e 's/\[gcode_macro _BED_MESH_CALIBRATE_START_PRINT\]/[gcode_macro BED_MESH_CALIBRATE_START_PRINT]/g' \
-          -e 's/\[gcode_macro _CANCEL_CHAMBER_FAN_SWITCH\]/[gcode_macro CANCEL_CHAMBER_FAN_SWITCH]/g' \
-          -e 's/\[gcode_macro _INPUTSHAPER\]/[gcode_macro INPUTSHAPER]/g' \
-          -e 's/\[gcode_macro _BEDPID\]/[gcode_macro BEDPID]/g' \
-          -e 's/\[gcode_macro _NOZZLE_PID\]/[gcode_macro NOZZLE_PID]/g' \
-          -e 's/\[gcode_macro _NOZZLE_PID_HIGH\]/[gcode_macro NOZZLE_PID_HIGH]/g' \
-          -e 's/\[gcode_macro _TUNOFFINPUTSHAPER\]/[gcode_macro TUNOFFINPUTSHAPER]/g' \
-          "$macro_cfg"
-        log_success "Patched gcode_macro.cfg"
-    fi
-}
