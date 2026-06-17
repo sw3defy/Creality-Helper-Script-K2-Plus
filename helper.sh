@@ -180,6 +180,8 @@ remove_menu() {
 }
 
 
+. "$SCRIPTS_DIR/scripts/system.sh"
 check_root
 check_printer
+patch_stock_configs
 main_menu
