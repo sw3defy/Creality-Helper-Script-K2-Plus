@@ -21,7 +21,16 @@
 - Unknown command: CANCEL_CHAMBER_FAN_SWITCH
 
 
-### Also fixed
+
+### Also fixed (2026-06-17)
+- **printer.cfg mesh_min edge artifact** — Stock Creality firmware sets
+  `mesh_min: 5,5` which causes the adaptive bed mesh algorithm to probe
+  too close to the bed edge, producing false spike readings at the front-left
+  corner. The helper script now automatically patches this to `mesh_min: 20,20`
+  on startup via `patch_stock_configs()` in `system.sh`.
+- **Duplicate patch_stock_configs function** — Removed a duplicate function
+  that was accidentally added to `system.sh`.
+
 - **useful_macros.sh conflicting macros** — Removed START_PRINT, END_PRINT,
   PAUSE, RESUME, CANCEL_PRINT from useful_macros.sh. These are already defined
   in stock gcode_macro.cfg with full CFS integration (BOX_START_PRINT,
