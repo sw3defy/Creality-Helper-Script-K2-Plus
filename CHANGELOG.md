@@ -39,6 +39,14 @@
   PID_HOTEND, PID_BED, PID_CHAMBER, BED_LEVELING, Z_TILT_CALIBRATE,
   WARMUP, CHAMBER_HEAT, CHAMBER_COOL, CHAMBER_STATUS.
 
+
+### Also fixed (2026-06-18)
+- **patch_stock_configs not running on boot** — The stock config patches
+  were only applied when helper.sh was run manually from the menu. This
+  meant reboots would revert the fixes. Added install_rc_local_patch()
+  which adds patch_stock_configs to /etc/rc.local so fixes are applied
+  automatically on every boot.
+
 ### Known issues being investigated
 - useful_macros.sh installs START_PRINT, END_PRINT, PAUSE, RESUME,
   CANCEL_PRINT macros that conflict with and override the stock Creality
