@@ -322,6 +322,18 @@ patch_stock_configs() {
     fi
 }
 
+
+# ── rc.local patch (ensure patch_stock_configs runs on every boot) ────────────
+
+install_rc_local_patch() {
+    local rc_local="/etc/rc.local"
+    if grep -q "patch_stock_configs" "$rc_local" 2>/dev/null; then
+        log_info "rc.local patch already installed."
+        return 0
+    fi
+    sed -i 's|exit 0|# Patch stock Klipper configs\n/bin/sh /mnt/UDISK/helper-script/scripts/system.sh patch_stock_configs\n\nexit 0|' "$rc_local"
+    log_success "Added patch_stock_configs to rc.local"
+}
 # ── Entry point ───────────────────────────────────────────────────────────────
 case "$1" in
     restart_klipper)   restart_klipper ;;
@@ -330,4 +342,5 @@ case "$1" in
     restart_camera)    restart_camera ;;
     show_installed)    show_installed ;;
     patch_stock_configs) patch_stock_configs ;;
+    install_rc_local_patch) install_rc_local_patch ;;
 esac

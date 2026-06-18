@@ -184,4 +184,5 @@ remove_menu() {
 check_root
 check_printer
 patch_stock_configs
+install_rc_local_patch
 main_menu
