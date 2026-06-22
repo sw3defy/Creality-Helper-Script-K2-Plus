@@ -65,6 +65,17 @@
   other macros, even though their definitions were already patched.
   These are now fixed too.
 
+
+### Also fixed (2026-06-22)
+- **queue_gcode_uploads race condition** — Stock moonraker.conf has
+  this set to False, causing Mainsail/Fluidd to poll for gcode
+  metadata before background extraction finishes on larger files.
+  This produced hundreds of "Metadata not available" errors per
+  upload and made history permanently show "Unknown" as the slicer.
+  install_moonraker_include() now also flips this to True.
+- Fixed install_moonraker_include() returning early when the include
+  line was already present, which skipped any fixes added after it.
+
 ### Known issues being investigated
 - useful_macros.sh installs START_PRINT, END_PRINT, PAUSE, RESUME,
   CANCEL_PRINT macros that conflict with and override the stock Creality
