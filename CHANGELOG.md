@@ -76,6 +76,15 @@
 - Fixed install_moonraker_include() returning early when the include
   line was already present, which skipped any fixes added after it.
 
+
+### Also fixed (2026-06-22)
+- **helper.sh failed on first run for everyone** — SCRIPTS_DIR was
+  already set to .../helper-script/scripts, but the line sourcing
+  system.sh appended another /scripts/ segment, producing a path
+  that doesn't exist (scripts/scripts/system.sh). This crashed
+  helper.sh immediately for any brand new install, before reaching
+  the menu at all. Reported by a user attempting first setup.
+
 ### Known issues being investigated
 - useful_macros.sh installs START_PRINT, END_PRINT, PAUSE, RESUME,
   CANCEL_PRINT macros that conflict with and override the stock Creality
