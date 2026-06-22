@@ -180,7 +180,7 @@ remove_menu() {
 }
 
 
-. "$SCRIPTS_DIR/scripts/system.sh"
+. "$SCRIPTS_DIR/system.sh"
 check_root
 check_printer
 patch_stock_configs
