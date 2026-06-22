@@ -311,6 +311,12 @@ patch_stock_configs() {
           -e 's/\[gcode_macro _NOZZLE_PID\]/[gcode_macro NOZZLE_PID]/g' \
           -e 's/\[gcode_macro _NOZZLE_PID_HIGH\]/[gcode_macro NOZZLE_PID_HIGH]/g' \
           -e 's/\[gcode_macro _TUNOFFINPUTSHAPER\]/[gcode_macro TUNOFFINPUTSHAPER]/g' \
+          -e 's/    _PRINT_PREPARE_CLEAR/    PRINT_PREPARE_CLEAR/g' \
+          -e 's/  _END_PRINT_Z_SAFE/  END_PRINT_Z_SAFE/g' \
+          -e 's/  _QMODE_EXIT/  QMODE_EXIT/g' \
+          -e 's/  _PRINT_PREPARE_CLEAR/  PRINT_PREPARE_CLEAR/g' \
+          -e 's/  _END_PRINT_POINT/  END_PRINT_POINT/g' \
+          -e 's/  _WAIT_TEMP_START/  WAIT_TEMP_START/g' \
           "$macro_cfg"
         log_success "Patched gcode_macro.cfg"
     fi
@@ -329,11 +335,55 @@ install_rc_local_patch() {
     local rc_local="/etc/rc.local"
     if grep -q "patch_stock_configs" "$rc_local" 2>/dev/null; then
         log_info "rc.local patch already installed."
+    else
+        sed -i 's|exit 0|# Patch stock Klipper configs\n/bin/sh /mnt/UDISK/helper-script/scripts/system.sh patch_stock_configs\n\nexit 0|' "$rc_local"
+        log_success "Added patch_stock_configs to rc.local"
+    fi
+
+    if grep -q "install_moonraker_include" "$rc_local" 2>/dev/null; then
+        log_info "moonraker include rc.local patch already installed."
+    else
+        sed -i 's|exit 0|# Ensure Moonraker loads UDISK extension config\n/bin/sh /mnt/UDISK/helper-script/scripts/system.sh install_moonraker_include\n\nexit 0|' "$rc_local"
+        log_success "Added install_moonraker_include to rc.local"
+    fi
+}
+
+# ── Moonraker include fix (ensure UDISK moonraker.conf is actually loaded) ────
+
+install_moonraker_include() {
+    local real_conf="/usr/share/moonraker/moonraker.conf"
+    local udisk_conf="$CONFIG_DIR/moonraker.conf"
+    local include_line="[include $udisk_conf]"
+
+    if [ ! -f "$real_conf" ]; then
+        log_info "Moonraker base config not found at $real_conf, skipping."
         return 0
     fi
-    sed -i 's|exit 0|# Patch stock Klipper configs\n/bin/sh /mnt/UDISK/helper-script/scripts/system.sh patch_stock_configs\n\nexit 0|' "$rc_local"
-    log_success "Added patch_stock_configs to rc.local"
+
+    if [ ! -f "$udisk_conf" ]; then
+        log_info "No UDISK moonraker.conf found, skipping include fix."
+        return 0
+    fi
+
+    # Remove any stale/incorrect include in the UDISK file pointing back at
+    # the real config -- this causes a recursive include loop.
+    if grep -q "\[include $real_conf\]" "$udisk_conf" 2>/dev/null; then
+        sed -i "\|\[include $real_conf\]|d" "$udisk_conf"
+        log_info "Removed recursive include from $udisk_conf"
+    fi
+
+    if grep -qF "$include_line" "$real_conf" 2>/dev/null; then
+        log_info "Moonraker include already installed."
+        return 0
+    fi
+
+    sed -i "1i\\
+$include_line
+" "$real_conf"
+    log_success "Added include for $udisk_conf to $real_conf"
+    log_info "Without this, sections like [timelapse] and [update_manager] in $udisk_conf are silently ignored by Moonraker."
 }
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 case "$1" in
     restart_klipper)   restart_klipper ;;
@@ -343,4 +393,5 @@ case "$1" in
     show_installed)    show_installed ;;
     patch_stock_configs) patch_stock_configs ;;
     install_rc_local_patch) install_rc_local_patch ;;
+    install_moonraker_include) install_moonraker_include ;;
 esac

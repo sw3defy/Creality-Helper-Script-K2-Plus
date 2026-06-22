@@ -185,4 +185,5 @@ check_root
 check_printer
 patch_stock_configs
 install_rc_local_patch
+install_moonraker_include
 main_menu
