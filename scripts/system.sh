@@ -374,14 +374,21 @@ install_moonraker_include() {
 
     if grep -qF "$include_line" "$real_conf" 2>/dev/null; then
         log_info "Moonraker include already installed."
-        return 0
-    fi
-
-    sed -i "1i\\
+    else
+        sed -i "1i\\
 $include_line
 " "$real_conf"
-    log_success "Added include for $udisk_conf to $real_conf"
-    log_info "Without this, sections like [timelapse] and [update_manager] in $udisk_conf are silently ignored by Moonraker."
+        log_success "Added include for $udisk_conf to $real_conf"
+        log_info "Without this, sections like [timelapse] and [update_manager] in $udisk_conf are silently ignored by Moonraker."
+    fi
+
+    # Queue gcode uploads so the UI waits for metadata extraction to finish
+    # instead of hammering Moonraker with "Metadata not available" requests
+    # and falling back to showing the slicer as "Unknown" in history.
+    if grep -q "queue_gcode_uploads: False" "$real_conf" 2>/dev/null; then
+        sed -i "s/queue_gcode_uploads: False/queue_gcode_uploads: True/" "$real_conf"
+        log_success "Enabled queue_gcode_uploads in $real_conf"
+    fi
 }
 
 # ── Entry point ───────────────────────────────────────────────────────────────
