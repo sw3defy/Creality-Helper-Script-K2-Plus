@@ -52,7 +52,7 @@ api:
 
 streams:
   k2plus:
-    - "webrtc:http://127.0.0.1:8090/call/webrtc_local"
+    - "webrtc:http://127.0.0.1:8000/call/webrtc_local#format=creality"
 
 webrtc:
   listen: :8555
@@ -63,53 +63,6 @@ webrtc:
         - stun:stun.l.google.com:19302
 YAML
 
-    # Create k2rtc.py bridge
-    cat > $K2RTC << 'PYTHON'
-#!/usr/bin/env python3
-import http.server, urllib.request, json, base64, time
-
-class K2Handler(http.server.BaseHTTPRequestHandler):
-    def log_message(self, format, *args):
-        pass
-    def do_POST(self):
-        length = int(self.headers.get('Content-Length', 0))
-        sdp = self.rfile.read(length).decode()
-        offer = {'type': 'offer', 'sdp': sdp}
-        payload = base64.b64encode(json.dumps(offer).encode())
-        req = urllib.request.Request(
-            'http://127.0.0.1:8000/call/webrtc_local',
-            data=payload, method='POST',
-            headers={'Content-Type': 'plain/text'}
-        )
-        try:
-            r = urllib.request.urlopen(req, timeout=10)
-            response = r.read()
-            decoded = base64.b64decode(response)
-            data = json.loads(decoded)
-            answer_sdp = data['sdp'].encode()
-            time.sleep(0.1)
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/sdp')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.send_header('Content-Length', len(answer_sdp))
-            self.end_headers()
-            self.wfile.write(answer_sdp)
-            print('Bridge connected', flush=True)
-        except Exception as e:
-            print('Error:', e, flush=True)
-            self.send_response(500)
-            self.end_headers()
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', '*')
-        self.end_headers()
-
-server = http.server.HTTPServer(('127.0.0.1', 8090), K2Handler)
-print('K2 bridge running on 8090', flush=True)
-server.serve_forever()
-PYTHON
 
     # Create watchdog
     cat > $WATCHDOG << 'PYTHON'
@@ -161,8 +114,6 @@ HELIX=/mnt/UDISK/helper-script
 start() {
     echo "Starting K2 camera bridge..."
     sleep 60
-    python3 $HELIX/k2rtc.py >> /tmp/k2rtc.log 2>&1 &
-    sleep 2
     $HELIX/go2rtc -config $HELIX/go2rtc.yaml >> /tmp/go2rtc.log 2>&1 &
     echo "Camera bridge started" >> /tmp/camera_startup.log 2>&1
     sleep 5
@@ -170,7 +121,6 @@ start() {
 }
 stop() {
     killall go2rtc 2>/dev/null
-    kill $(ps aux | grep k2rtc.py | grep -v grep | awk '{print $1}') 2>/dev/null
     kill $(ps aux | grep camera_watchdog | grep -v grep | awk '{print $1}') 2>/dev/null
 }
 case "$1" in
@@ -236,7 +186,6 @@ content = open('/usr/share/fluidd/index.html').read()
 content = re.sub(r'<iframe[^>]*go2rtc_keepalive[^>]*>.*?</iframe>', '', content)
 content = re.sub(r'<script>\nvar cameraReady.*?</script>', '', content, flags=re.DOTALL)
 script = '''<script>
-var cameraReady = false;
 function enableCamera() {
   try {
     var s = document.querySelector(\"#app\").__vue__.\$store;
@@ -247,31 +196,9 @@ function enableCamera() {
     }
   } catch(e) {}
 }
-function checkAndReload() {
-  fetch('/go2rtc/api/streams')
-    .then(r => r.json())
-    .then(data => {
-      var stream = data.k2plus;
-      var prod = stream && stream.producers && stream.producers[0];
-      if(prod) {
-        var cons = stream.consumers;
-        var senderHasBytes = cons && cons.length > 0 && cons[0].senders &&
-          cons[0].senders.some(function(s) { return s.bytes > 0; });
-        if(senderHasBytes) {
-          cameraReady = true;
-          enableCamera();
-        } else if(!cameraReady && prod.bytes_recv > 500000 && !sessionStorage.getItem(\'reloaded\')) {
-          sessionStorage.setItem(\'reloaded\', \'1\');
-          setTimeout(function() { location.reload(); }, 2000);
-        }
-      }
-    })
-    .catch(function() {});
-}
 setTimeout(enableCamera, 2000);
-setInterval(checkAndReload, 3000);
 </script>'''
-content = content.replace('</body>', '<iframe src=\"http://' + ip + ':1984/stream.html?src=k2plus&mode=webrtc\" style=\"display:none;width:1px;height:1px;\" id=\"go2rtc_keepalive\"></iframe>' + script + '</body>')
+content = content.replace('</body>', script + '</body>')
 open('/usr/share/fluidd/index.html', 'w').write(content)
 print('Fluidd index.html updated')
 "
@@ -299,7 +226,6 @@ function enableMainsailCams() {
   } catch(e) {}
 }
 setTimeout(enableMainsailCams, 2000);
-setInterval(enableMainsailCams, 5000);
 </script>'''
 content = content.replace('</body>', script + '</body>')
 open('/usr/share/mainsail/index.html', 'w').write(content)
