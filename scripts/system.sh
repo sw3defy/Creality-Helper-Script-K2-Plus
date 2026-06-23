@@ -248,6 +248,18 @@ restore_nginx_conf() {
 # ── Stock config patch (fix underscore prefix bug) ────────────────────────────
 
 patch_stock_configs() {
+    # Ensure /usr/bin/wget exists. Moonraker's shell_command subprocess
+    # PATH does not include /opt/bin (where wget actually lives on this
+    # firmware), causing "FileNotFoundError: wget" for every timelapse
+    # frame capture (TIMELAPSE_TAKE_FRAME -> [timelapse] component ->
+    # wget against the go2rtc frame.jpeg endpoint). /usr/bin is on every
+    # process's default PATH, so a symlink there fixes it without
+    # touching Moonraker's service config.
+    if [ -x /opt/bin/wget ] && [ ! -e /usr/bin/wget ]; then
+        ln -sf /opt/bin/wget /usr/bin/wget
+        log_success "Linked /usr/bin/wget -> /opt/bin/wget (fixes timelapse frame capture)"
+    fi
+
     local box_cfg="$CONFIG_DIR/box.cfg"
     local macro_cfg="$CONFIG_DIR/gcode_macro.cfg"
 
