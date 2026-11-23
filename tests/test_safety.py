@@ -44,6 +44,19 @@ for name in ("fluidd.sh", "mainsail.sh"):
     if "scripts/web_ui_release.py" not in source:
         failures.append(name + ": missing staged web UI updater")
 
+inspector = (root / "scripts" / "firmware_inspector.py").read_text()
+for marker in ("BACKUP.match(name)", "Active Klipper include graph", "COLLISION:", 'walk("printer.cfg")'):
+    if marker not in inspector:
+        failures.append("Firmware Inspector missing static safety feature: " + marker)
+if "recommended first" in helper or "needed by START_PRINT" in helper:
+    failures.append("Menu still recommends blocked installation paths")
+for label in ("Moonraker Extensions & Update Manager", "Fans Control Macros", "Useful Macros"):
+    if label not in helper:
+        failures.append("Menu missing feature label: " + label)
+p = subprocess.run([sys.executable, "-m", "py_compile", str(root / "scripts" / "firmware_inspector.py")], capture_output=True, text=True)
+if p.returncode:
+    failures.append("Firmware Inspector syntax: " + p.stderr.strip())
+
 if failures:
     for failure in failures:
         print("FAIL:", failure)
