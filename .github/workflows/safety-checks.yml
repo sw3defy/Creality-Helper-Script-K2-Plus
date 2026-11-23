@@ -14,8 +14,8 @@ jobs:
       - name: Shell syntax and safety invariants
         run: python3 tests/test_safety.py
       - name: Offline Moonraker migration scenarios
-        run: python3 tests/test_moonraker_migration.py tests/test_web_ui_camera.py
+        run: python3 tests/test_moonraker_migration.py
       - name: Camera preservation unit tests
         run: python3 tests/test_web_ui_camera.py
       - name: Python syntax
-        run: python3 -m py_compile scripts/web_ui_release.py scripts/moonraker_migration_plan.py tests/test_safety.py tests/test_moonraker_migration.py
+        run: python3 -m py_compile scripts/web_ui_release.py scripts/moonraker_migration_plan.py tests/test_safety.py tests/test_moonraker_migration.py tests/test_web_ui_camera.py
