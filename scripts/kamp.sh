@@ -20,7 +20,8 @@ install_kamp() {
 
     if ! is_installed "moonraker_extensions"; then
         log_warn "Moonraker Extensions not installed. Installing now (required for KAMP)..."
-        sh "$SCRIPT_DIR/scripts/moonraker.sh" install
+        log_error "Moonraker Extensions must be validated first; aborting KAMP install."
+        return 1
     fi
 
     mkdir -p "$KAMP_DIR"
