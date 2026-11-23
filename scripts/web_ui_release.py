@@ -170,14 +170,23 @@ def main():
         # Write metadata in the staging tree, before any live directory swap.
         # A failure here must leave the existing UI and camera untouched.
         (stage / ".helper-release-version").write_text(version + "\n")
+        # Keep the rollback directory on the same filesystem. If staging
+        # promotion fails, restore the previous UI and surface any failure.
         if target.exists():
             target.rename(backup)
             swapped = True
         try:
             stage.rename(target)
-        except Exception:
+        except Exception as install_error:
             if swapped:
-                backup.rename(target)
+                try:
+                    backup.rename(target)
+                except Exception as rollback_error:
+                    raise RuntimeError(
+                        "UI promotion failed AND automatic rollback failed. "
+                        "Original UI remains at {}. Installation error: {}. "
+                        "Rollback error: {}".format(backup, install_error, rollback_error)
+                    ) from install_error
             raise
         print("Installed {} {}. Rollback directory: {}".format(name, version, backup if swapped else "none"))
         print("No nginx, Moonraker, Klipper or camera services were restarted.")
