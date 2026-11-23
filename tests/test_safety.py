@@ -113,6 +113,28 @@ for marker in ("enableCamera", "enableMainsailCams", "go2rtc_keepalive",
     if marker not in updater:
         failures.append("Web UI updater does not preserve camera customization: " + marker)
 
+# Verified single-instance recovery: prevent reintroduction of startup hijacking.
+recovery_doc = root / "docs" / "moonraker-duplicate-process-recovery.md"
+if not recovery_doc.is_file():
+    failures.append("Missing verified Moonraker duplicate-process recovery documentation")
+else:
+    recovery_text = recovery_doc.read_text()
+    for marker in ("S56moonraker -> ../init.d/moonraker", "procd", "normal OS reboot", "HelixScreen", "Mainsail", "Fluidd", "fail closed"):
+        if marker not in recovery_text:
+            failures.append("Moonraker recovery documentation missing: " + marker)
+
+for name in ("moonraker.sh", "system.sh"):
+    source = (root / "scripts" / name).read_text()
+    if name == "moonraker.sh":
+        for marker in ("No service scripts", "return 1"):
+            if marker not in source:
+                failures.append("Moonraker installer lacks startup protection: " + marker)
+    else:
+        for function_name in ("patch_moonraker_startup", "unpatch_moonraker_startup"):
+            match = re.search(r"(?ms)^" + function_name + r"\(\) \{(.*?)^\}", source)
+            if not match or "return 1" not in match.group(1):
+                failures.append("Unsafe Moonraker startup helper not blocked: " + function_name)
+
 if failures:
     for failure in failures:
         print("FAIL:", failure)
