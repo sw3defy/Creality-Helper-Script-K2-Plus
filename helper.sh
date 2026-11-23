@@ -87,6 +87,7 @@ main_menu() {
     echo -e "   ${YELLOW}25)${NC} ${GREEN}Show installed features${NC}" 
     echo -e "   ${YELLOW}26)${NC} ${GREEN}Check add-on updates (read-only)${NC}"
     echo -e "   ${YELLOW}27)${NC} ${GREEN}Audit Moonraker configuration (read-only)${NC}"
+    echo -e "   ${YELLOW}28)${NC} ${GREEN}K2 Plus Firmware Inspector (read-only)${NC}"
     echo ""
     echo -e "    ${YELLOW}0)${NC} ${RED}Exit${NC}"
     echo ""
@@ -130,6 +131,7 @@ handle_choice() {
         25) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
         26) sh "$SCRIPTS_DIR/check_updates.sh" ;;
         27) sh "$SCRIPTS_DIR/moonraker_audit.sh" ;;
+        28) python3 "$SCRIPTS_DIR/firmware_inspector.py" > /tmp/k2-inspection.txt && { echo "Report saved: /tmp/k2-inspection.txt"; echo "Review for sensitive information before sharing."; } ;;
         0)  echo ""; echo "Goodbye!"; echo ""; exit 0 ;;
         *)  echo -e "${RED}Invalid choice.${NC}"; sleep 1 ;;
     esac
