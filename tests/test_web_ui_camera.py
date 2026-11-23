@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test camera-preservation detection using disposable offline HTML."""
+"""Offline tests: preserve original camera JS when replacing web UI assets."""
 import importlib.util
 import tempfile
 from pathlib import Path
@@ -11,22 +11,38 @@ spec.loader.exec_module(module)
 
 with tempfile.TemporaryDirectory() as directory:
     root = Path(directory)
-    index = root / "index.html"
-    assert module.has_camera_customization(index) is False
-    index.write_text("<html><body>stock UI</body></html>")
-    assert module.has_camera_customization(index) is False
-    for marker in ("function enableCamera() {", "function enableMainsailCams() {",
-                   "go2rtc_keepalive", "var cameraReady"):
-        index.write_text("<html><script>" + marker + "</script></html>")
-        before = index.read_bytes()
-        assert module.has_camera_customization(index) is True, marker
-        assert index.read_bytes() == before
-    index.unlink()
-    index.symlink_to(root / "missing.html")
+    original = root / "original.html"
+    stage = root / "stage.html"
+    assert module.has_camera_customization(original) is False
+    for name in ("enableCamera", "enableMainsailCams"):
+        camera_script = "<script>function " + name + "() { return true; }</script>"
+        original.write_text("<html><body>old" + camera_script + "</body></html>")
+        stage.write_text("<html><body>new</body></html>")
+        before = original.read_bytes()
+        assert module.has_camera_customization(original)
+        assert module.preserve_camera_scripts(original, stage)
+        assert original.read_bytes() == before
+        assert camera_script in stage.read_text()
+        assert "new" in stage.read_text()
+        assert stage.read_text().count(camera_script) == 1
+    original.write_text("<html><body>plain</body></html>")
+    stage.write_text("<html><body>new</body></html>")
+    assert module.preserve_camera_scripts(original, stage) is False
+    assert stage.read_text() == "<html><body>new</body></html>"
+    original.write_text("<html><body><script>function enableCamera() {}</script></body></html>")
+    stage.write_text("<html><body>no closing body</html>")
     try:
-        module.has_camera_customization(index)
+        module.preserve_camera_scripts(original, stage)
     except RuntimeError:
         pass
     else:
-        raise AssertionError("Symlinked UI index must be rejected")
-print("PASS: offline camera-preservation checks; no UI files modified")
+        raise AssertionError("Missing closing body should fail closed")
+    original.unlink()
+    original.symlink_to(root / "missing.html")
+    try:
+        module.extract_camera_scripts(original)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("Symlinked index must be rejected")
+print("PASS: offline camera JS preserved exactly; original UI unchanged")
