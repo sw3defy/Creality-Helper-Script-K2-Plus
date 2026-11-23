@@ -104,7 +104,7 @@ def validate_release_archive(archive):
             mode = member.external_attr >> 16
             kind = stat.S_IFMT(mode)
             parts = path.parts
-            if (not raw or "\\x00" in raw or "\\\\" in raw or
+            if (not raw or "\x00" in raw or "\\" in raw or
                 path.is_absolute() or ".." in parts or
                 any(part in ("", ".") for part in parts) or
                 stat.S_ISLNK(mode) or
