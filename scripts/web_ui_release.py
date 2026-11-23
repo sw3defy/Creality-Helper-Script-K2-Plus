@@ -77,6 +77,37 @@ def preserve_camera_scripts(source_index, staged_index):
     staged_index.write_text(content, encoding="utf-8")
     return True
 
+def validate_release_archive(archive):
+    """Reject unsafe or ambiguous ZIP members before extracting anything."""
+    with zipfile.ZipFile(str(archive)) as z:
+        members = z.infolist()
+        total = 0
+        seen = set()
+        if len(members) > 20000:
+            raise RuntimeError("Release contains too many entries")
+        for member in members:
+            raw = member.filename
+            path = Path(raw)
+            mode = member.external_attr >> 16
+            parts = path.parts
+            if (not raw or "\\x00" in raw or "\\\\" in raw or
+                path.is_absolute() or ".." in parts or
+                any(part in ("", ".") for part in parts) or
+                stat.S_ISLNK(mode) or
+                (mode and not (stat.S_ISREG(mode) or stat.S_ISDIR(mode)))):
+                raise RuntimeError("Unsafe release archive entry")
+            canonical = raw.rstrip("/")
+            if canonical in seen:
+                raise RuntimeError("Duplicate release archive entry")
+            seen.add(canonical)
+            total += member.file_size
+            if total > MAX_UNPACKED:
+                raise RuntimeError("Expanded release exceeds size limit")
+        if "index.html" not in seen:
+            raise RuntimeError("Release missing index.html")
+        return members
+
+
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in PROJECTS:
         raise SystemExit("Usage: web_ui_release.py fluidd|mainsail")
@@ -126,19 +157,8 @@ def main():
                 out.write(block)
         stage = work / "files"
         stage.mkdir()
+        validate_release_archive(archive)
         with zipfile.ZipFile(str(archive)) as z:
-            total = 0
-            members = z.infolist()
-            for member in members:
-                path = Path(member.filename)
-                mode = (member.external_attr >> 16)
-                if (path.is_absolute() or ".." in path.parts or
-                    stat.S_ISLNK(mode) or
-                    (mode and not (stat.S_ISREG(mode) or stat.S_ISDIR(mode)))):
-                    raise RuntimeError("Unsafe archive entry")
-                total += member.file_size
-                if total > MAX_UNPACKED:
-                    raise RuntimeError("Expanded release exceeds size limit")
             z.extractall(str(stage))
         if not (stage / "index.html").is_file():
             raise RuntimeError("Release missing index.html; original installation untouched")
