@@ -36,7 +36,7 @@ restart_klipper() {
 
 restart_moonraker() {
     # The inspected K2 Plus uses /etc/rc.d/S56moonraker and a UDISK
-    # configuration. The old kill-all + /etc/init.d/moonraker start
+    # configuration. The old kill-all and legacy service-start
     # sequence could leave the API offline. Fail closed until a firmware-
     # specific, tested restart procedure and health check are available.
     log_error "Moonraker restart is blocked pending firmware-specific validation."
