@@ -53,6 +53,22 @@ with tempfile.TemporaryDirectory() as directory:
         pass
     else:
         raise AssertionError("Unrecognized legacy camera injection must be reviewed")
+    original.write_text("<html><body><script>function enableCamera() {}</script>"
+                        "<script>function enableCamera() {}</script></body></html>")
+    try:
+        module.extract_camera_scripts(original)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("Duplicate camera scripts must not be transplanted")
+    original.write_text("<html><body><script>function enableCamera() {}</script>"
+                        "go2rtc_keepalive</body></html>")
+    try:
+        module.extract_camera_scripts(original)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("Mixed camera generations must not be transplanted")
     original.unlink()
     original.symlink_to(root / "missing.html")
     try:
