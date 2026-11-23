@@ -5,6 +5,9 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 Z_CFG=$CONFIG_DIR/z_offset_macros.cfg
 
 install_z_offset() {
+    log_error "Z-offset macro installation is blocked pending stock probe compatibility review."
+    return 1
+
 
     if is_installed "z_offset_macros"; then
         log_info "Z Offset Macros is already installed."
@@ -46,6 +49,9 @@ EOF
 }
 
 remove_z_offset() {
+    log_error "Z-offset removal blocked pending config ownership review."
+    return 1
+
     if ! is_installed "z_offset_macros"; then
         log_info "Z Offset Macros is not installed."
         return 0
