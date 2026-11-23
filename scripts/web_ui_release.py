@@ -37,6 +37,21 @@ def main():
     target = Path("/usr/share") / name
     if target.is_symlink():
         raise RuntimeError("Refusing symlinked target")
+    # The existing camera fix injects UI-specific JavaScript into index.html.
+    # Replacing web assets would silently erase that working integration.
+    # Keep the camera untouched and refuse this unrelated update instead.
+    current_index = target / "index.html"
+    if current_index.is_symlink():
+        raise RuntimeError("Refusing symlinked web UI index")
+    if current_index.is_file():
+        current_text = current_index.read_text(encoding="utf-8", errors="replace")
+        camera_markers = ("enableCamera()", "enableMainsailCams()",
+                          "go2rtc_keepalive", "var cameraReady")
+        if any(marker in current_text for marker in camera_markers):
+            raise RuntimeError(
+                "Existing camera UI customization detected; web UI update postponed "
+                "to avoid removing the working camera fix. No changes made."
+            )
     release = get_json("https://api.github.com/repos/{}/releases/latest".format(repo))
     assets = [a for a in release.get("assets", []) if a.get("name") == asset_name]
     if len(assets) != 1:
