@@ -145,35 +145,16 @@ MOONRAKER_RC=/etc/rc.d/S56moonraker
 MOONRAKER_RC_BAK=/mnt/UDISK/helper-script/.S56moonraker.orig
 MOONRAKER_STOCK_CONF=/usr/share/moonraker/moonraker.conf
 
-# Patch S56moonraker to use our config wrapper instead of the stock one
+# Historical startup patching and restoration are intentionally disabled.
+# The inspected printer already uses the UDISK Moonraker config.
 patch_moonraker_startup() {
-    if grep -q "CONF=/mnt/UDISK" "$MOONRAKER_RC" 2>/dev/null; then
-        log_info "Moonraker startup already patched."
-        return 0
-    fi
-
-    # Back up original
-    if [ ! -f "${MOONRAKER_RC}.orig" ]; then
-        cp "$MOONRAKER_RC" "${MOONRAKER_RC}.orig"
-        log_success "Backed up original S56moonraker to ${MOONRAKER_RC}.orig"
-    fi
-
-    # Replace the CONF= line
-    sed -i "s|CONF=/usr/share/moonraker/moonraker.conf|CONF=/mnt/UDISK/printer_data/config/moonraker.conf|g" "$MOONRAKER_RC"
-    log_success "Patched S56moonraker to use /mnt/UDISK/printer_data/config/moonraker.conf"
+    log_error "Moonraker startup modification is not supported."
+    return 1
 }
 
-# Restore the original CONF= line
 unpatch_moonraker_startup() {
-    if [ -f "${MOONRAKER_RC}.orig" ]; then
-        cp "${MOONRAKER_RC}.orig" "$MOONRAKER_RC"
-        log_success "Restored original S56moonraker startup."
-        rm -f "${MOONRAKER_RC}.orig"
-    else
-        # Restore manually if backup is missing
-        sed -i "s|CONF=/mnt/UDISK/printer_data/config/moonraker.conf|CONF=/usr/share/moonraker/moonraker.conf|g" "$MOONRAKER_RC"
-        log_success "Restored S56moonraker CONF to stock path."
-    fi
+    log_error "Moonraker startup restoration is not supported."
+    return 1
 }
 
 # Add a section to our moonraker.conf (idempotent)
