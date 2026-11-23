@@ -106,4 +106,20 @@ with tempfile.TemporaryDirectory() as directory:
         raise AssertionError("Existing rollback backup must block overwrite")
     assert (backup / "index.html").read_text() == "old camera"
 
+with tempfile.TemporaryDirectory() as directory:
+    root = Path(directory)
+    target = root / "mainsail"
+    missing_stage = root / "missing-stage"
+    backup = root / "mainsail.previous-helper"
+    target.mkdir()
+    (target / "index.html").write_text("working camera")
+    try:
+        module.promote_staged_ui(missing_stage, target, backup)
+    except FileNotFoundError:
+        pass
+    else:
+        raise AssertionError("Missing stage must fail")
+    assert (target / "index.html").read_text() == "working camera"
+    assert not backup.exists(), "Original must be restored to active directory"
+
 print("PASS: offline camera JS preserved exactly; original UI unchanged")
