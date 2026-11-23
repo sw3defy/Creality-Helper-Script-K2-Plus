@@ -94,7 +94,7 @@ def validate_release_archive(archive):
                 path.is_absolute() or ".." in parts or
                 any(part in ("", ".") for part in parts) or
                 stat.S_ISLNK(mode) or
-                (mode and not (stat.S_ISREG(mode) or stat.S_ISDIR(mode)))):
+                (stat.S_IFMT(mode) not in (0, stat.S_IFREG, stat.S_IFDIR))):
                 raise RuntimeError("Unsafe release archive entry")
             canonical = raw.rstrip("/")
             if canonical in seen:
