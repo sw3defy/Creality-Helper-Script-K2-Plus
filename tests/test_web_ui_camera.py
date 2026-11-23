@@ -2,6 +2,7 @@
 """Offline tests: preserve original camera JS when replacing web UI assets."""
 import importlib.util
 import tempfile
+import zipfile
 from pathlib import Path
 
 script = Path(__file__).resolve().parents[1] / "scripts" / "web_ui_release.py"
@@ -60,4 +61,27 @@ with tempfile.TemporaryDirectory() as directory:
         pass
     else:
         raise AssertionError("Symlinked index must be rejected")
+with tempfile.TemporaryDirectory() as directory:
+    archive = Path(directory) / "release.zip"
+
+    def check_zip(entries, expected_failure=False):
+        with zipfile.ZipFile(archive, "w") as z:
+            for name, payload in entries:
+                z.writestr(name, payload)
+        if expected_failure:
+            try:
+                module.validate_release_archive(archive)
+            except RuntimeError:
+                pass
+            else:
+                raise AssertionError("Unsafe ZIP entry accepted: " + repr(entries))
+        else:
+            assert len(module.validate_release_archive(archive)) == len(entries)
+
+    check_zip([("index.html", "<html></html>"), ("assets/app.js", "ok")])
+    check_zip([("../index.html", "bad"), ("index.html", "ok")], True)
+    check_zip([("index.html", "ok"), ("index.html", "duplicate")], True)
+    check_zip([("assets/app.js", "no index")], True)
+    check_zip([("index.html", "ok"), ("assets\\\\escape.js", "bad")], True)
+
 print("PASS: offline camera JS preserved exactly; original UI unchanged")
