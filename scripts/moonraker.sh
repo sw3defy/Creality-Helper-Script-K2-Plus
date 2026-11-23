@@ -63,6 +63,11 @@ EOF
 }
 
 remove_moonraker_extensions() {
+    log_error "Moonraker Extensions removal is temporarily blocked."
+    log_warn "Legacy installs may share configuration with Timelapse and Update Manager."
+    log_warn "Back up and inspect the active startup path before removing anything."
+    return 1
+
     if ! is_installed "moonraker_extensions"; then
         log_info "Moonraker Extensions is not installed."
         return 0
