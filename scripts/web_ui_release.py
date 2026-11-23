@@ -78,33 +78,49 @@ def preserve_camera_scripts(source_index, staged_index):
     return True
 
 def validate_release_archive(archive):
-    """Reject unsafe or ambiguous ZIP members before extracting anything."""
+    """Reject unsafe ZIP members before extraction to a disposable directory."""
     with zipfile.ZipFile(str(archive)) as z:
         members = z.infolist()
         total = 0
         seen = set()
+        files = set()
+        directories = set()
         if len(members) > 20000:
             raise RuntimeError("Release contains too many entries")
         for member in members:
             raw = member.filename
             path = Path(raw)
             mode = member.external_attr >> 16
+            kind = stat.S_IFMT(mode)
             parts = path.parts
-            if (not raw or "\x00" in raw or "\\" in raw or
+            if (not raw or "\\x00" in raw or "\\\\" in raw or
                 path.is_absolute() or ".." in parts or
                 any(part in ("", ".") for part in parts) or
                 stat.S_ISLNK(mode) or
-                (stat.S_IFMT(mode) not in (0, stat.S_IFREG, stat.S_IFDIR))):
+                kind not in (0, stat.S_IFREG, stat.S_IFDIR)):
                 raise RuntimeError("Unsafe release archive entry")
             canonical = raw.rstrip("/")
             if canonical in seen:
                 raise RuntimeError("Duplicate release archive entry")
             seen.add(canonical)
+            is_dir = member.is_dir()
+            if is_dir and kind == stat.S_IFREG:
+                raise RuntimeError("Directory entry declared as regular file")
+            if not is_dir and kind == stat.S_IFDIR:
+                raise RuntimeError("File entry declared as directory")
+            if is_dir:
+                directories.add(canonical)
+            else:
+                files.add(canonical)
             total += member.file_size
             if total > MAX_UNPACKED:
                 raise RuntimeError("Expanded release exceeds size limit")
-        if "index.html" not in seen:
-            raise RuntimeError("Release missing index.html")
+        for path in files | directories:
+            parents = Path(path).parents
+            if any(str(parent) in files for parent in parents if str(parent) != "."):
+                raise RuntimeError("Archive file conflicts with nested path")
+        if "index.html" not in files:
+            raise RuntimeError("Release missing regular index.html")
         return members
 
 
