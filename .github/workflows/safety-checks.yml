@@ -13,5 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Shell syntax and safety invariants
         run: python3 tests/test_safety.py
+      - name: Offline Moonraker migration scenarios
+        run: python3 tests/test_moonraker_migration.py
       - name: Python syntax
-        run: python3 -m py_compile scripts/web_ui_release.py tests/test_safety.py
+        run: python3 -m py_compile scripts/web_ui_release.py scripts/moonraker_migration_plan.py tests/test_safety.py tests/test_moonraker_migration.py
