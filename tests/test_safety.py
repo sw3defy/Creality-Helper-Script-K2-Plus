@@ -73,6 +73,14 @@ for forbidden in ("patch_moonraker_startup", "unpatch_moonraker_startup", "resta
 if "return 1" not in moonraker_installer:
     failures.append("Moonraker installer must fail closed")
 
+system_source = (root / "scripts" / "system.sh").read_text()
+restart_body = system_source.split("restart_moonraker() {", 1)[1].split("\n}\n", 1)[0]
+for forbidden in ("kill \"$pid\"", "/etc/init.d/moonraker start", "/etc/rc.d/S56moonraker restart"):
+    if forbidden in restart_body:
+        failures.append("Moonraker restart has unverified mutation: " + forbidden)
+if "return 1" not in restart_body:
+    failures.append("Moonraker restart must fail closed until validated")
+
 if failures:
     for failure in failures:
         print("FAIL:", failure)
