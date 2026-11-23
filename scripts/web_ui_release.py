@@ -109,14 +109,12 @@ def validate_release_archive(archive):
 
 
 def promote_staged_ui(stage, target, backup):
-    """Promote a prepared directory; restore the original if promotion fails."""
+    """Promote prepared UI; retain or restore original on failure."""
     if backup.exists() or backup.is_symlink():
         raise RuntimeError("Previous rollback backup exists: " + str(backup))
     if target.is_symlink() or stage.is_symlink():
         raise RuntimeError("Refusing symlinked UI directory")
     swapped = False
-    # Keep the rollback directory on the same filesystem. If staging
-    # promotion fails, restore the previous UI and surface any failure.
     if target.exists():
         target.rename(backup)
         swapped = True
@@ -124,14 +122,14 @@ def promote_staged_ui(stage, target, backup):
         stage.rename(target)
     except Exception as install_error:
         if swapped:
-        try:
-            backup.rename(target)
-        except Exception as rollback_error:
-            raise RuntimeError(
-            "UI promotion failed AND automatic rollback failed. "
-            "Original UI remains at {}. Installation error: {}. "
-            "Rollback error: {}".format(backup, install_error, rollback_error)
-            ) from install_error
+            try:
+                backup.rename(target)
+            except Exception as rollback_error:
+                raise RuntimeError(
+                    "UI promotion AND automatic rollback failed. Original UI at {}. "
+                    "Install error: {}. Rollback error: {}".format(
+                        backup, install_error, rollback_error)
+                ) from install_error
         raise
     return swapped
 
