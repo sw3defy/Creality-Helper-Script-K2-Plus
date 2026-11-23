@@ -139,7 +139,12 @@ remove_entware() {
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
 
-    rm -rf /opt
+    # /opt is shared with HelixScreen and other software.
+    # Removing it would destroy unrelated applications.
+    log_error "Automatic Entware removal disabled: /opt is shared with HelixScreen."
+    log_warn "Use a reviewed per-package uninstall and preserve /opt/helixscreen."
+    return 1
+
     python3 -c "
 content = open('/etc/rc.local').read()
 content = content.replace('# Entware\n[ -f /opt/etc/init.d/rc.unslung ] && /opt/etc/init.d/rc.unslung start\nexport PATH=/opt/bin:/opt/sbin:\$PATH\n', '')
