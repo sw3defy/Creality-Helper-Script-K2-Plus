@@ -150,6 +150,14 @@ if not re.search(r'(?m)^\s*log_error "Camera removal is blocked', camera_remove)
 if 'Existing go2rtc, nginx, Mainsail, Fluidd' not in camera_remove:
     failures.append("Camera removal does not document preservation boundary")
 
+# Fluidd removal must not falsely report success while leaving files in place.
+fluidd_source = (root / "scripts" / "fluidd.sh").read_text()
+fluidd_remove = fluidd_source.split("remove_fluidd() {", 1)[1].split("status_fluidd() {", 1)[0]
+if not re.search(r'(?m)^\s*log_error "Fluidd removal/stock restoration is blocked', fluidd_remove):
+    failures.append("Fluidd removal must fail closed")
+if not re.search(r'(?m)^\s*return 1', fluidd_remove):
+    failures.append("Fluidd removal lacks early return")
+
 if failures:
     for failure in failures:
         print("FAIL:", failure)
