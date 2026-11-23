@@ -84,7 +84,7 @@ main_menu() {
     echo -e "   ${YELLOW}22)${NC} ${GREEN}Restart Nginx${NC}"
     echo -e "   ${YELLOW}23)${NC} ${GREEN}View Klipper log${NC}"
     echo -e "   ${YELLOW}24)${NC} ${GREEN}View Moonraker log${NC}"
-    echo -e "   ${YELLOW}25)${NC} ${GREEN}Show installed features${NC}"
+    echo -e "   ${YELLOW}25)${NC} ${GREEN}Show installed features${NC}"\n    echo -e "   ${YELLOW}26)${NC} ${GREEN}Check add-on updates (read-only)${NC}"
     echo ""
     echo -e "    ${YELLOW}0)${NC} ${RED}Exit${NC}"
     echo ""
@@ -125,7 +125,7 @@ handle_choice() {
         22) sh "$SCRIPTS_DIR/system.sh" restart_nginx ;;
         23) tail -50 "$LOGS_DIR/klippy.log" | less ;;
         24) tail -50 "$LOGS_DIR/moonraker.log" | less ;;
-        25) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
+        25) sh "$SCRIPTS_DIR/system.sh" show_installed ;;\n        26) sh "$SCRIPTS_DIR/check_updates.sh" ;;
         0)  echo ""; echo "Goodbye!"; echo ""; exit 0 ;;
         *)  echo -e "${RED}Invalid choice.${NC}"; sleep 1 ;;
     esac
