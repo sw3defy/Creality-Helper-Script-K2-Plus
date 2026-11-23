@@ -147,6 +147,9 @@ def main():
             print("Preserved existing camera UI script in staged {} release".format(name))
         if backup.exists() or backup.is_symlink():
             raise RuntimeError("Previous rollback backup exists: " + str(backup))
+        # Write metadata in the staging tree, before any live directory swap.
+        # A failure here must leave the existing UI and camera untouched.
+        (stage / ".helper-release-version").write_text(version + "\n")
         if target.exists():
             target.rename(backup)
             swapped = True
@@ -156,7 +159,6 @@ def main():
             if swapped:
                 backup.rename(target)
             raise
-        (target / ".helper-release-version").write_text(version + "\n")
         print("Installed {} {}. Rollback directory: {}".format(name, version, backup if swapped else "none"))
         print("No nginx, Moonraker, Klipper or camera services were restarted.")
     finally:
