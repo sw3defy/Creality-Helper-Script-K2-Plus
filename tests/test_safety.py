@@ -158,6 +158,14 @@ if not re.search(r'(?m)^\s*log_error "Fluidd removal/stock restoration is blocke
 if not re.search(r'(?m)^\s*return 1', fluidd_remove):
     failures.append("Fluidd removal lacks early return")
 
+# Require the early fail-closed return before any legacy camera/Fluidd
+# mutation. Merely containing a return somewhere later is insufficient.
+for feature, body in (("camera", camera_remove), ("fluidd", fluidd_remove)):
+    prefix = body.split("return 1", 1)[0]
+    for forbidden in ("rm -f", "sed -i", "mark_removed", "restart_nginx", "open('/etc/", "killall"):
+        if forbidden in prefix:
+            failures.append(feature + " removal performs mutation before safety return: " + forbidden)
+
 if failures:
     for failure in failures:
         print("FAIL:", failure)
