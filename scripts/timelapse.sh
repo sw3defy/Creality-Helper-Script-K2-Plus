@@ -21,7 +21,8 @@ install_timelapse() {
 
     if ! is_installed "moonraker_extensions"; then
         log_warn "Moonraker Extensions not installed. Installing now (required for timelapse)..."
-        sh "$SCRIPT_DIR/scripts/moonraker.sh" install
+        log_error "Moonraker Extensions must be validated first; aborting Timelapse install."
+        return 1
     fi
 
     log_info "Downloading moonraker-timelapse..."
