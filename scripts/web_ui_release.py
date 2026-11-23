@@ -53,8 +53,19 @@ def extract_camera_scripts(index_path):
             raise RuntimeError("Cannot isolate camera customization: " + name)
     if len(scripts) > 1:
         raise RuntimeError("Multiple camera scripts require manual review")
-    if any(token in content for token in ("go2rtc_keepalive", "var cameraReady")) and not scripts:
-        raise RuntimeError("Unknown legacy camera injection requires manual review")
+    # A partially installed or mixed-generation camera injection is not safe
+    # to transplant automatically: retain the working UI for manual review.
+    legacy_tokens = ("go2rtc_keepalive", "var cameraReady")
+    if any(token in content for token in legacy_tokens):
+        raise RuntimeError("Legacy camera injection requires manual review")
+    if len(scripts) == 1:
+        script = scripts[0]
+        for name in CAMERA_FUNCTIONS:
+            if len(re.findall(r"\\bfunction\\s+" + name + r"\\s*\\(", content)) > 1:
+                raise RuntimeError("Duplicate camera function requires manual review")
+        if not any(re.search(r"\\bfunction\\s+" + name + r"\\s*\\(", script)
+                   for name in CAMERA_FUNCTIONS):
+            raise RuntimeError("Camera script cannot be isolated")
     return scripts
 
 def has_camera_customization(index_path):
