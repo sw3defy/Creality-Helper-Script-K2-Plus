@@ -8,6 +8,11 @@ MOONRAKER_CONF=$CONFIG_DIR/moonraker.conf
 STOCK_MOONRAKER_CONF=/usr/share/moonraker/moonraker.conf
 
 install_moonraker_extensions() {
+    log_error "Moonraker Extensions installation is temporarily blocked."
+    log_warn "The previous wrapper can create recursive includes and break Update Manager."
+    log_warn "A firmware-specific, backed-up migration is required before enabling."
+    return 1
+
 
     if is_installed "moonraker_extensions"; then
         log_info "Moonraker Extensions is already installed."
