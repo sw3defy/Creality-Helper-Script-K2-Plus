@@ -10,8 +10,6 @@ K2RTC=$SCRIPT_DIR/k2rtc.py
 WATCHDOG=$SCRIPT_DIR/camera_watchdog.py
 
 install_camera() {
-    log_error "Camera installation modifies startup scripts, nginx, Moonraker webcams and web assets; blocked pending rollback validation."
-    return 1
 
     echo ""
     echo ""
