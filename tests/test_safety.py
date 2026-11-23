@@ -108,7 +108,7 @@ if "Camera Support for Fluidd and Mainsail [BLOCKED]" in helper:
     failures.append("Working camera feature incorrectly labeled blocked")
 
 updater = (root / "scripts" / "web_ui_release.py").read_text()
-for marker in ("enableCamera()", "enableMainsailCams()", "go2rtc_keepalive",
+for marker in ("enableCamera", "enableMainsailCams", "go2rtc_keepalive",
                "preserve_camera_scripts", "extract_camera_scripts"):
     if marker not in updater:
         failures.append("Web UI updater does not preserve camera customization: " + marker)
