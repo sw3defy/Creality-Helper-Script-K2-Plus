@@ -31,6 +31,9 @@ guards = {
     "useful_macros.sh": ["install_useful_macros", "remove_useful_macros"],
     "shapers.sh": ["install_shapers", "remove_shapers"],
     "helixscreen.sh": ["install_helixscreen", "remove_helixscreen"],
+    "camera.sh": ["install_camera"],
+    "entware.sh": ["install_entware"],
+    "backup.sh": ["restore_config"],
     "z_offset.sh": ["install_z_offset", "remove_z_offset"],
 }
 for name, functions in guards.items():
