@@ -15,6 +15,7 @@ ACTIVE = Path("/mnt/UDISK/printer_data/config")
 SHARE = Path("/usr/share/klipper/config")
 MAX_BYTES = 2 * 1024 * 1024
 CONFIG_EXTENSIONS = {".cfg", ".conf"}
+BACKUP = re.compile(r"^(?:printer|moonraker)-\\d{8}_\\d{6}\\.(?:cfg|conf)$", re.I)
 SAFE_NAME = re.compile(r"^[a-zA-Z0-9_.-]+$")
 SENSITIVE = re.compile(r"password|passwd|secret|token|api[_-]?key|credential|ssid|wifi|wpa|authorization|private", re.I)
 SECTION = re.compile(r"^\s*\[([^\]]+)\]\s*(?:[#;].*)?$")
@@ -41,7 +42,7 @@ def inventory(base, title):
         for name in sorted(files):
             path = Path(directory) / name
             relative = path.relative_to(base)
-            if path.is_symlink() or path.suffix.lower() not in CONFIG_EXTENSIONS:
+            if path.is_symlink() or path.suffix.lower() not in CONFIG_EXTENSIONS or BACKUP.match(name):
                 continue
             if any(not SAFE_NAME.fullmatch(part) for part in relative.parts):
                 continue
@@ -82,7 +83,40 @@ def main():
     stock = inventory(STOCK, "Stock ROM Klipper config")
     share = inventory(SHARE, "Installed share Klipper config")
     active = inventory(ACTIVE, "Active UDISK config")
-    print("\n### Same-relative-path comparisons (active vs ROM)")
+    print("\\n### Active Klipper include graph (static; does not expand wildcards)")
+    visited = set()
+    definitions = {}
+    def walk(relative):
+        if relative in visited:
+            return
+        visited.add(relative)
+        entry = active.get(relative)
+        if entry is None:
+            print("MISSING INCLUDE:", relative)
+            return
+        for section in entry[1]:
+            if section.lower().startswith("gcode_macro "):
+                macro = section[12:].strip().upper()
+                definitions.setdefault(macro, []).append(relative)
+        for inc in entry[2]:
+            if "*" in inc or "?" in inc or "[" in inc:
+                print("UNRESOLVED GLOB:", relative, "->", inc)
+                continue
+            import posixpath
+            target = posixpath.normpath(posixpath.join(posixpath.dirname(relative), inc))
+            if target.startswith("../") or target.startswith("/"):
+                print("OUTSIDE SCAN:", relative, "->", inc)
+                continue
+            walk(target)
+    walk("printer.cfg")
+    print("Included config files:", len(visited))
+    print("Macro name collisions (included files only):")
+    collisions = {name: files for name, files in definitions.items() if len(files) > 1}
+    if not collisions:
+        print("None found in resolved files; this is not a runtime validation.")
+    for name, files in sorted(collisions.items()):
+        print("COLLISION:", name, "in", ", ".join(files))
+    print("\\n### Same-relative-path comparisons (active vs ROM)")
     for name in sorted(set(active) & set(stock)):
         print("{}: {}".format(name, "IDENTICAL" if active[name][0] == stock[name][0] else "DIFFERENT"))
     print("\n### Same-relative-path comparisons (active vs share)")
