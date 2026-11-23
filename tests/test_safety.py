@@ -66,6 +66,13 @@ for marker in ("OFFLINE MIGRATION ASSESSMENT", "Refusing live printer paths", "C
     if marker not in source:
         failures.append("Migration assessment missing safety marker: " + marker)
 
+moonraker_installer = (root / "scripts" / "moonraker.sh").read_text()
+for forbidden in ("patch_moonraker_startup", "unpatch_moonraker_startup", "restart_moonraker", "sed -i", "mv \"$MOONRAKER_CONF\"", "add_moonraker_section"):
+    if forbidden in moonraker_installer:
+        failures.append("Moonraker installer still contains legacy mutation: " + forbidden)
+if "return 1" not in moonraker_installer:
+    failures.append("Moonraker installer must fail closed")
+
 if failures:
     for failure in failures:
         print("FAIL:", failure)
