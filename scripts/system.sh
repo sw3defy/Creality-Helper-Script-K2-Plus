@@ -35,10 +35,11 @@ restart_klipper() {
 }
 
 restart_moonraker() {
-    # The inspected K2 Plus uses /etc/rc.d/S56moonraker and a UDISK
-    # configuration. The old kill-all and legacy service-start
-    # sequence could leave the API offline. Fail closed until a firmware-
-    # specific, tested restart procedure and health check are available.
+    # Live K2 Plus diagnostics (2026-11-23) found stock /etc/init.d/moonraker
+    # loading /usr/share/moonraker/moonraker.conf, which already includes
+    # the UDISK extension file. A separately modified /etc/rc.d/S56moonraker
+    # instead loads that extension-only file directly. Three processes and
+    # port/socket errors were observed. Never kill or restart blindly.
     log_error "Moonraker restart is blocked pending firmware-specific validation."
     log_warn "No Moonraker processes were killed and no service was restarted."
     return 1
@@ -102,6 +103,43 @@ show_installed() {
     echo ""
 }
 
+# Read-only checks for the K2 Plus Moonraker startup mismatch.
+# Does not create directories, edit services, restart processes or expose tokens.
+diagnose_moonraker_startup() {
+    stock=/usr/share/moonraker/moonraker.conf
+    extension=/mnt/UDISK/printer_data/config/moonraker.conf
+    boot=/etc/rc.d/S56moonraker
+    service=/etc/init.d/moonraker
+    log_info "Moonraker startup diagnostic (read-only)"
+    for file in "$stock" "$extension" "$boot" "$service"; do
+        if [ -f "$file" ]; then
+            log_info "Present: $file"
+        else
+            log_warn "Missing: $file"
+        fi
+    done
+    if [ -f "$stock" ] && grep -Fq "[include $extension]" "$stock"; then
+        log_info "Stock configuration includes UDISK extensions"
+    else
+        log_warn "Stock configuration does not include expected UDISK extension"
+    fi
+    if [ -f "$boot" ] && grep -Fq "CONF=$extension" "$boot"; then
+        log_warn "Boot script points directly at extension-only configuration"
+    fi
+    if [ -f "$service" ] && grep -Fq "CONF=$stock" "$service"; then
+        log_info "Stock service uses full Moonraker configuration"
+    fi
+    if [ -d /mnt/UDISK/printer_data/comms ]; then
+        log_info "Moonraker communication directory exists"
+    else
+        log_warn "Moonraker communication directory is missing"
+    fi
+    if [ -f /etc/rc.d/S56moonraker.orig ]; then
+        log_warn "Executable-name-style backup remains in /etc/rc.d; inspect before changing"
+    fi
+    log_info "No changes made"
+}
+
 # ── printer.cfg include management ───────────────────────────────────────────
 
 # Add an [include filename.cfg] line to printer.cfg if not already present
@@ -146,7 +184,8 @@ MOONRAKER_RC_BAK=/mnt/UDISK/helper-script/.S56moonraker.orig
 MOONRAKER_STOCK_CONF=/usr/share/moonraker/moonraker.conf
 
 # Historical startup patching and restoration are intentionally disabled.
-# The inspected printer already uses the UDISK Moonraker config.
+# The inspected printer's stock config includes the UDISK extension config;
+# the modified /etc/rc.d/S56moonraker incorrectly uses the extension as root.
 patch_moonraker_startup() {
     log_error "Moonraker startup modification is not supported."
     return 1
@@ -417,6 +456,7 @@ $include_line
 case "$1" in
     restart_klipper)   restart_klipper ;;
     restart_moonraker) restart_moonraker ;;
+    diagnose_moonraker_startup) diagnose_moonraker_startup ;;
     restart_nginx)     restart_nginx ;;
     restart_camera)    restart_camera ;;
     show_installed)    show_installed ;;
