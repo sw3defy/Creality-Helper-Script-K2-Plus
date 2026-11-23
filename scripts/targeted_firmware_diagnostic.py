@@ -7,8 +7,8 @@ import sys
 ROOT = Path("/mnt/UDISK/printer_data/config")
 MACROS = {"M106", "M107", "AUTOTUNE_SHAPERS"}
 SENSITIVE = re.compile(r"password|passwd|secret|token|api[_-]?key|credential|ssid|wifi|wpa|authorization|private|https?://", re.I)
-HEADER = re.compile(r"^\\s*\\[([^]]+)\\]\\s*(?:[#;].*)?$")
-INCLUDE = re.compile(r"^\\s*\\[include\\s+([^]]+)\\]", re.I)
+HEADER = re.compile(r"^\s*\[([^]]+)\]\s*(?:[#;].*)?$")
+INCLUDE = re.compile(r"^\s*\[include\s+([^]]+)\]", re.I)
 MAX_BYTES = 1024 * 1024
 
 def safe_lines(path):
@@ -28,7 +28,7 @@ def macro_report():
     print("### Targeted macro definitions")
     for name in ("printer.cfg", "gcode_macro.cfg", "fans_control.cfg", "shapers_calibration.cfg"):
         path = ROOT / name
-        print("\\nFILE:", path, "FOUND" if path.is_file() else "MISSING")
+        print("\nFILE:", path, "FOUND" if path.is_file() else "MISSING")
         lines = safe_lines(path)
         if not lines:
             continue
@@ -47,7 +47,7 @@ def macro_report():
                 print("[TRUNCATED SECTION]")
 
 def moonraker_report():
-    print("\\n### Moonraker startup references (read-only)")
+    print("\n### Moonraker startup references (read-only)")
     paths = [
         Path("/etc/rc.d/S56moonraker"),
         Path("/etc/init.d/S56moonraker"),
@@ -56,11 +56,11 @@ def moonraker_report():
     ]
     for path in paths:
         lines = safe_lines(path)
-        print("\\nFILE:", path, "FOUND" if path.is_file() else "MISSING")
+        print("\nFILE:", path, "FOUND" if path.is_file() else "MISSING")
         for i, line in enumerate(lines):
-            if re.search(r"moonraker\\.conf|moonraker\\.py|CONF=|\\[include\\s|\\[file_manager\\]|\\[timelapse\\]|\\[update_manager", line, re.I):
+            if re.search(r"moonraker\.conf|moonraker\.py|CONF=|\[include\s|\[file_manager\]|\[timelapse\]|\[update_manager", line, re.I):
                 print("{:04d}: {}".format(i + 1, redact(line)))
-    print("\\nRuntime process command lines are intentionally not collected.")
+    print("\nRuntime process command lines are intentionally not collected.")
     print("Startup configuration cannot be conclusively established from these references alone.")
 
 if __name__ == "__main__":
@@ -68,4 +68,4 @@ if __name__ == "__main__":
     print("Review output for sensitive information before sharing.")
     macro_report()
     moonraker_report()
-    print("\\nEND")
+    print("\nEND")
