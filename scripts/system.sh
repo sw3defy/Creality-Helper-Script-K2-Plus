@@ -35,24 +35,13 @@ restart_klipper() {
 }
 
 restart_moonraker() {
-    if [ "$1" != "force" ]; then
-        printf "Restart Moonraker? [y/n]: "
-        read confirm
-        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
-    fi
-    log_info "Restarting Moonraker..."
-    # Kill ALL running moonraker instances (stock + helper script)
-    for pid in $(ps aux | grep moonraker.py | grep -v grep | awk '{print $1}'); do
-        kill "$pid" 2>/dev/null
-    done
-    sleep 2
-    /etc/init.d/moonraker start
-    sleep 3
-    if pgrep -f "moonraker.py" > /dev/null; then
-        log_success "Moonraker restarted successfully."
-    else
-        log_error "Moonraker failed to restart. Check $LOGS_DIR/moonraker.log"
-    fi
+    # The inspected K2 Plus uses /etc/rc.d/S56moonraker and a UDISK
+    # configuration. The old kill-all + /etc/init.d/moonraker start
+    # sequence could leave the API offline. Fail closed until a firmware-
+    # specific, tested restart procedure and health check are available.
+    log_error "Moonraker restart is blocked pending firmware-specific validation."
+    log_warn "No Moonraker processes were killed and no service was restarted."
+    return 1
 }
 
 restart_nginx() {
