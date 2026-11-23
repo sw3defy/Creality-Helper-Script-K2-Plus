@@ -108,6 +108,34 @@ def validate_release_archive(archive):
         return members
 
 
+def promote_staged_ui(stage, target, backup):
+    """Promote a prepared directory; restore the original if promotion fails."""
+    if backup.exists() or backup.is_symlink():
+        raise RuntimeError("Previous rollback backup exists: " + str(backup))
+    if target.is_symlink() or stage.is_symlink():
+        raise RuntimeError("Refusing symlinked UI directory")
+    swapped = False
+    # Keep the rollback directory on the same filesystem. If staging
+    # promotion fails, restore the previous UI and surface any failure.
+    if target.exists():
+        target.rename(backup)
+        swapped = True
+    try:
+        stage.rename(target)
+    except Exception as install_error:
+        if swapped:
+        try:
+            backup.rename(target)
+        except Exception as rollback_error:
+            raise RuntimeError(
+            "UI promotion failed AND automatic rollback failed. "
+            "Original UI remains at {}. Installation error: {}. "
+            "Rollback error: {}".format(backup, install_error, rollback_error)
+            ) from install_error
+        raise
+    return swapped
+
+
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in PROJECTS:
         raise SystemExit("Usage: web_ui_release.py fluidd|mainsail")
@@ -170,24 +198,7 @@ def main():
         # Write metadata in the staging tree, before any live directory swap.
         # A failure here must leave the existing UI and camera untouched.
         (stage / ".helper-release-version").write_text(version + "\n")
-        # Keep the rollback directory on the same filesystem. If staging
-        # promotion fails, restore the previous UI and surface any failure.
-        if target.exists():
-            target.rename(backup)
-            swapped = True
-        try:
-            stage.rename(target)
-        except Exception as install_error:
-            if swapped:
-                try:
-                    backup.rename(target)
-                except Exception as rollback_error:
-                    raise RuntimeError(
-                        "UI promotion failed AND automatic rollback failed. "
-                        "Original UI remains at {}. Installation error: {}. "
-                        "Rollback error: {}".format(backup, install_error, rollback_error)
-                    ) from install_error
-            raise
+        swapped = promote_staged_ui(stage, target, backup)
         print("Installed {} {}. Rollback directory: {}".format(name, version, backup if swapped else "none"))
         print("No nginx, Moonraker, Klipper or camera services were restarted.")
     finally:
