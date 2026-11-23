@@ -58,16 +58,18 @@ install_helixscreen() {
                 fi
                 log_success "HelixScreen updater completed."
                 echo "  A controlled reboot is required before further installations."
-                printf "  Reboot the printer now? [y/n]: "
-                read reboot_confirm
-                case "$reboot_confirm" in
-                    y|Y) reboot ;;
-                    *) log_warn "Reboot deferred. Do not install further add-ons until rebooted." ;;
-                esac
+                log_warn "Reboot is mandatory after HelixScreen update."
+                sleep 10
+                reboot
                 return 0 ;;
             *) log_info "Cancelled."; return 0 ;;
         esac
     fi
+
+    log_error "Fresh HelixScreen installation is paused pending verification of the installer download."
+    log_warn "The legacy installer downloads and executes an unverified script over HTTP."
+    log_warn "Do not bypass this safeguard until a trusted HTTPS source is confirmed."
+    return 1
 
     log_info "Downloading and installing HelixScreen..."
     python3 -c "
@@ -125,6 +127,9 @@ except: pass
 }
 
 remove_helixscreen() {
+    log_error "HelixScreen removal is paused pending verified local uninstall and recovery checks."
+    return 1
+
     if ! is_installed "helixscreen"; then
         log_info "HelixScreen is not installed."
         return 0
