@@ -90,6 +90,23 @@ for forbidden in ("urlopen(", "http://", "sh \"$HELIX_INSTALL\" --update", "rebo
     if forbidden in helix:
         failures.append("HelixScreen installer contains unverified mutation: " + forbidden)
 
+# Camera fix is an explicitly preserved working feature. Do not block it
+# while auditing unrelated installers or accidentally remove its menu route.
+camera_source = (root / "scripts" / "camera.sh").read_text()
+camera_install = camera_source.split("install_camera() {", 1)[1].split("\nremove_camera() {", 1)[0]
+for required in ("go2rtc", "camera_watchdog.py", "nginx_go2rtc.py",
+                 "server/webcams/item", "mark_installed \"camera_support\""):
+    if required not in camera_install:
+        failures.append("Existing camera installation missing: " + required)
+if re.search(r"install_camera\(\) \{\s*log_error", camera_source):
+    failures.append("Working camera installer was unexpectedly blocked")
+if '11) sh "$SCRIPTS_DIR/camera.sh" install' not in helper:
+    failures.append("Camera install menu route missing")
+if '11) sh "$SCRIPTS_DIR/camera.sh" remove' not in helper:
+    failures.append("Camera removal menu route missing")
+if "Camera Support for Fluidd and Mainsail [BLOCKED]" in helper:
+    failures.append("Working camera feature incorrectly labeled blocked")
+
 if failures:
     for failure in failures:
         print("FAIL:", failure)
