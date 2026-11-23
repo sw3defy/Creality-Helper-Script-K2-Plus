@@ -4,6 +4,9 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 . "$SCRIPT_DIR/scripts/system.sh"
 
 install_entware() {
+    log_error "Entware bootstrap uses unverified HTTP pipe-to-shell and changes shared /opt; blocked pending trusted install procedure."
+    return 1
+
     echo ""
     echo "======================================================"
     echo "  Entware Package Manager"
