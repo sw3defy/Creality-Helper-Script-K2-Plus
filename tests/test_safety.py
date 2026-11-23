@@ -57,6 +57,15 @@ p = subprocess.run([sys.executable, "-m", "py_compile", str(root / "scripts" / "
 if p.returncode:
     failures.append("Firmware Inspector syntax: " + p.stderr.strip())
 
+assessment = root / "scripts" / "migration_assessment.py"
+p = subprocess.run([sys.executable, "-m", "py_compile", str(assessment)], capture_output=True, text=True)
+if p.returncode:
+    failures.append("Migration assessment syntax: " + p.stderr.strip())
+source = assessment.read_text()
+for marker in ("OFFLINE MIGRATION ASSESSMENT", "Refusing live printer paths", "COLLISION:", "no automatic edits"):
+    if marker not in source:
+        failures.append("Migration assessment missing safety marker: " + marker)
+
 if failures:
     for failure in failures:
         print("FAIL:", failure)
