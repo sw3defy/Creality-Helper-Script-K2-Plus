@@ -29,4 +29,33 @@ if [ -f "$STOCK" ] && [ -f "$USER" ]; then
         exit 2
     fi
 fi
+echo
+echo "OpenWrt service topology:"
+if [ -L "$RC" ]; then
+    target=$(readlink "$RC")
+    echo "Startup symlink target: $target"
+    if [ "$target" = "../init.d/moonraker" ]; then
+        echo "OK: canonical Moonraker startup symlink"
+    else
+        echo "WARNING: unexpected Moonraker startup symlink target"
+    fi
+elif [ -f "$RC" ]; then
+    echo "WARNING: startup entry is a regular file, not the canonical service symlink"
+else
+    echo "WARNING: Moonraker startup entry missing"
+fi
+if [ -f /etc/init.d/moonraker ]; then
+    grep -n '^CONF=' /etc/init.d/moonraker || :
+fi
+echo
+echo "Moonraker process inventory:"
+ps | grep '[m]oonraker.py' || :
+echo
+echo "Procd Moonraker registration:"
+if command -v ubus >/dev/null 2>&1; then
+    ubus call service list '{"name":"moonraker","verbose":true}' || :
+else
+    echo "ubus unavailable"
+fi
+echo
 echo "No files were modified. Review output before installing extensions."
