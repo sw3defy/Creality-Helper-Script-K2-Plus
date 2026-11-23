@@ -43,8 +43,27 @@ install_helixscreen() {
         case "$subchoice" in
             1)
                 log_info "Updating HelixScreen..."
-                $HELIX_INSTALL --update
-                log_success "HelixScreen updated."
+                if [ ! -f "$HELIX_INSTALL" ]; then
+                    log_error "Local HelixScreen installer missing. Aborting update."
+                    return 1
+                fi
+                echo "  Updating HelixScreen can change the touchscreen boot path."
+                echo "  Verify a full printer backup and USB recovery plan first."
+                printf "  Type UPDATE to proceed: "
+                read approval
+                [ "$approval" = "UPDATE" ] || { log_info "Cancelled."; return 0; }
+                if ! sh "$HELIX_INSTALL" --update; then
+                    log_error "HelixScreen updater failed. Do NOT force power off."
+                    return 1
+                fi
+                log_success "HelixScreen updater completed."
+                echo "  A controlled reboot is required before further installations."
+                printf "  Reboot the printer now? [y/n]: "
+                read reboot_confirm
+                case "$reboot_confirm" in
+                    y|Y) reboot ;;
+                    *) log_warn "Reboot deferred. Do not install further add-ons until rebooted." ;;
+                esac
                 return 0 ;;
             *) log_info "Cancelled."; return 0 ;;
         esac
