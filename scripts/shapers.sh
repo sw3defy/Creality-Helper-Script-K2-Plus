@@ -6,6 +6,10 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 SHAPERS_CFG=$CONFIG_DIR/shapers_calibration.cfg
 
 install_shapers() {
+    log_error "Shaper macro installation is blocked pending firmware command validation."
+    log_warn "The old macros may invoke unsupported resonance parameters and homing."
+    return 1
+
 
     if is_installed "improved_shapers"; then
         log_info "Improved Shapers is already installed."
@@ -225,6 +229,9 @@ EOF
 }
 
 remove_shapers() {
+    log_error "Shaper removal blocked pending config ownership review."
+    return 1
+
     if ! is_installed "improved_shapers"; then
         log_info "Improved Shapers is not installed."
         return 0
