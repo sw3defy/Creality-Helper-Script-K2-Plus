@@ -248,6 +248,15 @@ restore_nginx_conf() {
 # ── Stock config patch (fix underscore prefix bug) ────────────────────────────
 
 patch_stock_configs() {
+    # Existing rc.local installations may call this at every boot.
+    # Fail closed: never rewrite CFS, motor tuning, mesh or camera-related
+    # paths without a separate reviewed migration.
+    log_warn "Automatic stock config patching is disabled for safety."
+    log_warn "No files were changed. Review firmware-specific fixes manually."
+    return 0
+}
+
+legacy_patch_stock_configs() {
     # Ensure /usr/bin/wget exists. Moonraker's shell_command subprocess
     # PATH does not include /opt/bin (where wget actually lives on this
     # firmware), causing "FileNotFoundError: wget" for every timelapse
@@ -364,7 +373,7 @@ patch_stock_configs() {
 
 # ── rc.local patch (ensure patch_stock_configs runs on every boot) ────────────
 
-install_rc_local_patch() {
+install_rc_local_patch() {\n    log_warn "Automatic boot patch installation disabled; requires reviewed migration."\n    return 0\n}\n\nlegacy_install_rc_local_patch() {
     local rc_local="/etc/rc.local"
     if grep -q "patch_stock_configs" "$rc_local" 2>/dev/null; then
         log_info "rc.local patch already installed."
@@ -383,7 +392,7 @@ install_rc_local_patch() {
 
 # ── Moonraker include fix (ensure UDISK moonraker.conf is actually loaded) ────
 
-install_moonraker_include() {
+install_moonraker_include() {\n    log_warn "Automatic Moonraker include patch disabled; requires reviewed migration."\n    return 0\n}\n\nlegacy_install_moonraker_include() {
     local real_conf="/usr/share/moonraker/moonraker.conf"
     local udisk_conf="$CONFIG_DIR/moonraker.conf"
     local include_line="[include $udisk_conf]"
