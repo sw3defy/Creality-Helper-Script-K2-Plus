@@ -9,6 +9,10 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 MACROS_CFG=$CONFIG_DIR/useful_macros.cfg
 
 install_useful_macros() {
+    log_error "Useful Macros installation is blocked pending collision and motion-safety review."
+    log_warn "CHAMBER_* macros overlap Fans Control and Z_TILT_CALIBRATE may be stock-defined."
+    return 1
+
 
     if is_installed "useful_macros"; then
         log_info "Useful Macros is already installed."
@@ -180,6 +184,9 @@ CFGEOF
 }
 
 remove_useful_macros() {
+    log_error "Automatic removal is blocked pending config ownership review."
+    return 1
+
     if ! is_installed "useful_macros"; then
         log_info "Useful Macros is not installed."
         return 0
