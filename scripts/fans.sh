@@ -47,17 +47,7 @@ gcode:
   SET_FAN0 S={( s.fan0_speed * 255 )|int}
   SET_FAN2 S={( s.fan2_speed * 255 )|int}
 
-# ── Part cooling fan (fan0) ───────────────────────────────────────────────────
-
-[gcode_macro SET_FAN0]
-description: Set part cooling fan speed. S=0-255
-gcode:
-  {% set speed = params.S|default(0)|int %}
-  {% set pwm = (speed / 255.0)|round(4) %}
-  SET_PIN PIN=fan0_en VALUE={% if speed > 0 %}1{% else %}0{% endif %}
-  SET_PIN PIN=fan0 VALUE={pwm}
-
-# ── Aux fan (fan2) ────────────────────────────────────────────────────────────
+# ── Stock M106/M107 remain owned by Creality gcode_macro.cfg ──\n# Helper fan commands use distinct names and must not override M106/M107.\n\n# ── Part cooling fan (fan0) ───────────────────────────────────────────────────\n\n[gcode_macro SET_FAN0]\ndescription: Set part cooling fan speed. S=0-255\ngcode:\n  {% set speed = params.S|default(0)|int %}\n  {% set pwm = (speed / 255.0)|round(4) %}\n  SET_PIN PIN=fan0_en VALUE={% if speed > 0 %}1{% else %}0{% endif %}\n  SET_PIN PIN=fan0 VALUE={pwm}\n\n# ── Aux fan (fan2) ────────────────────────────────────────────────────────────
 
 [gcode_macro SET_FAN2]
 description: Set aux fan speed. S=0-255
