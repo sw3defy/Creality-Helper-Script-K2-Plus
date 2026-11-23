@@ -6,6 +6,7 @@ The caller must explicitly confirm the selected release. This script only
 changes /usr/share/{fluidd,mainsail}; no service restarts are performed.
 """
 import json
+import re
 import os
 from pathlib import Path
 import shutil
@@ -29,17 +30,52 @@ def get_json(url):
     with urllib.request.urlopen(request, timeout=20) as response:
         return json.load(response)
 
-def has_camera_customization(index_path):
-    """Read-only check for the existing K2 camera UI injections."""
+# Camera customizations are maintained by the existing camera installer.
+# Preserve its exact script, not a guessed replacement. Reject ambiguous cases.
+CAMERA_FUNCTIONS = ("enableCamera", "enableMainsailCams")
+CAMERA_BLOCK = re.compile(r"<script\\b[^>]*>[\\s\\S]*?</script\\s*>", re.I)
+
+def extract_camera_scripts(index_path):
     if index_path.is_symlink():
         raise RuntimeError("Refusing symlinked web UI index")
     if not index_path.is_file():
-        return False
-    current_text = index_path.read_text(encoding="utf-8", errors="replace")
-    markers = ("enableCamera()", "enableMainsailCams()",
-               "go2rtc_keepalive", "var cameraReady")
-    return any(marker in current_text for marker in markers)
+        return []
+    content = index_path.read_text(encoding="utf-8", errors="replace")
+    scripts = []
+    for block in CAMERA_BLOCK.findall(content):
+        if any(re.search(r"\\bfunction\\s+" + name + r"\\s*\\(", block)
+               for name in CAMERA_FUNCTIONS):
+            scripts.append(block)
+    for name in CAMERA_FUNCTIONS:
+        if re.search(r"\\bfunction\\s+" + name + r"\\s*\\(", content) and not any(
+            re.search(r"\\bfunction\\s+" + name + r"\\s*\\(", block) for block in scripts
+        ):
+            raise RuntimeError("Cannot isolate camera customization: " + name)
+    if len(scripts) > 1:
+        raise RuntimeError("Multiple camera scripts require manual review")
+    if any(token in content for token in ("go2rtc_keepalive", "var cameraReady")) and not scripts:
+        raise RuntimeError("Unknown legacy camera injection requires manual review")
+    return scripts
 
+def has_camera_customization(index_path):
+    return bool(extract_camera_scripts(index_path))
+
+def preserve_camera_scripts(source_index, staged_index):
+    scripts = extract_camera_scripts(source_index)
+    if not scripts:
+        return False
+    if staged_index.is_symlink() or not staged_index.is_file():
+        raise RuntimeError("Missing or symlinked staged UI index")
+    content = staged_index.read_text(encoding="utf-8")
+    if any(re.search(r"\\bfunction\\s+" + name + r"\\s*\\(", content)
+           for name in CAMERA_FUNCTIONS):
+        raise RuntimeError("Staged UI already has camera customization; manual review required")
+    if content.lower().count("</body>") != 1:
+        raise RuntimeError("Staged UI has no unique closing body tag")
+    content = re.sub(r"</body>", lambda match: "\\n".join(scripts) + "\\n" + match.group(),
+                     content, count=1, flags=re.I)
+    staged_index.write_text(content, encoding="utf-8")
+    return True
 
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in PROJECTS:
@@ -52,11 +88,10 @@ def main():
     # The existing camera fix injects UI-specific JavaScript into index.html.
     # Replacing web assets would silently erase that working integration.
     # Keep the camera untouched and refuse this unrelated update instead.
-    if has_camera_customization(target / "index.html"):
-        raise RuntimeError(
-            "Existing camera UI customization detected; web UI update postponed "
-            "to avoid removing the working camera fix. No changes made."
-        )
+    # Capture no camera files here; preserve the exact existing injection
+    # only after archive validation and before replacing the live UI.
+    camera_index = target / "index.html"
+    extract_camera_scripts(camera_index)
     release = get_json("https://api.github.com/repos/{}/releases/latest".format(repo))
     assets = [a for a in release.get("assets", []) if a.get("name") == asset_name]
     if len(assets) != 1:
@@ -109,6 +144,9 @@ def main():
             z.extractall(str(stage))
         if not (stage / "index.html").is_file():
             raise RuntimeError("Release missing index.html; original installation untouched")
+        preserved_camera = preserve_camera_scripts(camera_index, stage / "index.html")
+        if preserved_camera:
+            print("Preserved existing camera UI script in staged {} release".format(name))
         if backup.exists() or backup.is_symlink():
             raise RuntimeError("Previous rollback backup exists: " + str(backup))
         if target.exists():
