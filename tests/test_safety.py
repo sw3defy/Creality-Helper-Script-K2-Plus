@@ -30,6 +30,7 @@ guards = {
     "fans.sh": ["install_fans", "remove_fans"],
     "useful_macros.sh": ["install_useful_macros", "remove_useful_macros"],
     "shapers.sh": ["install_shapers", "remove_shapers"],
+    "helixscreen.sh": ["install_helixscreen", "remove_helixscreen"],
     "z_offset.sh": ["install_z_offset", "remove_z_offset"],
 }
 for name, functions in guards.items():
@@ -80,6 +81,11 @@ for forbidden in ("kill \"$pid\"", "/etc/init.d/moonraker start", "/etc/rc.d/S56
         failures.append("Moonraker restart has unverified mutation: " + forbidden)
 if "return 1" not in restart_body:
     failures.append("Moonraker restart must fail closed until validated")
+
+helix = (root / "scripts" / "helixscreen.sh").read_text()
+for forbidden in ("urlopen(", "http://", "sh \"$HELIX_INSTALL\" --update", "reboot\n", "rm -rf"):
+    if forbidden in helix:
+        failures.append("HelixScreen installer contains unverified mutation: " + forbidden)
 
 if failures:
     for failure in failures:
