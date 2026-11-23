@@ -7,6 +7,9 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 FANS_CFG=$CONFIG_DIR/fans_control.cfg
 
 install_fans() {
+    log_error "Fans Control installation blocked pending stock pin and macro collision checks."
+    return 1
+
 
     if is_installed "fans_control_macros"; then
         log_info "Fans Control Macros is already installed."
@@ -116,6 +119,9 @@ EOF
 }
 
 remove_fans() {
+    log_error "Fans Control removal blocked pending config ownership review."
+    return 1
+
     if ! is_installed "fans_control_macros"; then
         log_info "Fans Control Macros is not installed."
         return 0
