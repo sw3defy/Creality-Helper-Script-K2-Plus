@@ -117,6 +117,20 @@ PYEOF
 
 install_fluidd() {
     echo ""
+    log_warn "This update replaces web assets only; nginx and camera configs are protected."
+    log_warn "Review Fluidd/Mainsail compatibility with your installed Moonraker first."
+    if python3 "$SCRIPT_DIR/scripts/web_ui_release.py" "fluidd"; then
+        mark_installed "fluidd_updated"
+        log_success "Web assets updated. No service restart performed."
+    else
+        log_error "Update cancelled or failed; installed state not changed."
+        return 1
+    fi
+    return 0
+}
+
+legacy_install_fluidd() {
+    echo ""
 
     # Detect whether this is a fresh install or a repair
     if [ -d "$FLUIDD_DIR" ] && [ -f "$FLUIDD_DIR/index.html" ]; then
@@ -200,8 +214,7 @@ remove_fluidd() {
     read confirm
     [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
     log_info "Restoring stock Fluidd nginx configuration..."
-    restore_fluidd_nginx_block
-    restart_nginx force
+    log_warn "Legacy nginx restoration disabled to preserve camera routes."
     mark_removed "fluidd_updated"
     echo ""
     log_success "Stock Fluidd nginx configuration restored."
@@ -241,7 +254,7 @@ status_fluidd() {
 case "$1" in
     install) install_fluidd ;;
     remove)  remove_fluidd ;;
-    restore) restore_fluidd_nginx_block; restart_nginx ;;
+    restore) log_error "Nginx restore disabled to protect camera configuration"; return 1 ;;
     status)  status_fluidd ;;
     *)       echo "Usage: $0 [install|remove|restore|status]" ;;
 esac
