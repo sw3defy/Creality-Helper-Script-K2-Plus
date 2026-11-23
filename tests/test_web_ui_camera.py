@@ -84,4 +84,26 @@ with tempfile.TemporaryDirectory() as directory:
     check_zip([("assets/app.js", "no index")], True)
     check_zip([("index.html", "ok"), ("assets\\\\escape.js", "bad")], True)
 
+with tempfile.TemporaryDirectory() as directory:
+    root = Path(directory)
+    target = root / "fluidd"
+    stage = root / "staged"
+    backup = root / "fluidd.previous-helper"
+    target.mkdir()
+    stage.mkdir()
+    (target / "index.html").write_text("old camera")
+    (stage / "index.html").write_text("new camera")
+    assert module.promote_staged_ui(stage, target, backup)
+    assert (target / "index.html").read_text() == "new camera"
+    assert (backup / "index.html").read_text() == "old camera"
+    retry = root / "retry"
+    retry.mkdir()
+    try:
+        module.promote_staged_ui(retry, target, backup)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("Existing rollback backup must block overwrite")
+    assert (backup / "index.html").read_text() == "old camera"
+
 print("PASS: offline camera JS preserved exactly; original UI unchanged")
