@@ -17,6 +17,8 @@ helper = (root / "helper.sh").read_text()
 for old in ("\npatch_stock_configs\n", "\ninstall_rc_local_patch\n", "\ninstall_moonraker_include\n"):
     if old in helper:
         failures.append("helper.sh invokes unsafe automatic startup patch: " + old.strip())
+if '28) python3 "$SCRIPTS_DIR/firmware_inspector.py"' not in helper:
+    failures.append("Firmware Inspector not available from menu")
 if '27) sh "$SCRIPTS_DIR/moonraker_audit.sh"' not in helper:
     failures.append("Read-only Moonraker audit not available from menu")
 
