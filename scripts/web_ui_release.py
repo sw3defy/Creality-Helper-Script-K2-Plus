@@ -33,7 +33,7 @@ def get_json(url):
 # Camera customizations are maintained by the existing camera installer.
 # Preserve its exact script, not a guessed replacement. Reject ambiguous cases.
 CAMERA_FUNCTIONS = ("enableCamera", "enableMainsailCams")
-CAMERA_BLOCK = re.compile(r"<script\\b[^>]*>[\\s\\S]*?</script\\s*>", re.I)
+CAMERA_BLOCK = re.compile(r"<script\b[^>]*>[\s\S]*?</script\s*>", re.I)
 
 def extract_camera_scripts(index_path):
     if index_path.is_symlink():
@@ -43,12 +43,12 @@ def extract_camera_scripts(index_path):
     content = index_path.read_text(encoding="utf-8", errors="replace")
     scripts = []
     for block in CAMERA_BLOCK.findall(content):
-        if any(re.search(r"\\bfunction\\s+" + name + r"\\s*\\(", block)
+        if any(re.search(r"\bfunction\s+" + name + r"\s*\(", block)
                for name in CAMERA_FUNCTIONS):
             scripts.append(block)
     for name in CAMERA_FUNCTIONS:
-        if re.search(r"\\bfunction\\s+" + name + r"\\s*\\(", content) and not any(
-            re.search(r"\\bfunction\\s+" + name + r"\\s*\\(", block) for block in scripts
+        if re.search(r"\bfunction\s+" + name + r"\s*\(", content) and not any(
+            re.search(r"\bfunction\s+" + name + r"\s*\(", block) for block in scripts
         ):
             raise RuntimeError("Cannot isolate camera customization: " + name)
     if len(scripts) > 1:
@@ -67,12 +67,12 @@ def preserve_camera_scripts(source_index, staged_index):
     if staged_index.is_symlink() or not staged_index.is_file():
         raise RuntimeError("Missing or symlinked staged UI index")
     content = staged_index.read_text(encoding="utf-8")
-    if any(re.search(r"\\bfunction\\s+" + name + r"\\s*\\(", content)
+    if any(re.search(r"\bfunction\s+" + name + r"\s*\(", content)
            for name in CAMERA_FUNCTIONS):
         raise RuntimeError("Staged UI already has camera customization; manual review required")
     if content.lower().count("</body>") != 1:
         raise RuntimeError("Staged UI has no unique closing body tag")
-    content = re.sub(r"</body>", lambda match: "\\n".join(scripts) + "\\n" + match.group(),
+    content = re.sub(r"</body>", lambda match: "\n".join(scripts) + "\n" + match.group(),
                      content, count=1, flags=re.I)
     staged_index.write_text(content, encoding="utf-8")
     return True
