@@ -203,6 +203,11 @@ legacy_install_fluidd() {
 # ── Remove Fluidd static files ────────────────────────────────────────────────
 
 remove_fluidd() {
+    # Removing the installed-state marker without restoring the web assets
+    # falsely reported success. Leave both the assets and marker untouched.
+    log_error "Fluidd removal/stock restoration is blocked pending a verified rollback."
+    log_warn "Nginx, camera routes, Fluidd assets and installed-state tracking were preserved."
+    return 1
     if ! is_installed "fluidd_updated"; then
         log_info "Fluidd Updated is not installed."
         return 0
