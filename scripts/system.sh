@@ -373,7 +373,12 @@ legacy_patch_stock_configs() {
 
 # ── rc.local patch (ensure patch_stock_configs runs on every boot) ────────────
 
-install_rc_local_patch() {\n    log_warn "Automatic boot patch installation disabled; requires reviewed migration."\n    return 0\n}\n\nlegacy_install_rc_local_patch() {
+install_rc_local_patch() {
+    log_warn "Automatic boot patch installation disabled; requires reviewed migration."
+    return 0
+}
+
+legacy_install_rc_local_patch() {
     local rc_local="/etc/rc.local"
     if grep -q "patch_stock_configs" "$rc_local" 2>/dev/null; then
         log_info "rc.local patch already installed."
@@ -392,7 +397,12 @@ install_rc_local_patch() {\n    log_warn "Automatic boot patch installation disa
 
 # ── Moonraker include fix (ensure UDISK moonraker.conf is actually loaded) ────
 
-install_moonraker_include() {\n    log_warn "Automatic Moonraker include patch disabled; requires reviewed migration."\n    return 0\n}\n\nlegacy_install_moonraker_include() {
+install_moonraker_include() {
+    log_warn "Automatic Moonraker include patch disabled; requires reviewed migration."
+    return 0
+}
+
+legacy_install_moonraker_include() {
     local real_conf="/usr/share/moonraker/moonraker.conf"
     local udisk_conf="$CONFIG_DIR/moonraker.conf"
     local include_line="[include $udisk_conf]"
