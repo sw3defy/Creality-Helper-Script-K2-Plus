@@ -37,6 +37,21 @@ with tempfile.TemporaryDirectory() as directory:
         pass
     else:
         raise AssertionError("Missing closing body should fail closed")
+    original.write_text("<html><body><script>function enableCamera() {}</script></body></html>")
+    stage.write_text("<html><body><script>function enableCamera() {}</script></body></html>")
+    try:
+        module.preserve_camera_scripts(original, stage)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("Existing staged camera function must not be duplicated")
+    original.write_text("<html><body>go2rtc_keepalive</body></html>")
+    try:
+        module.extract_camera_scripts(original)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("Unrecognized legacy camera injection must be reviewed")
     original.unlink()
     original.symlink_to(root / "missing.html")
     try:
