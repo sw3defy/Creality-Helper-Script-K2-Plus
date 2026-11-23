@@ -61,9 +61,9 @@ def extract_camera_scripts(index_path):
     if len(scripts) == 1:
         script = scripts[0]
         for name in CAMERA_FUNCTIONS:
-            if len(re.findall(r"\\bfunction\\s+" + name + r"\\s*\\(", content)) > 1:
+            if len(re.findall(r"\bfunction\s+" + name + r"\s*\(", content)) > 1:
                 raise RuntimeError("Duplicate camera function requires manual review")
-        if not any(re.search(r"\\bfunction\\s+" + name + r"\\s*\\(", script)
+        if not any(re.search(r"\bfunction\s+" + name + r"\s*\(", script)
                    for name in CAMERA_FUNCTIONS):
             raise RuntimeError("Camera script cannot be isolated")
     return scripts
