@@ -82,6 +82,8 @@ with tempfile.TemporaryDirectory() as directory:
     check_zip([("../index.html", "bad"), ("index.html", "ok")], True)
     check_zip([("index.html", "ok"), ("index.html", "duplicate")], True)
     check_zip([("assets/app.js", "no index")], True)
+    check_zip([("index.html", "ok"), ("assets", "file"), ("assets/app.js", "nested")], True)
+    check_zip([("index.html/", "not a file")], True)
     check_zip([("index.html", "ok"), ("assets\\\\escape.js", "bad")], True)
 
 with tempfile.TemporaryDirectory() as directory:
