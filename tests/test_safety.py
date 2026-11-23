@@ -135,6 +135,14 @@ for name in ("moonraker.sh", "system.sh"):
             if not match or "return 1" not in match.group(1):
                 failures.append("Unsafe Moonraker startup helper not blocked: " + function_name)
 
+moonraker_audit = (root / "scripts" / "moonraker_audit.sh").read_text()
+for marker in ('readlink "$RC"', 'ps | grep', 'ubus call service list', 'canonical Moonraker startup symlink'):
+    if marker not in moonraker_audit:
+        failures.append("Read-only Moonraker audit missing: " + marker)
+for forbidden in ('ln -s ', 'rm /etc/rc.d/', 'kill -', '/etc/init.d/moonraker restart'):
+    if forbidden in moonraker_audit:
+        failures.append("Moonraker audit must remain read-only: " + forbidden)
+
 if failures:
     for failure in failures:
         print("FAIL:", failure)
