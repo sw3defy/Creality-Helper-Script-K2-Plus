@@ -62,7 +62,7 @@ main_menu() {
     echo -e "    ${YELLOW}8)${NC} ${GREEN}Fluidd (install/update/repair — port 4408)${NC}"
     echo -e "    ${YELLOW}9)${NC} ${GREEN}Mainsail (install/update/repair — port 4409)${NC}"
     echo -e "   ${YELLOW}10)${NC} ${GREEN}Moonraker Timelapse [BLOCKED]${NC}"
-    echo -e "   ${YELLOW}11)${NC} ${GREEN}Camera Support for Fluidd and Mainsail [BLOCKED]${NC}"
+    echo -e "   ${YELLOW}11)${NC} ${GREEN}Camera Support for Fluidd and Mainsail${NC}"
     echo -e "   ${YELLOW}12)${NC} ${GREEN}HelixScreen (touchscreen UI) [BLOCKED]${NC}"
     echo ""
     echo -e "  ${CYAN}--- Step 5: Remote access & notifications ---${NC}"
