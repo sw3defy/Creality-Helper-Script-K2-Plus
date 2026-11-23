@@ -85,11 +85,9 @@ def main():
     target = Path("/usr/share") / name
     if target.is_symlink():
         raise RuntimeError("Refusing symlinked target")
-    # The existing camera fix injects UI-specific JavaScript into index.html.
-    # Replacing web assets would silently erase that working integration.
-    # Keep the camera untouched and refuse this unrelated update instead.
-    # Capture no camera files here; preserve the exact existing injection
-    # only after archive validation and before replacing the live UI.
+    # Inspect the existing camera injection without changing live files.
+    # Copy the exact existing script into the validated staging directory
+    # before swapping the web UI. Unknown injections fail closed.
     camera_index = target / "index.html"
     extract_camera_scripts(camera_index)
     release = get_json("https://api.github.com/repos/{}/releases/latest".format(repo))
