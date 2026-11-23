@@ -107,6 +107,12 @@ if '11) sh "$SCRIPTS_DIR/camera.sh" remove' not in helper:
 if "Camera Support for Fluidd and Mainsail [BLOCKED]" in helper:
     failures.append("Working camera feature incorrectly labeled blocked")
 
+updater = (root / "scripts" / "web_ui_release.py").read_text()
+for marker in ("enableCamera()", "enableMainsailCams()", "go2rtc_keepalive",
+               "Existing camera UI customization detected"):
+    if marker not in updater:
+        failures.append("Web UI updater does not preserve camera customization: " + marker)
+
 if failures:
     for failure in failures:
         print("FAIL:", failure)
