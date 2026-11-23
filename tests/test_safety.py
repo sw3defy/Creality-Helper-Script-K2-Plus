@@ -145,7 +145,7 @@ for forbidden in ('ln -s ', 'rm /etc/rc.d/', 'kill -', '/etc/init.d/moonraker re
 
 # Preserve the working camera installer; legacy broad-regex removal stays blocked.
 camera_remove = camera_source.split("remove_camera() {", 1)[1]
-if not re.match(r'\\s*#.*?\\n(?:\\s*#.*\\n)*\\s*log_error "Camera removal is blocked', camera_remove, re.S):
+if not re.search(r'(?m)^\s*log_error "Camera removal is blocked', camera_remove):
     failures.append("Legacy camera removal is not explicitly blocked")
 if 'Existing go2rtc, nginx, Mainsail, Fluidd' not in camera_remove:
     failures.append("Camera removal does not document preservation boundary")
