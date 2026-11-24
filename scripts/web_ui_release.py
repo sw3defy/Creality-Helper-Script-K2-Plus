@@ -197,6 +197,8 @@ def main():
     name = sys.argv[1]
     repo, asset_name = PROJECTS[name]
     target = Path("/usr/share") / name
+    if (Path("/rom/usr/share") / name).exists():
+        raise RuntimeError("Firmware-backed UI requires overlay-aware installer; no changes made")
     if target.is_symlink():
         raise RuntimeError("Refusing symlinked target")
     # Inspect the existing camera injection without changing live files.
