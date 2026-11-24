@@ -88,3 +88,15 @@ def unregister_adopted(root, registry, allowed_paths, preflight):
         if candidate != original:
             atomic_replace(registry, candidate)
         print("PASS: Adopted extensions unregistered; existing files and ownership preserved")
+
+def active_dependency_guard(api):
+    info = api("/server/info")
+    config = api("/server/config")["config"]
+    settings = api("/printer/objects/query?configfile")["status"]["configfile"]["settings"]
+    names = [name.lower() for name in settings]
+    if ("timelapse" in info["components"] or "timelapse" in config
+            or any("timelapse" in name for name in names)):
+        raise RuntimeError("Remove active Moonraker Timelapse first")
+    if any(any(token in name for token in ("kamp", "adaptive_mesh", "line_purge", "voron_purge", "smart_park")) for name in names):
+        raise RuntimeError("Remove active KAMP or adaptive macros first")
+    return True
