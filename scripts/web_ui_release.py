@@ -199,8 +199,11 @@ def main():
         print("Cancelled; no changes made")
         raise SystemExit(2)
 
-    # Use a temporary directory on the same filesystem for atomic rename.
-    work = Path(tempfile.mkdtemp(prefix="." + name + "-stage-", dir="/usr/share"))
+    # Download to UDISK; only the final promotion tree needs the target filesystem.
+    if not os.path.ismount("/mnt/UDISK"):
+        raise RuntimeError("UDISK is not mounted; refusing to stage on system storage")
+    work = Path(tempfile.mkdtemp(prefix="helper-ui-" + name + "-", dir="/mnt/UDISK"))
+    promotion = None
     backup = target.with_name(target.name + ".previous-helper")
     swapped = False
     try:
@@ -218,7 +221,10 @@ def main():
                 out.write(block)
         stage = work / "files"
         stage.mkdir()
-        validate_release_archive(archive)
+        members = validate_release_archive(archive)
+        expanded = sum(m.file_size for m in members)
+        if shutil.disk_usage("/usr/share").free < expanded + 32 * 1024 * 1024:
+            raise RuntimeError("Insufficient overlay space for safe promotion")
         with zipfile.ZipFile(str(archive)) as z:
             z.extractall(str(stage))
         if not (stage / "index.html").is_file():
@@ -231,10 +237,17 @@ def main():
         # Write metadata in the staging tree, before any live directory swap.
         # A failure here must leave the existing UI and camera untouched.
         (stage / ".helper-release-version").write_text(version + "\n")
-        swapped = promote_staged_ui(stage, target, backup)
+        promotion = Path(tempfile.mkdtemp(prefix="." + name + "-promote-", dir="/usr/share"))
+        local_stage = promotion / "files"
+        shutil.copytree(stage, local_stage)
+        if extract_camera_scripts(local_stage / "index.html") != extract_camera_scripts(camera_index):
+            raise RuntimeError("Camera preservation verification failed")
+        swapped = promote_staged_ui(local_stage, target, backup)
         print("Installed {} {}. Rollback directory: {}".format(name, version, backup if swapped else "none"))
         print("No nginx, Moonraker, Klipper or camera services were restarted.")
     finally:
+        if promotion is not None:
+            shutil.rmtree(str(promotion), ignore_errors=True)
         shutil.rmtree(str(work), ignore_errors=True)
 
 if __name__ == "__main__":
