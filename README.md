@@ -10,15 +10,7 @@ Forked and adapted from the excellent [Guilouz Creality Helper Script](https://g
 
 ## Installation
 
-Connect to your K2 Plus via SSH, then run:
-
-```sh
-python3 -c "import urllib.request; urllib.request.urlretrieve('https://github.com/sw3defy/Creality-Helper-Script-K2-Plus/archive/refs/heads/main.zip', '/tmp/helper.zip')"
-python3 -c "import shutil; shutil.unpack_archive('/tmp/helper.zip', '/tmp/')"
-cp -r /tmp/Creality-Helper-Script-K2-Plus-main/* /mnt/UDISK/helper-script/
-chmod +x /mnt/UDISK/helper-script/helper.sh
-sh /mnt/UDISK/helper-script/helper.sh
-```
+**Installation temporarily suspended.** The legacy Helper Script has been withdrawn while stock firmware and CFS compatibility are reviewed. Do not download or run older installers. Existing installations are not automatically modified. Development testing is tracked in [PR #7](https://github.com/sw3defy/Creality-Helper-Script-K2-Plus/pull/7).
 
 ## Features
 
