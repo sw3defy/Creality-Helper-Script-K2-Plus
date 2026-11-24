@@ -46,7 +46,7 @@ main_menu() {
     print_header
     echo -e "  ${WHITE}[Install] Menu${NC}"
     echo -e "  ${CYAN}--- Step 1: Foundation (install first) ---${NC}"
-    echo -e "    ${YELLOW}1)${NC} ${GREEN}Moonraker Extensions${NC}  ${WHITE}[BLOCKED: installer pending]${NC}"
+    echo -e "    ${YELLOW}1)${NC} ${GREEN}Moonraker Extensions${NC}  ${WHITE}[TEST: verify existing installation]${NC}"
     echo ""
     echo -e "  ${CYAN}--- Step 2: Web interfaces & camera ---${NC}"
     echo -e "    ${YELLOW}2)${NC} ${GREEN}Fluidd (install/update/repair — port 4408)${NC} [BLOCKED: overlay installer]"
