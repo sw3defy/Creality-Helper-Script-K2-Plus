@@ -59,6 +59,8 @@ def functional_verify():
 
 def install():
     import fcntl
+    from moonraker_ownership import register, load
+    from moonraker_removal import restoration_plan
     from moonraker_activation import activate
     from moonraker_service_recovery import recover_service
     from moonraker_service_guard import SERVICE
@@ -66,9 +68,21 @@ def install():
     with (ROOT / ".moonraker.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         changes = preflight()
+        ownership = ROOT / "moonraker-ownership.json"
+        if ownership.exists():
+            record, owned_journal = load(ROOT)
+            if owned_journal is not None:
+                restoration_plan(owned_journal, [CONFIG, MODULE])
+            if any(p.read_bytes() != data for p, data in changes):
+                raise RuntimeError("Registered installation changed; manual review required")
+        elif list(ROOT.glob("moonraker-*/COMMITTED")):
+            raise RuntimeError("Unclassified committed journal; manual review required")
         if all(p.read_bytes() == data for p, data in changes):
             adoption_test()
             functional_verify()
+            if not ownership.exists():
+                register(ROOT)
+            print("PASS: Persistent ownership:", load(ROOT)[0]["kind"])
             return
         baseline = api("/server/config")["config"]["file_manager"]["enable_object_processing"]
         service = SERVICE.read_bytes()
@@ -86,6 +100,7 @@ def install():
                            lambda: recover_service(True, service),
                            verify,
                            lambda: recover_service(baseline, service))
+        register(ROOT, journal, baseline)
         print("PASS: Activation committed:", journal)
 
 if __name__ == "__main__":
