@@ -20,7 +20,7 @@ fi
 for f in "$STOCK" "$USER"; do
     if [ -f "$f" ]; then
         echo "Includes and relevant sections in $f:"
-        grep -nE '^\\[include |^\\[file_manager\\]|^\\[timelapse\\]|^\\[update_manager' "$f" || :
+        grep -nE '^[[:space:]]*[[](include[[:space:]]|file_manager[]]|timelapse[]]|update_manager)' "$f" || :
     fi
 done
 if [ -f "$STOCK" ] && [ -f "$USER" ]; then
