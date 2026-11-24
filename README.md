@@ -1,10 +1,10 @@
 # Creality K2 Plus - Helper Script
 
-## Development update — 24 November 2026
+## WORK IN PROGRESS — 24 November 2026
 
 Public installation is temporarily suspended. Legacy installers have been withdrawn from main; existing printers are unchanged. We are rebuilding and hardware-testing in dependency order, starting with Moonraker Extensions & Update Manager (option 1). Goals: automatic prerequisite and health checks, beginner-friendly guidance, verified installation/update/repair, backups and rollback, and preservation of Creality stock firmware, CFS and camera functionality.
 
-The revised development menu has opened successfully on a real K2 Plus. Fluidd/Mainsail safeguards passed offline tests but require hardware validation. Moonraker migration and other blocked installers remain unresolved. Three Benchy failures with nozzle clogs are under investigation; Timelapse causation is unconfirmed. Follow [development PR #7](https://github.com/sw3defy/Creality-Helper-Script-K2-Plus/pull/7). No stable release date is announced.
+The revised development menu has opened successfully on a real K2 Plus. Fluidd/Mainsail safeguards passed offline tests but require hardware validation. Moonraker migration and other blocked installers remain unresolved. Three Benchy failures with nozzle clogs are under investigation; Timelapse causation is unconfirmed. Follow [development PR #7](https://github.com/sw3defy/Creality-Helper-Script-K2-Plus/pull/7). Our target is to complete fixes and hardware validation by Sunday, 29 November 2026 (end of this week). This is a development goal, not a guaranteed release date; public installation will resume only after acceptance checks pass.
 
 
 A menu-driven helper script for the **Creality K2 Plus** and **K2 Plus Combo (with CFS)**.
@@ -19,7 +19,7 @@ Forked and adapted from the excellent [Guilouz Creality Helper Script](https://g
 
 **Installation temporarily suspended.** The legacy Helper Script has been withdrawn while stock firmware and CFS compatibility are reviewed. Do not download or run older installers. Existing installations are not automatically modified. Development testing is tracked in [PR #7](https://github.com/sw3defy/Creality-Helper-Script-K2-Plus/pull/7).
 
-## Features
+## Features under review (not currently available for public installation)
 
 | Option | Feature |
 |--------|---------|
