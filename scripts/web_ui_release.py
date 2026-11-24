@@ -55,9 +55,17 @@ def extract_camera_scripts(index_path):
         raise RuntimeError("Multiple camera scripts require manual review")
     # A partially installed or mixed-generation camera injection is not safe
     # to transplant automatically: retain the working UI for manual review.
-    legacy_tokens = ("go2rtc_keepalive", "var cameraReady")
-    if any(token in content for token in legacy_tokens):
-        raise RuntimeError("Legacy camera injection requires manual review")
+    if "go2rtc_keepalive" in content or "var cameraReady" in content:
+        frames = re.findall(r"<iframe\b[^>]*>[\s\S]*?</iframe\s*>", content, re.I)
+        frames = [f for f in frames if re.search(r'\bid="go2rtc_keepalive"', f)]
+        if len(frames) != 1 or len(scripts) != 1:
+            raise RuntimeError("Ambiguous legacy camera integration")
+        if not all(t in scripts[0] for t in ("var cameraReady", "function enableCamera", "function checkAndReload", "/go2rtc/api/streams")):
+            raise RuntimeError("Unknown legacy camera integration")
+        combined = frames[0] + scripts[0]
+        if content.count(combined) != 1:
+            raise RuntimeError("Legacy camera block is not contiguous")
+        return [combined]
     if len(scripts) == 1:
         script = scripts[0]
         for name in CAMERA_FUNCTIONS:
@@ -189,7 +197,7 @@ def main():
     print("Target: {}".format(target))
     if input("Type INSTALL to stage and replace this web UI only: ").strip() != "INSTALL":
         print("Cancelled; no changes made")
-        return
+        raise SystemExit(2)
 
     # Use a temporary directory on the same filesystem for atomic rename.
     work = Path(tempfile.mkdtemp(prefix="." + name + "-stage-", dir="/usr/share"))
