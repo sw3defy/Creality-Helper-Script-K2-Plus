@@ -57,7 +57,7 @@ for name, repo in [('Fluidd', 'fluidd-core/fluidd'), ('Mainsail', 'mainsail-crew
     folder = Path('/usr/share') / name.lower()
     print('  {}: present={}, version={}, upstream stable={}'.format(
         name, (folder / 'index.html').is_file(),
-        local_version(folder / 'version'), github_latest(repo)))
+        next((v for v in (local_version(folder / '.helper-release-version'), local_version(folder / '.version'), local_version(folder / 'version')) if v not in ('unknown', 'empty')), 'unknown'), github_latest(repo)))
 
 print('\nSource-based add-ons (installed commit not tracked by .installed):')
 for name, repo in [
