@@ -55,3 +55,17 @@ def verify_retirement(root, removal, allowed_paths):
         if digest(Path(name).read_bytes()) != original:
             raise RuntimeError("Original file not restored")
     return installation
+
+def retire_owned(root, removal, allowed_paths):
+    """Caller must hold the shared Moonraker lock."""
+    import os
+    from moonraker_transaction import sync_directory
+    root = Path(root)
+    installation = verify_retirement(root, removal, allowed_paths)
+    target = installation / "RETIRED-ownership.json"
+    if target.exists():
+        raise RuntimeError("Retirement archive already exists")
+    os.replace(str(root / "moonraker-ownership.json"), str(target))
+    sync_directory(installation)
+    sync_directory(root)
+    return target
