@@ -9,5 +9,10 @@ def preflight():
     active_dependency_guard(api)
 
 if __name__ == "__main__":
-    unregister_adopted(ROOT, Path("/mnt/UDISK/helper-script/.installed"),
-                       [CONFIG, MODULE], preflight)
+    import sys
+    try:
+        unregister_adopted(ROOT, Path("/mnt/UDISK/helper-script/.installed"),
+                           [CONFIG, MODULE], preflight)
+    except RuntimeError as error:
+        print("Removal refused: " + str(error), file=sys.stderr)
+        sys.exit(1)
