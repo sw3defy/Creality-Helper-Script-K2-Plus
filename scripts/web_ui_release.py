@@ -169,9 +169,20 @@ def promote_staged_ui(stage, target, backup):
     return swapped
 
 
+def require_idle():
+    base = "http://127.0.0.1:7125"
+    info = get_json(base + "/server/info")["result"]
+    if not info["klippy_connected"] or info["klippy_state"] != "ready" or info["failed_components"] or "update_manager" in info["components"]:
+        raise RuntimeError("Printer health or core update protection check failed")
+    state = get_json(base + "/printer/objects/query?print_stats")["result"]["status"]["print_stats"]["state"]
+    queue = get_json(base + "/server/job_queue/status")["result"]
+    if state not in ("standby", "complete", "cancelled") or queue["queued_jobs"]:
+        raise RuntimeError("Printer must be idle with an empty queue")
+
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in PROJECTS:
         raise SystemExit("Usage: web_ui_release.py fluidd|mainsail")
+    require_idle()
     name = sys.argv[1]
     repo, asset_name = PROJECTS[name]
     target = Path("/usr/share") / name
@@ -193,6 +204,9 @@ def main():
     if not url.startswith("https://github.com/{}/releases/download/".format(repo)):
         raise RuntimeError("Unexpected release download host/path")
     version = release.get("tag_name", "unknown")
+    approved = {"fluidd": "v1.38.1", "mainsail": "v2.19.0"}
+    if version != approved[name]:
+        raise RuntimeError("Release not approved for live compatibility testing")
     print("Selected official {} release: {}".format(name, version))
     print("Target: {}".format(target))
     if input("Type INSTALL to stage and replace this web UI only: ").strip() != "INSTALL":
@@ -242,6 +256,7 @@ def main():
         shutil.copytree(stage, local_stage)
         if extract_camera_scripts(local_stage / "index.html") != extract_camera_scripts(camera_index):
             raise RuntimeError("Camera preservation verification failed")
+        require_idle()
         swapped = promote_staged_ui(local_stage, target, backup)
         print("Installed {} {}. Rollback directory: {}".format(name, version, backup if swapped else "none"))
         print("No nginx, Moonraker, Klipper or camera services were restarted.")
