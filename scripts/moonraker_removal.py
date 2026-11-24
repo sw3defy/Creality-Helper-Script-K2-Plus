@@ -54,3 +54,19 @@ def removal_preflight(root, registry, allowed_paths):
     if journal is None:
         return record, []
     return record, restoration_plan(journal, allowed_paths)
+
+def execute_removal(root, registry, allowed_paths, preflight, restart, verify, recover):
+    import fcntl
+    from moonraker_ownership import load
+    root = Path(root)
+    with (root / ".moonraker.lock").open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        record, changes = removal_preflight(root, registry, allowed_paths)
+        preflight()
+        if record["kind"] == "adopted":
+            print("PASS: Adopted files preserved; no restoration required")
+            return None
+        _, journal = load(root)
+        return restore_owned(root, journal, allowed_paths, preflight,
+                             lambda: restart(record["baseline"]),
+                             lambda: verify(record["baseline"]), recover)
