@@ -170,6 +170,20 @@ status_mainsail() {
 
 install_mainsail() {
     echo ""
+    log_warn "This update replaces web assets only; nginx and camera configs are protected."
+    log_warn "Review Fluidd/Mainsail compatibility with your installed Moonraker first."
+    if python3 "$SCRIPT_DIR/scripts/web_ui_release.py" "mainsail"; then
+        mark_installed "mainsail"
+        log_success "Web assets updated. No service restart performed."
+    else
+        log_error "Update cancelled or failed; installed state not changed."
+        return 1
+    fi
+    return 0
+}
+
+legacy_install_mainsail() {
+    echo ""
 
     # Detect whether this is a fresh install or update/repair
     if [ -d "$MAINSAIL_DIR" ] && [ -f "$MAINSAIL_DIR/index.html" ]; then
@@ -249,9 +263,8 @@ remove_mainsail() {
         return 0
     fi
 
-    remove_mainsail_nginx_block
-    rm -rf "$MAINSAIL_DIR"
-    restart_nginx force
+    log_error "Automatic removal disabled until a rollback-safe path is implemented."
+    return 1
     mark_removed "mainsail"
     echo ""
     log_success "Mainsail removed."
@@ -264,7 +277,7 @@ remove_mainsail() {
 case "$1" in
     install) install_mainsail ;;
     remove)  remove_mainsail ;;
-    restore) restore_mainsail_nginx_block; restart_nginx ;;
+    restore) log_error "Nginx restore disabled to protect camera configuration"; return 1 ;;
     status)  status_mainsail ;;
     *)       echo "Usage: $0 [install|remove|restore|status]" ;;
 esac

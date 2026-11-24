@@ -6,6 +6,11 @@ KAMP_DIR=$CONFIG_DIR/KAMP
 KAMP_URL=https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging/archive/refs/heads/main.zip
 
 install_kamp() {
+    log_error "KAMP installation and upgrades are temporarily blocked."
+    log_warn "The old installer can overwrite local KAMP settings and duplicate [file_manager]."
+    log_warn "A staged configuration-preserving migration is under review."
+    return 1
+
 
     if is_installed "kamp"; then
         log_info "Kamp is already installed."
@@ -20,7 +25,8 @@ install_kamp() {
 
     if ! is_installed "moonraker_extensions"; then
         log_warn "Moonraker Extensions not installed. Installing now (required for KAMP)..."
-        sh "$SCRIPT_DIR/scripts/moonraker.sh" install
+        log_error "Moonraker Extensions must be validated first; aborting KAMP install."
+        return 1
     fi
 
     mkdir -p "$KAMP_DIR"
@@ -95,6 +101,9 @@ EOF
 }
 
 remove_kamp() {
+    log_error "KAMP automatic removal is blocked pending config ownership validation."
+    return 1
+
     if ! is_installed "kamp"; then
         log_info "Kamp is not installed."
         return 0

@@ -35,24 +35,14 @@ restart_klipper() {
 }
 
 restart_moonraker() {
-    if [ "$1" != "force" ]; then
-        printf "Restart Moonraker? [y/n]: "
-        read confirm
-        [ "$confirm" != "y" ] && [ "$confirm" != "Y" ] && { log_info "Cancelled."; return 0; }
-    fi
-    log_info "Restarting Moonraker..."
-    # Kill ALL running moonraker instances (stock + helper script)
-    for pid in $(ps aux | grep moonraker.py | grep -v grep | awk '{print $1}'); do
-        kill "$pid" 2>/dev/null
-    done
-    sleep 2
-    /etc/init.d/moonraker start
-    sleep 3
-    if pgrep -f "moonraker.py" > /dev/null; then
-        log_success "Moonraker restarted successfully."
-    else
-        log_error "Moonraker failed to restart. Check $LOGS_DIR/moonraker.log"
-    fi
+    # Live K2 Plus diagnostics (2026-11-23) found stock /etc/init.d/moonraker
+    # loading /usr/share/moonraker/moonraker.conf, which already includes
+    # the UDISK extension file. A separately modified /etc/rc.d/S56moonraker
+    # instead loads that extension-only file directly. Three processes and
+    # port/socket errors were observed. Never kill or restart blindly.
+    log_error "Moonraker restart is blocked pending firmware-specific validation."
+    log_warn "No Moonraker processes were killed and no service was restarted."
+    return 1
 }
 
 restart_nginx() {
@@ -113,6 +103,43 @@ show_installed() {
     echo ""
 }
 
+# Read-only checks for the K2 Plus Moonraker startup mismatch.
+# Does not create directories, edit services, restart processes or expose tokens.
+diagnose_moonraker_startup() {
+    stock=/usr/share/moonraker/moonraker.conf
+    extension=/mnt/UDISK/printer_data/config/moonraker.conf
+    boot=/etc/rc.d/S56moonraker
+    service=/etc/init.d/moonraker
+    log_info "Moonraker startup diagnostic (read-only)"
+    for file in "$stock" "$extension" "$boot" "$service"; do
+        if [ -f "$file" ]; then
+            log_info "Present: $file"
+        else
+            log_warn "Missing: $file"
+        fi
+    done
+    if [ -f "$stock" ] && grep -Fq "[include $extension]" "$stock"; then
+        log_info "Stock configuration includes UDISK extensions"
+    else
+        log_warn "Stock configuration does not include expected UDISK extension"
+    fi
+    if [ -f "$boot" ] && grep -Fq "CONF=$extension" "$boot"; then
+        log_warn "Boot script points directly at extension-only configuration"
+    fi
+    if [ -f "$service" ] && grep -Fq "CONF=$stock" "$service"; then
+        log_info "Stock service uses full Moonraker configuration"
+    fi
+    if [ -d /mnt/UDISK/printer_data/comms ]; then
+        log_info "Moonraker communication directory exists"
+    else
+        log_warn "Moonraker communication directory is missing"
+    fi
+    if [ -f /etc/rc.d/S56moonraker.orig ]; then
+        log_warn "Executable-name-style backup remains in /etc/rc.d; inspect before changing"
+    fi
+    log_info "No changes made"
+}
+
 # ── printer.cfg include management ───────────────────────────────────────────
 
 # Add an [include filename.cfg] line to printer.cfg if not already present
@@ -156,35 +183,17 @@ MOONRAKER_RC=/etc/rc.d/S56moonraker
 MOONRAKER_RC_BAK=/mnt/UDISK/helper-script/.S56moonraker.orig
 MOONRAKER_STOCK_CONF=/usr/share/moonraker/moonraker.conf
 
-# Patch S56moonraker to use our config wrapper instead of the stock one
+# Historical startup patching and restoration are intentionally disabled.
+# The inspected printer's stock config includes the UDISK extension config;
+# the modified /etc/rc.d/S56moonraker incorrectly uses the extension as root.
 patch_moonraker_startup() {
-    if grep -q "CONF=/mnt/UDISK" "$MOONRAKER_RC" 2>/dev/null; then
-        log_info "Moonraker startup already patched."
-        return 0
-    fi
-
-    # Back up original
-    if [ ! -f "${MOONRAKER_RC}.orig" ]; then
-        cp "$MOONRAKER_RC" "${MOONRAKER_RC}.orig"
-        log_success "Backed up original S56moonraker to ${MOONRAKER_RC}.orig"
-    fi
-
-    # Replace the CONF= line
-    sed -i "s|CONF=/usr/share/moonraker/moonraker.conf|CONF=/mnt/UDISK/printer_data/config/moonraker.conf|g" "$MOONRAKER_RC"
-    log_success "Patched S56moonraker to use /mnt/UDISK/printer_data/config/moonraker.conf"
+    log_error "Moonraker startup modification is not supported."
+    return 1
 }
 
-# Restore the original CONF= line
 unpatch_moonraker_startup() {
-    if [ -f "${MOONRAKER_RC}.orig" ]; then
-        cp "${MOONRAKER_RC}.orig" "$MOONRAKER_RC"
-        log_success "Restored original S56moonraker startup."
-        rm -f "${MOONRAKER_RC}.orig"
-    else
-        # Restore manually if backup is missing
-        sed -i "s|CONF=/mnt/UDISK/printer_data/config/moonraker.conf|CONF=/usr/share/moonraker/moonraker.conf|g" "$MOONRAKER_RC"
-        log_success "Restored S56moonraker CONF to stock path."
-    fi
+    log_error "Moonraker startup restoration is not supported."
+    return 1
 }
 
 # Add a section to our moonraker.conf (idempotent)
@@ -248,6 +257,15 @@ restore_nginx_conf() {
 # ── Stock config patch (fix underscore prefix bug) ────────────────────────────
 
 patch_stock_configs() {
+    # Existing rc.local installations may call this at every boot.
+    # Fail closed: never rewrite CFS, motor tuning, mesh or camera-related
+    # paths without a separate reviewed migration.
+    log_warn "Automatic stock config patching is disabled for safety."
+    log_warn "No files were changed. Review firmware-specific fixes manually."
+    return 0
+}
+
+legacy_patch_stock_configs() {
     # Ensure /usr/bin/wget exists. Moonraker's shell_command subprocess
     # PATH does not include /opt/bin (where wget actually lives on this
     # firmware), causing "FileNotFoundError: wget" for every timelapse
@@ -365,6 +383,11 @@ patch_stock_configs() {
 # ── rc.local patch (ensure patch_stock_configs runs on every boot) ────────────
 
 install_rc_local_patch() {
+    log_warn "Automatic boot patch installation disabled; requires reviewed migration."
+    return 0
+}
+
+legacy_install_rc_local_patch() {
     local rc_local="/etc/rc.local"
     if grep -q "patch_stock_configs" "$rc_local" 2>/dev/null; then
         log_info "rc.local patch already installed."
@@ -384,6 +407,11 @@ install_rc_local_patch() {
 # ── Moonraker include fix (ensure UDISK moonraker.conf is actually loaded) ────
 
 install_moonraker_include() {
+    log_warn "Automatic Moonraker include patch disabled; requires reviewed migration."
+    return 0
+}
+
+legacy_install_moonraker_include() {
     local real_conf="/usr/share/moonraker/moonraker.conf"
     local udisk_conf="$CONFIG_DIR/moonraker.conf"
     local include_line="[include $udisk_conf]"
@@ -428,6 +456,7 @@ $include_line
 case "$1" in
     restart_klipper)   restart_klipper ;;
     restart_moonraker) restart_moonraker ;;
+    diagnose_moonraker_startup) diagnose_moonraker_startup ;;
     restart_nginx)     restart_nginx ;;
     restart_camera)    restart_camera ;;
     show_installed)    show_installed ;;

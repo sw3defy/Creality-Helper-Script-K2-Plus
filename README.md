@@ -8,17 +8,31 @@ Forked and adapted from the excellent [Guilouz Creality Helper Script](https://g
 
 **[https://sw3defy.github.io/Creality-Helper-Script-Wiki-K2-Plus/](https://sw3defy.github.io/Creality-Helper-Script-Wiki-K2-Plus/)**
 
-## Installation
+## Installation and safe updates
 
-Connect to your K2 Plus via SSH, then run:
+**K2 Plus / K2 Plus Combo only.** Back up the active printer configuration
+and existing Helper Script before installing or updating. The Helper Script
+has startup patch paths that may change active Klipper/Moonraker configuration;
+review them before launching `helper.sh`.
+
+**Existing installations:** Do not copy the complete GitHub archive over
+`/mnt/UDISK/helper-script`. That can overwrite local camera fixes and other
+printer-specific files. Use a reviewed selective update instead.
+
+### Read-only update audit
+
+On an installation containing the audit script, run:
 
 ```sh
-python3 -c "import urllib.request; urllib.request.urlretrieve('https://github.com/sw3defy/Creality-Helper-Script-K2-Plus/archive/refs/heads/main.zip', '/tmp/helper.zip')"
-python3 -c "import shutil; shutil.unpack_archive('/tmp/helper.zip', '/tmp/')"
-cp -r /tmp/Creality-Helper-Script-K2-Plus-main/* /mnt/UDISK/helper-script/
-chmod +x /mnt/UDISK/helper-script/helper.sh
-sh /mnt/UDISK/helper-script/helper.sh
+sh /mnt/UDISK/helper-script/scripts/check_updates.sh
 ```
+
+The audit checks available stable upstream releases where possible, but
+does not install, change settings, restart services or reboot. An unknown
+installed version does not mean the feature is missing.
+
+For safe upgrade requirements, see the
+[Wiki update audit](https://sw3defy.github.io/Creality-Helper-Script-Wiki-K2-Plus/helper-script/safe-update-audit/).
 
 ## Features
 
@@ -26,7 +40,7 @@ sh /mnt/UDISK/helper-script/helper.sh
 |--------|---------|
 | 1 | Moonraker Extensions & Update Manager |
 | 2 | Fans Control Macros |
-| 3 | Useful Macros (START_PRINT / END_PRINT) |
+| 3 | Useful Macros (review CFS compatibility before installation) |
 | 4 | Save Z-Offset Macros |
 | 5 | M600 Filament Change Support |
 | 6 | KAMP (Klipper Adaptive Meshing & Purging) |

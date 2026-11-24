@@ -6,6 +6,10 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 SHAPERS_CFG=$CONFIG_DIR/shapers_calibration.cfg
 
 install_shapers() {
+    log_error "Shaper macro installation is blocked pending firmware command validation."
+    log_warn "The old macros may invoke unsupported resonance parameters and homing."
+    return 1
+
 
     if is_installed "improved_shapers"; then
         log_info "Improved Shapers is already installed."
@@ -33,7 +37,7 @@ install_shapers() {
 #   SHAPER_CALIBRATE_Y        - Y axis only
 #   BELTS_SHAPER_CALIBRATION  - belt tension analysis via frequency profile
 #   EXCITATE_AXIS_AT_FREQ     - hold excitation at a specific frequency for diagnosis
-#   AUTOTUNE_SHAPERS          - apply and save recommended shaper settings
+#   HELPER_SAVE_SHAPERS          - apply and save recommended shaper settings
 #   TEST_RESONANCES_GRAPHS    - generate CSV data for external analysis
 #   RESTORE_SHAPERS           - restore previously saved shaper settings
 
@@ -53,7 +57,7 @@ gcode:
   SHAPER_CALIBRATE
 
   {action_respond_info("Calibration complete. Run SAVE_CONFIG to apply the results.")}
-  {action_respond_info("Or run AUTOTUNE_SHAPERS to apply and save automatically.")}
+  {action_respond_info("Or run HELPER_SAVE_SHAPERS to apply and save automatically.")}
 
 # ── Per-axis calibration ──────────────────────────────────────────────────────
 
@@ -146,7 +150,7 @@ gcode:
 
 # ── Apply and save recommended shapers ───────────────────────────────────────
 
-[gcode_macro AUTOTUNE_SHAPERS]
+[gcode_macro HELPER_SAVE_SHAPERS]
 description: Apply and save the recommended shaper settings from the last calibration
 gcode:
   {action_respond_info("Saving shaper calibration results to printer.cfg...")}
@@ -211,20 +215,23 @@ EOF
     echo -e "  ${GREEN}Belt analysis:${NC}      BELTS_SHAPER_CALIBRATION"
     echo -e "  ${GREEN}Diagnosis:${NC}          EXCITATE_AXIS_AT_FREQ [AXIS=X] [FREQ=25] [TIME=10]"
     echo -e "  ${GREEN}Raw data:${NC}           TEST_RESONANCES_GRAPHS"
-    echo -e "  ${GREEN}Apply & save:${NC}       AUTOTUNE_SHAPERS"
+    echo -e "  ${GREEN}Apply & save:${NC}       HELPER_SAVE_SHAPERS"
     echo -e "  ${GREEN}Restore:${NC}            RESTORE_SHAPERS"
     echo -e "  ${GREEN}Status:${NC}             SHAPER_STATUS"
     echo ""
     log_info "Recommended workflow:"
     echo "  1. Run INPUT_SHAPER_CALIBRATION"
     echo "  2. Review results in console"
-    echo "  3. Run AUTOTUNE_SHAPERS to save"
+    echo "  3. Run HELPER_SAVE_SHAPERS to save"
     echo ""
     log_info "Belt tension check: Settings → Self-check → Belt Tension (target: 140N)"
     echo ""
 }
 
 remove_shapers() {
+    log_error "Shaper removal blocked pending config ownership review."
+    return 1
+
     if ! is_installed "improved_shapers"; then
         log_info "Improved Shapers is not installed."
         return 0

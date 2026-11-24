@@ -7,6 +7,11 @@ TIMELAPSE_DIR=/mnt/UDISK/printer_data/timelapse
 TIMELAPSE_COMPONENT=/usr/share/moonraker/components/timelapse.py
 
 install_timelapse() {
+    log_error "Timelapse installation and upgrades are temporarily blocked."
+    log_warn "The old installer overwrites Moonraker components and Klipper macros."
+    log_warn "The existing camera integration must not be changed."
+    return 1
+
 
     if is_installed "moonraker_timelapse"; then
         log_info "Moonraker Timelapse is already installed."
@@ -21,7 +26,8 @@ install_timelapse() {
 
     if ! is_installed "moonraker_extensions"; then
         log_warn "Moonraker Extensions not installed. Installing now (required for timelapse)..."
-        sh "$SCRIPT_DIR/scripts/moonraker.sh" install
+        log_error "Moonraker Extensions must be validated first; aborting Timelapse install."
+        return 1
     fi
 
     log_info "Downloading moonraker-timelapse..."
@@ -69,6 +75,9 @@ ffmpeg_binary_path: /usr/bin/ffmpeg"
 }
 
 remove_timelapse() {
+    log_error "Timelapse removal is blocked until component ownership is verified."
+    return 1
+
     if ! is_installed "moonraker_timelapse"; then
         log_info "Moonraker Timelapse is not installed."
         return 0

@@ -5,6 +5,10 @@ SCRIPT_DIR=/mnt/UDISK/helper-script
 M600_CFG=$CONFIG_DIR/m600.cfg
 
 install_m600() {
+    log_error "M600 install is blocked pending stock PAUSE/CFS integration validation."
+    log_warn "The old macro calls PAUSE_BASE, which may not exist on this firmware."
+    return 1
+
 
     if is_installed "m600_support"; then
         log_info "M600 Support is already installed."
@@ -86,6 +90,9 @@ EOF
 }
 
 remove_m600() {
+    log_error "M600 removal blocked until file ownership is verified."
+    return 1
+
     if ! is_installed "m600_support"; then
         log_info "M600 Support is not installed."
         return 0

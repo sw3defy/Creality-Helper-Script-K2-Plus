@@ -46,29 +46,29 @@ main_menu() {
     print_header
         echo -e "  ${WHITE}[Install] Menu${NC}"
     echo -e "  ${CYAN}--- Step 1: Foundation (install first) ---${NC}"
-    echo -e "    ${YELLOW}1)${NC} ${GREEN}Moonraker Extensions & Update Manager${NC}  ${WHITE}[recommended first]${NC}"
+    echo -e "    ${YELLOW}1)${NC} ${GREEN}Moonraker Extensions & Update Manager${NC}  ${WHITE}[BLOCKED: audit pending]${NC}"
     echo ""
     echo -e "  ${CYAN}--- Step 2: Print macros ---${NC}"
-    echo -e "    ${YELLOW}2)${NC} ${GREEN}Fans Control Macros${NC}                    ${WHITE}[needed by START_PRINT]${NC}"
-    echo -e "    ${YELLOW}3)${NC} ${GREEN}Useful Macros (START_PRINT / END_PRINT)${NC}"
-    echo -e "    ${YELLOW}4)${NC} ${GREEN}Save Z-Offset Macros${NC}"
-    echo -e "    ${YELLOW}5)${NC} ${GREEN}M600 Filament Change Support${NC}"
+    echo -e "    ${YELLOW}2)${NC} ${GREEN}Fans Control Macros${NC}                    ${WHITE}[BLOCKED: macro review]${NC}"
+    echo -e "    ${YELLOW}3)${NC} ${GREEN}Useful Macros (START_PRINT / END_PRINT)${NC} ${WHITE}[BLOCKED: stock protected]"
+    echo -e "    ${YELLOW}4)${NC} ${GREEN}Save Z-Offset Macros [BLOCKED]${NC}"
+    echo -e "    ${YELLOW}5)${NC} ${GREEN}M600 Filament Change Support [BLOCKED]${NC}"
     echo ""
     echo -e "  ${CYAN}--- Step 3: Leveling & calibration ---${NC}"
-    echo -e "    ${YELLOW}6)${NC} ${GREEN}Klipper Adaptive Meshing & Purging (KAMP)${NC}"
-    echo -e "    ${YELLOW}7)${NC} ${GREEN}Improved Shapers Calibrations${NC}"
+    echo -e "    ${YELLOW}6)${NC} ${GREEN}Klipper Adaptive Meshing & Purging (KAMP) [BLOCKED]${NC}"
+    echo -e "    ${YELLOW}7)${NC} ${GREEN}Improved Shapers Calibrations [BLOCKED]${NC}"
     echo ""
     echo -e "  ${CYAN}--- Step 4: Web interface & camera ---${NC}"
     echo -e "    ${YELLOW}8)${NC} ${GREEN}Fluidd (install/update/repair — port 4408)${NC}"
     echo -e "    ${YELLOW}9)${NC} ${GREEN}Mainsail (install/update/repair — port 4409)${NC}"
-    echo -e "   ${YELLOW}10)${NC} ${GREEN}Moonraker Timelapse${NC}"
+    echo -e "   ${YELLOW}10)${NC} ${GREEN}Moonraker Timelapse [BLOCKED]${NC}"
     echo -e "   ${YELLOW}11)${NC} ${GREEN}Camera Support for Fluidd and Mainsail${NC}"
-    echo -e "   ${YELLOW}12)${NC} ${GREEN}HelixScreen (touchscreen UI)${NC}"
+    echo -e "   ${YELLOW}12)${NC} ${GREEN}HelixScreen (touchscreen UI) [BLOCKED]${NC}"
     echo ""
     echo -e "  ${CYAN}--- Step 5: Remote access & notifications ---${NC}"
     echo -e "   ${YELLOW}13)${NC} ${GREEN}OctoEverywhere${NC}"
     echo -e "   ${YELLOW}14)${NC} ${GREEN}Mobileraker Companion${NC}"
-    echo -e "   ${YELLOW}15)${NC} ${GREEN}Entware Package Manager${NC}"
+    echo -e "   ${YELLOW}15)${NC} ${GREEN}Entware Package Manager [BLOCKED]${NC}"
     echo -e "   ${YELLOW}16)${NC} ${GREEN}Git Backup${NC}"
     echo ""
     echo -e "  ${WHITE}[Remove] Menu${NC}"
@@ -76,15 +76,18 @@ main_menu() {
     echo ""
     echo -e "  ${WHITE}[Backup & Restore] Menu${NC}"
     echo -e "   ${YELLOW}18)${NC} ${GREEN}Backup Klipper configuration${NC}"
-    echo -e "   ${YELLOW}19)${NC} ${GREEN}Restore Klipper configuration${NC}"
+    echo -e "   ${YELLOW}19)${NC} ${GREEN}Restore Klipper configuration [BLOCKED]${NC}"
     echo ""
     echo -e "  ${WHITE}[Tools] Menu${NC}"
     echo -e "   ${YELLOW}20)${NC} ${GREEN}Restart Klipper${NC}"
-    echo -e "   ${YELLOW}21)${NC} ${GREEN}Restart Moonraker${NC}"
+    echo -e "   ${YELLOW}21)${NC} ${GREEN}Restart Moonraker [BLOCKED]${NC}"
     echo -e "   ${YELLOW}22)${NC} ${GREEN}Restart Nginx${NC}"
     echo -e "   ${YELLOW}23)${NC} ${GREEN}View Klipper log${NC}"
     echo -e "   ${YELLOW}24)${NC} ${GREEN}View Moonraker log${NC}"
-    echo -e "   ${YELLOW}25)${NC} ${GREEN}Show installed features${NC}"
+    echo -e "   ${YELLOW}25)${NC} ${GREEN}Show installed features${NC}" 
+    echo -e "   ${YELLOW}26)${NC} ${GREEN}Check add-on updates (read-only)${NC}"
+    echo -e "   ${YELLOW}27)${NC} ${GREEN}Audit Moonraker configuration (read-only)${NC}"
+    echo -e "   ${YELLOW}28)${NC} ${GREEN}K2 Plus Firmware Inspector (read-only)${NC}"
     echo ""
     echo -e "    ${YELLOW}0)${NC} ${RED}Exit${NC}"
     echo ""
@@ -126,6 +129,9 @@ handle_choice() {
         23) tail -50 "$LOGS_DIR/klippy.log" | less ;;
         24) tail -50 "$LOGS_DIR/moonraker.log" | less ;;
         25) sh "$SCRIPTS_DIR/system.sh" show_installed ;;
+        26) sh "$SCRIPTS_DIR/check_updates.sh" ;;
+        27) sh "$SCRIPTS_DIR/moonraker_audit.sh" ;;
+        28) python3 "$SCRIPTS_DIR/firmware_inspector.py" > /tmp/k2-inspection.txt && { echo "Report saved: /tmp/k2-inspection.txt"; echo "Review for sensitive information before sharing."; } ;;
         0)  echo ""; echo "Goodbye!"; echo ""; exit 0 ;;
         *)  echo -e "${RED}Invalid choice.${NC}"; sleep 1 ;;
     esac
@@ -183,7 +189,5 @@ remove_menu() {
 . "$SCRIPTS_DIR/system.sh"
 check_root
 check_printer
-patch_stock_configs
-install_rc_local_patch
-install_moonraker_include
+# Automatic stock and boot configuration modifications are intentionally disabled.
 main_menu

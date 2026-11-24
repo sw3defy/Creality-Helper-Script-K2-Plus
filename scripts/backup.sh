@@ -35,6 +35,9 @@ backup_config() {
 }
 
 restore_config() {
+    log_error "Bulk restore overwrites live configuration and restarts Klipper; blocked pending verified archive and rollback checks."
+    return 1
+
     echo ""
     log_info "Available backups:"
     echo ""

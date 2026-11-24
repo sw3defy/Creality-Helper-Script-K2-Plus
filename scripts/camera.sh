@@ -10,6 +10,7 @@ K2RTC=$SCRIPT_DIR/k2rtc.py
 WATCHDOG=$SCRIPT_DIR/camera_watchdog.py
 
 install_camera() {
+
     echo ""
     echo ""
     echo "======================================================"
@@ -246,6 +247,12 @@ print('Mainsail index.html updated')
 }
 
 remove_camera() {
+    # The legacy removal path rewrites nginx.conf using broad regular
+    # expressions and deletes shared startup/UI integrations. Preserve the
+    # verified working camera until ownership-aware removal is implemented.
+    log_error "Camera removal is blocked pending an ownership-aware, reversible migration."
+    log_warn "Existing go2rtc, nginx, Mainsail, Fluidd and camera startup configuration was preserved."
+    return 1
     if ! is_installed "camera_support"; then
         log_info "Camera Support is not installed."
         return 0
