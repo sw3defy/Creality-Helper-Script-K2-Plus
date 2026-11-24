@@ -179,6 +179,17 @@ def require_idle():
     if state not in ("standby", "complete", "cancelled") or queue["queued_jobs"]:
         raise RuntimeError("Printer must be idle with an empty queue")
 
+def verify_http(name, target):
+    require_idle()
+    port = {"fluidd": 4408, "mainsail": 4409}[name]
+    base = "http://127.0.0.1:{}".format(port)
+    with urllib.request.urlopen(base + "/", timeout=15) as response:
+        if response.read() != (target / "index.html").read_bytes():
+            raise RuntimeError("Served index does not match installed index")
+    with urllib.request.urlopen(base + "/go2rtc/api/frame.jpeg?src=k2plus", timeout=20) as response:
+        if response.read(2) != b"\xff\xd8":
+            raise RuntimeError("Camera snapshot is not JPEG")
+
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in PROJECTS:
         raise SystemExit("Usage: web_ui_release.py fluidd|mainsail")
@@ -257,7 +268,17 @@ def main():
         if extract_camera_scripts(local_stage / "index.html") != extract_camera_scripts(camera_index):
             raise RuntimeError("Camera preservation verification failed")
         require_idle()
+        verify_http(name, target)
         swapped = promote_staged_ui(local_stage, target, backup)
+        try:
+            verify_http(name, target)
+        except Exception:
+            if swapped:
+                target.rename(local_stage)
+                backup.rename(target)
+                verify_http(name, target)
+                print("Original UI restored after failed health check")
+            raise
         print("Installed {} {}. Rollback directory: {}".format(name, version, backup if swapped else "none"))
         print("No nginx, Moonraker, Klipper or camera services were restarted.")
     finally:
