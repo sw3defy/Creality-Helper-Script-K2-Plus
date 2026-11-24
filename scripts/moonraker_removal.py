@@ -70,3 +70,21 @@ def execute_removal(root, registry, allowed_paths, preflight, restart, verify, r
         return restore_owned(root, journal, allowed_paths, preflight,
                              lambda: restart(record["baseline"]),
                              lambda: verify(record["baseline"]), recover)
+
+def unregister_adopted(root, registry, allowed_paths, preflight):
+    """Unregister adopted extensions without touching pre-existing files."""
+    import fcntl
+    from moonraker_transaction import atomic_replace
+    root, registry = Path(root), Path(registry)
+    with (root / ".moonraker.lock").open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        record, changes = removal_preflight(root, registry, allowed_paths)
+        if record != {"kind": "adopted"} or changes:
+            raise RuntimeError("Owned restoration requires separate validation")
+        preflight()
+        original = registry.read_bytes()
+        candidate = b"".join(line for line in original.splitlines(keepends=True)
+                             if line.strip() != b"moonraker_extensions")
+        if candidate != original:
+            atomic_replace(registry, candidate)
+        print("PASS: Adopted extensions unregistered; existing files and ownership preserved")
