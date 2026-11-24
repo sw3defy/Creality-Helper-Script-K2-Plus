@@ -36,3 +36,22 @@ def load(root):
     if digest((journal / "manifest.json").read_bytes()) != record["manifest"]:
         raise RuntimeError("Ownership manifest changed")
     return record, journal
+
+def verify_retirement(root, removal, allowed_paths):
+    from moonraker_journal import verify_backup
+    record, installation = load(root)
+    removal = Path(removal)
+    if installation is None or removal.parent != Path(root) or removal == installation:
+        raise RuntimeError("Invalid retirement transaction")
+    if not (removal / "COMMITTED").is_file() or (removal / "PENDING").exists():
+        raise RuntimeError("Removal not committed")
+    installed = verify_backup(installation)
+    restored = verify_backup(removal)
+    expected = {r["path"]: (r["candidate"], r["original"]) for r in installed}
+    actual = {r["path"]: (r["original"], r["candidate"]) for r in restored}
+    if expected != actual or not set(expected).issubset({str(p) for p in allowed_paths}):
+        raise RuntimeError("Removal journal does not reverse installation")
+    for name, (_, original) in expected.items():
+        if digest(Path(name).read_bytes()) != original:
+            raise RuntimeError("Original file not restored")
+    return installation
