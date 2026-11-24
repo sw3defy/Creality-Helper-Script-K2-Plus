@@ -40,3 +40,17 @@ def restore_owned(root, journal, allowed_paths, preflight, restart, verify, reco
         if restoration_plan(journal, allowed_paths) != changes:
             raise RuntimeError("Restoration plan changed")
     return activate(root, changes, check, restart, verify, recover)
+
+def removal_preflight(root, registry, allowed_paths):
+    from moonraker_ownership import load
+    root = Path(root)
+    if list(root.glob("moonraker-*/PENDING")):
+        raise RuntimeError("Pending transaction; resolve before removal")
+    installed = set(Path(registry).read_text().splitlines())
+    for dependency, label in (("kamp", "KAMP"), ("moonraker_timelapse", "Moonraker Timelapse")):
+        if dependency in installed:
+            raise RuntimeError("Remove " + label + " first")
+    record, journal = load(root)
+    if journal is None:
+        return record, []
+    return record, restoration_plan(journal, allowed_paths)
