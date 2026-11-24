@@ -1,0 +1,3 @@
+# Maintenance menu order
+
+Agreed development sequence: 1 Moonraker Extensions; 2 Fluidd; 3 Mainsail; 4 Camera Support; 5 Fans; 6 Useful Macros; 7 Save Z-Offset; 8 M600; 9 KAMP; 10 Improved Shapers; 11 Timelapse; 12 HelixScreen (mandatory reboot); 13 Entware; 14 OctoEverywhere; 15 Mobileraker; 16 Git Backup. Tools 17–28 retain their previous numbers; 29 is Safe Update Manager (blocked). Removal menu follows the new feature numbering for its supported entries. Finish each feature before moving on. This is a development sequence, not a verified dependency graph. Existing camera fix is protected. Fluidd ROM-backed installation remains blocked. Public release remains suspended.
