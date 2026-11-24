@@ -28,10 +28,10 @@ def adoption_test():
         raise RuntimeError("Fresh activation not yet enabled")
     if api("/server/config")["config"]["file_manager"]["enable_object_processing"] is not True:
         raise RuntimeError("Effective object processing disabled")
-    print("PASS: Existing correction eligible for adoption")
+    print("PASS: Existing correction verified")
     print("PASS: No pending recovery journals")
     print("PASS: No file replacement or restart required")
-    print("Existing changes remain user-owned; removal must not revert them")
+
 
 
 def functional_verify():
@@ -82,7 +82,10 @@ def install():
             functional_verify()
             if not ownership.exists():
                 register(ROOT)
-            print("PASS: Persistent ownership:", load(ROOT)[0]["kind"])
+            kind = load(ROOT)[0]["kind"]
+            print("PASS: Persistent ownership:", kind)
+            if kind == "adopted":
+                print("Existing corrections remain user-owned; removal must not revert them")
             return
         baseline = api("/server/config")["config"]["file_manager"]["enable_object_processing"]
         service = SERVICE.read_bytes()
