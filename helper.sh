@@ -46,29 +46,31 @@ main_menu() {
     print_header
         echo -e "  ${WHITE}[Install] Menu${NC}"
     echo -e "  ${CYAN}--- Step 1: Foundation (install first) ---${NC}"
-    echo -e "    ${YELLOW}1)${NC} ${GREEN}Moonraker Extensions & Update Manager${NC}  ${WHITE}[BLOCKED: audit pending]${NC}"
+    echo -e "    ${YELLOW}1)${NC} ${GREEN}Moonraker Extensions${NC}  ${WHITE}[BLOCKED: installer pending]${NC}"
     echo ""
-    echo -e "  ${CYAN}--- Step 2: Print macros ---${NC}"
-    echo -e "    ${YELLOW}2)${NC} ${GREEN}Fans Control Macros${NC}                    ${WHITE}[BLOCKED: macro review]${NC}"
-    echo -e "    ${YELLOW}3)${NC} ${GREEN}Useful Macros (START_PRINT / END_PRINT)${NC} ${WHITE}[BLOCKED: stock protected]"
-    echo -e "    ${YELLOW}4)${NC} ${GREEN}Save Z-Offset Macros [BLOCKED]${NC}"
-    echo -e "    ${YELLOW}5)${NC} ${GREEN}M600 Filament Change Support [BLOCKED]${NC}"
+    echo -e "  ${CYAN}--- Step 2: Web interfaces & camera ---${NC}"
+    echo -e "    ${YELLOW}2)${NC} ${GREEN}Fluidd (install/update/repair — port 4408)${NC} [BLOCKED: overlay installer]"
+    echo -e "    ${YELLOW}3)${NC} ${GREEN}Mainsail (install/update/repair — port 4409)${NC}"
+    echo -e "   ${YELLOW}4)${NC} ${GREEN}Camera Support for Fluidd and Mainsail${NC}"
     echo ""
-    echo -e "  ${CYAN}--- Step 3: Leveling & calibration ---${NC}"
-    echo -e "    ${YELLOW}6)${NC} ${GREEN}Klipper Adaptive Meshing & Purging (KAMP) [BLOCKED]${NC}"
-    echo -e "    ${YELLOW}7)${NC} ${GREEN}Improved Shapers Calibrations [BLOCKED]${NC}"
+    echo -e "  ${CYAN}--- Step 3: Print macros ---${NC}"
+    echo -e "    ${YELLOW}5)${NC} ${GREEN}Fans Control Macros${NC}                    ${WHITE}[BLOCKED: macro review]${NC}"
+    echo -e "    ${YELLOW}6)${NC} ${GREEN}Useful Macros (START_PRINT / END_PRINT)${NC} ${WHITE}[BLOCKED: stock protected]"
+    echo -e "    ${YELLOW}7)${NC} ${GREEN}Save Z-Offset Macros [BLOCKED]${NC}"
+    echo -e "    ${YELLOW}8)${NC} ${GREEN}M600 Filament Change Support [BLOCKED]${NC}"
     echo ""
-    echo -e "  ${CYAN}--- Step 4: Web interface & camera ---${NC}"
-    echo -e "    ${YELLOW}8)${NC} ${GREEN}Fluidd (install/update/repair — port 4408)${NC}"
-    echo -e "    ${YELLOW}9)${NC} ${GREEN}Mainsail (install/update/repair — port 4409)${NC}"
-    echo -e "   ${YELLOW}10)${NC} ${GREEN}Moonraker Timelapse [BLOCKED]${NC}"
-    echo -e "   ${YELLOW}11)${NC} ${GREEN}Camera Support for Fluidd and Mainsail${NC}"
+    echo -e "  ${CYAN}--- Step 4: Leveling & calibration ---${NC}"
+    echo -e "    ${YELLOW}9)${NC} ${GREEN}Klipper Adaptive Meshing & Purging (KAMP) [BLOCKED]${NC}"
+    echo -e "    ${YELLOW}10)${NC} ${GREEN}Improved Shapers Calibrations [BLOCKED]${NC}"
+    echo ""
+    echo -e "  ${CYAN}--- Step 5: Additional features ---${NC}"
+    echo -e "   ${YELLOW}11)${NC} ${GREEN}Moonraker Timelapse [BLOCKED]${NC}"
     echo -e "   ${YELLOW}12)${NC} ${GREEN}HelixScreen (touchscreen UI) [BLOCKED]${NC}"
     echo ""
-    echo -e "  ${CYAN}--- Step 5: Remote access & notifications ---${NC}"
-    echo -e "   ${YELLOW}13)${NC} ${GREEN}OctoEverywhere${NC}"
-    echo -e "   ${YELLOW}14)${NC} ${GREEN}Mobileraker Companion${NC}"
-    echo -e "   ${YELLOW}15)${NC} ${GREEN}Entware Package Manager [BLOCKED]${NC}"
+    echo -e "  ${CYAN}--- Step 6: Packages & integrations ---${NC}"
+    echo -e "   ${YELLOW}13)${NC} ${GREEN}Entware Package Manager [BLOCKED]${NC}"
+    echo -e "   ${YELLOW}14)${NC} ${GREEN}OctoEverywhere${NC}"
+    echo -e "   ${YELLOW}15)${NC} ${GREEN}Mobileraker Companion${NC}"
     echo -e "   ${YELLOW}16)${NC} ${GREEN}Git Backup${NC}"
     echo ""
     echo -e "  ${WHITE}[Remove] Menu${NC}"
@@ -89,6 +91,7 @@ main_menu() {
     echo -e "   ${YELLOW}27)${NC} ${GREEN}Audit Moonraker configuration (read-only)${NC}"
     echo -e "   ${YELLOW}28)${NC} ${GREEN}K2 Plus Firmware Inspector (read-only)${NC}"
     echo ""
+    echo -e "   ${YELLOW}29)${NC} ${GREEN}Safe Update Manager [BLOCKED: development]${NC}"
     echo -e "    ${YELLOW}0)${NC} ${RED}Exit${NC}"
     echo ""
 printf "  \033[0;32mEnter choice:\033[0m "
@@ -105,20 +108,20 @@ confirm_install() {
 handle_choice() {
     case "$1" in
         1)  confirm_install "Moonraker Extensions" && sh "$SCRIPTS_DIR/moonraker.sh" install ;;
-        2)  confirm_install "Fans Control Macros" && sh "$SCRIPTS_DIR/fans.sh" install ;;
-        3)  confirm_install "Useful Macros" && sh "$SCRIPTS_DIR/useful_macros.sh" install ;;
-        4)  confirm_install "Save Z-Offset Macros" && sh "$SCRIPTS_DIR/z_offset.sh" install ;;
-        5)  confirm_install "M600 Support" && sh "$SCRIPTS_DIR/m600.sh" install ;;
-        6)  confirm_install "KAMP" && sh "$SCRIPTS_DIR/kamp.sh" install ;;
-        7)  confirm_install "Improved Shapers Calibrations" && sh "$SCRIPTS_DIR/shapers.sh" install ;;
-        8)  confirm_install "Fluidd" && sh "$SCRIPTS_DIR/fluidd.sh" install ;;
-        9)  confirm_install "Mainsail" && sh "$SCRIPTS_DIR/mainsail.sh" install ;;
-        10) confirm_install "Moonraker Timelapse" && sh "$SCRIPTS_DIR/timelapse.sh" install ;;
-        11) sh "$SCRIPTS_DIR/camera.sh" install ;;
+        2)  echo "Blocked: overlay-compatible Fluidd installer pending." ;;
+        3)  confirm_install "Mainsail" && sh "$SCRIPTS_DIR/mainsail.sh" install ;;
+        4) sh "$SCRIPTS_DIR/camera.sh" install ;;
+        5)  confirm_install "Fans Control Macros" && sh "$SCRIPTS_DIR/fans.sh" install ;;
+        6)  confirm_install "Useful Macros" && sh "$SCRIPTS_DIR/useful_macros.sh" install ;;
+        7)  confirm_install "Save Z-Offset Macros" && sh "$SCRIPTS_DIR/z_offset.sh" install ;;
+        8)  confirm_install "M600 Support" && sh "$SCRIPTS_DIR/m600.sh" install ;;
+        9)  confirm_install "KAMP" && sh "$SCRIPTS_DIR/kamp.sh" install ;;
+        10)  confirm_install "Improved Shapers Calibrations" && sh "$SCRIPTS_DIR/shapers.sh" install ;;
+        11) confirm_install "Moonraker Timelapse" && sh "$SCRIPTS_DIR/timelapse.sh" install ;;
         12) sh "$SCRIPTS_DIR/helixscreen.sh" install ;;
-        13) sh "$SCRIPTS_DIR/octoeverywhere.sh" install ;;
-        14) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
-        15) sh "$SCRIPTS_DIR/entware.sh" install ;;
+        13) sh "$SCRIPTS_DIR/entware.sh" install ;;
+        14) sh "$SCRIPTS_DIR/octoeverywhere.sh" install ;;
+        15) sh "$SCRIPTS_DIR/mobileraker.sh" install ;;
         16) sh "$SCRIPTS_DIR/git_backup.sh" install ;;
         17) remove_menu; main_menu; return ;;
         18) sh "$SCRIPTS_DIR/backup.sh" backup ;;
@@ -132,6 +135,7 @@ handle_choice() {
         26) sh "$SCRIPTS_DIR/check_updates.sh" ;;
         27) sh "$SCRIPTS_DIR/moonraker_audit.sh" ;;
         28) python3 "$SCRIPTS_DIR/firmware_inspector.py" > /tmp/k2-inspection.txt && { echo "Report saved: /tmp/k2-inspection.txt"; echo "Review for sensitive information before sharing."; } ;;
+        29) echo "Safe Update Manager is not yet available." ;;
         0)  echo ""; echo "Goodbye!"; echo ""; exit 0 ;;
         *)  echo -e "${RED}Invalid choice.${NC}"; sleep 1 ;;
     esac
@@ -146,16 +150,16 @@ remove_menu() {
     echo -e "  ${WHITE}[Remove] Menu${NC}"
     echo ""
     echo -e "    ${YELLOW}1)${NC}  ${GREEN}Moonraker Extensions${NC}"
-    echo -e "    ${YELLOW}2)${NC}  ${GREEN}Fans Control Macros${NC}"
-    echo -e "    ${YELLOW}3)${NC}  ${GREEN}Useful Macros${NC}"
-    echo -e "    ${YELLOW}4)${NC}  ${GREEN}Save Z-Offset Macros${NC}"
-    echo -e "    ${YELLOW}5)${NC}  ${GREEN}M600 Support${NC}"
-    echo -e "    ${YELLOW}6)${NC}  ${GREEN}KAMP${NC}"
-    echo -e "    ${YELLOW}7)${NC}  ${GREEN}Improved Shapers Calibrations${NC}"
-    echo -e "    ${YELLOW}8)${NC}  ${GREEN}Restore stock Fluidd${NC}"
-    echo -e "    ${YELLOW}9)${NC}  ${GREEN}Mainsail${NC}"
-    echo -e "   ${YELLOW}10)${NC}  ${GREEN}Moonraker Timelapse${NC}"
-    echo -e "   ${YELLOW}11)${NC}  ${GREEN}Camera Support for Fluidd and Mainsail${NC}"
+    echo -e "    ${YELLOW}2)${NC}  ${GREEN}Restore stock Fluidd${NC}"
+    echo -e "    ${YELLOW}3)${NC}  ${GREEN}Mainsail${NC}"
+    echo -e "   ${YELLOW}4)${NC}  ${GREEN}Camera Support for Fluidd and Mainsail${NC}"
+    echo -e "    ${YELLOW}5)${NC}  ${GREEN}Fans Control Macros${NC}"
+    echo -e "    ${YELLOW}6)${NC}  ${GREEN}Useful Macros${NC}"
+    echo -e "    ${YELLOW}7)${NC}  ${GREEN}Save Z-Offset Macros${NC}"
+    echo -e "    ${YELLOW}8)${NC}  ${GREEN}M600 Support${NC}"
+    echo -e "    ${YELLOW}9)${NC}  ${GREEN}KAMP${NC}"
+    echo -e "    ${YELLOW}10)${NC}  ${GREEN}Improved Shapers Calibrations${NC}"
+    echo -e "   ${YELLOW}11)${NC}  ${GREEN}Moonraker Timelapse${NC}"
     echo -e "   ${YELLOW}12)${NC}  ${GREEN}HelixScreen${NC}"
     echo -e "   ${YELLOW}13)${NC}  ${GREEN}Entware Package Manager${NC}"
     echo -e "    ${YELLOW}0)${NC}  ${RED}Back to main menu${NC}"
@@ -164,16 +168,16 @@ remove_menu() {
     read choice
     case "$choice" in
         1)  sh "$SCRIPTS_DIR/moonraker.sh" remove ;;
-        2)  sh "$SCRIPTS_DIR/fans.sh" remove ;;
-        3)  sh "$SCRIPTS_DIR/useful_macros.sh" remove ;;
-        4)  sh "$SCRIPTS_DIR/z_offset.sh" remove ;;
-        5)  sh "$SCRIPTS_DIR/m600.sh" remove ;;
-        6)  sh "$SCRIPTS_DIR/kamp.sh" remove ;;
-        7)  sh "$SCRIPTS_DIR/shapers.sh" remove ;;
-        8)  sh "$SCRIPTS_DIR/fluidd.sh" remove ;;
-        9)  sh "$SCRIPTS_DIR/mainsail.sh" remove ;;
-        10) sh "$SCRIPTS_DIR/timelapse.sh" remove ;;
-        11) sh "$SCRIPTS_DIR/camera.sh" remove ;;
+        2)  sh "$SCRIPTS_DIR/fluidd.sh" remove ;;
+        3)  sh "$SCRIPTS_DIR/mainsail.sh" remove ;;
+        4) sh "$SCRIPTS_DIR/camera.sh" remove ;;
+        5)  sh "$SCRIPTS_DIR/fans.sh" remove ;;
+        6)  sh "$SCRIPTS_DIR/useful_macros.sh" remove ;;
+        7)  sh "$SCRIPTS_DIR/z_offset.sh" remove ;;
+        8)  sh "$SCRIPTS_DIR/m600.sh" remove ;;
+        9)  sh "$SCRIPTS_DIR/kamp.sh" remove ;;
+        10)  sh "$SCRIPTS_DIR/shapers.sh" remove ;;
+        11) sh "$SCRIPTS_DIR/timelapse.sh" remove ;;
         12) sh "$SCRIPTS_DIR/helixscreen.sh" remove ;;
         13) sh "$SCRIPTS_DIR/entware.sh" remove ;;
         0)  return ;;
