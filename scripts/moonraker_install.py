@@ -1,4 +1,4 @@
-"""Integrate verified Moonraker extension primitives; adoption test only."""
+"""Transactional Moonraker extension installer."""
 from pathlib import Path
 import pathlib
 import subprocess
@@ -11,6 +11,8 @@ ROOT = Path("/mnt/UDISK/helper-backups")
 
 def preflight():
     guard()
+    if api("/server/info")["warnings"]:
+        raise RuntimeError("Moonraker warnings; resolve before installation")
     if list(ROOT.glob("moonraker-*/PENDING")):
         raise RuntimeError("Pending recovery journal; resolve before installation")
     changes = [(MODULE, prepare_module(MODULE.read_bytes())),
@@ -46,7 +48,11 @@ def functional_verify():
         env=os.environ.copy()
         env.pop("PYTHONPATH",None)
         env["PYTHONDONTWRITEBYTECODE"]="1"
-        subprocess.run(["/usr/share/moonraker-env/bin/python","/usr/share/moonraker/components/file_manager/metadata.py","-p",d,"-f",f.name,"--check-objects"],check=True,timeout=60,env=env,cwd=d)
+        result = subprocess.run(["/usr/share/moonraker-env/bin/python","/usr/share/moonraker/components/file_manager/metadata.py","-p",d,"-f",f.name,"--check-objects"],check=False,timeout=60,env=env,cwd=d,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        if result.returncode:
+            print(result.stdout.decode(errors="replace"))
+            print(result.stderr.decode(errors="replace"))
+            result.check_returncode()
         commands={line.split()[0] for line in f.read_text().splitlines() if line.strip() and not line.startswith(";")}
         require(required.issubset(commands) and not commands.intersection({"DEFINE_OBJECT","START_CURRENT_OBJECT","END_CURRENT_OBJECT"}),"Functional metadata processing")
     
