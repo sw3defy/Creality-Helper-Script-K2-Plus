@@ -31,3 +31,12 @@ def restoration_plan(journal, allowed_paths):
     if not changes:
         raise RuntimeError("Empty ownership journal")
     return changes
+
+def restore_owned(root, journal, allowed_paths, preflight, restart, verify, recover):
+    from moonraker_activation import activate
+    changes = restoration_plan(journal, allowed_paths)
+    def check():
+        preflight()
+        if restoration_plan(journal, allowed_paths) != changes:
+            raise RuntimeError("Restoration plan changed")
+    return activate(root, changes, check, restart, verify, recover)
