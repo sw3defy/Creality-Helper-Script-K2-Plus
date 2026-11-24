@@ -19,8 +19,11 @@ remove)
             exit 1
         fi
     done
-    log_error "Removal blocked pending ownership-aware restoration validation."
-    exit 1
+    PYTHONDONTWRITEBYTECODE=1 python3 "$SCRIPT_DIR/scripts/moonraker_remove_entry.py" || {
+        log_error "Removal refused or failed. Existing files retained where possible."
+        exit 1
+    }
+    log_success "Adopted Moonraker Extensions unregistered; existing corrections retained."
     ;;
 *) exit 2 ;;
 esac
